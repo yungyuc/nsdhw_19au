@@ -1,4 +1,4 @@
-This repository is for turning in coding homework assignment for
+This repository is for turning in coding homework assignments for
 https://github.com/yungyuc/nsd .
 
 To turn in your submission, you need to clone this repository, and create a
