@@ -67,9 +67,9 @@ Question 2
 ==========
 
 Write a C++ function that calculates the angle (in radians) between two vectors
-in the 2-dimensional Cartesian coordinate.  Use pybind11 to wrap it to Python.
-Use Python unit-test to check the result is correct.  You may use third-party
-test runners, e.g., py.test or nosetest.
+in the 2-dimensional Cartesian coordinate system.  Use pybind11 to wrap it to
+Python.  Use Python unit-test to check the result is correct.  You may use
+third-party test runners, e.g., py.test or nosetest.
 
 Similar to `Question 1`__, in a sub-directory under your ``$WORK`` directory,
 running ``make`` should build your code.  ``make test`` runs the Python-based
