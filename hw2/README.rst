@@ -4,8 +4,7 @@ username as your working directory (``$WORK``).
 Question 1
 ==========
 
-Reimplement the class ``Line`` by using STL containers instead of raw pointers
-(do not copy-n-paste the following code listing):
+Reimplement the class ``Line`` by using STL containers instead of raw pointers:
 
 .. code-block:: cpp
 
@@ -56,6 +55,9 @@ Reimplement the class ``Line`` by using STL containers instead of raw pointers
 
       return 0;
   }
+
+You may copy-n-paste the above ``main`` function.  It's not suggested to
+copy-n-paste the class declaration.
 
 In a sub-directory under your ``$WORK`` directory, the code needs to be
 built by executing ``make``.  When a source file changes, ``make`` needs to
