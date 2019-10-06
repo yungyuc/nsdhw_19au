@@ -1,5 +1,6 @@
 Your submission PR needs to create a sub-directory using exactly your GitHub
-username as your working directory (``$WORK``).
+username as your working directory (``$WORK``).  The PR needs to be created
+against the ``hw2`` branch.  (Not ``master``!)
 
 Question 1
 ==========
