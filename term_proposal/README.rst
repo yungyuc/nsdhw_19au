@@ -1,16 +1,20 @@
-This directory collects the proposals for the term project.  You should use a
-PR to submit your proposal.
+This directory collects proposals for the term project from everyone.  You
+should use a PR to submit.  Your proposal will be considered as a part of the
+project.  You should use it to help planning and implementation.
 
-The proposal is to help you plan and implement the project.  The project will
-be `graded based on
-<https://github.com/yungyuc/nsd/blob/master/notebook/index.ipynb>`__:
+.. note::
 
-* Good engineering infrastructure.
-* Correct implementation and solution to the problem.
-* Adequate architecture.
-* Good presentation.
+  The full list of the project grading guideline:
 
-The proposal won't be graded separately, but as part of "good presentation".
+  * Good engineering infrastructure.
+  * Correct implementation and solution to the problem.
+  * Adequate architecture.
+  * Good presentation.
+
+  The proposal belongs to "good presentation".
+
+  See https://github.com/yungyuc/nsd/blob/master/notebook/index.ipynb for the
+  detail information about the requirement of the term project.
 
 The following file formats are accepted for the proposal: plain text,
 reStructuredText, markdown, PDF, and word (.doc or .docx).  The
