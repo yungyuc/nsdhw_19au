@@ -1,6 +1,8 @@
 #include"Line.h"
 #include<iostream>
+
 using namespace std;
+
 int main(int, char**){
   Line line(3);
   line.x(0) = 0; line.y(0) = 1;
@@ -25,6 +27,5 @@ int main(int, char**){
       << " x = " << line2.x(it)
       << " y = " << line2.y(it) << std::endl;
   }
-
   return 0;
 }

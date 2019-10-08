@@ -3,6 +3,8 @@ TARGET   = main
 # The C++ source programs (.cc) [multiple files]
 SOURCES  = Line main
 
+INCLUDE+= $(shell pkg-config --cflags --libs python3)
+
 O_DIR    = O_$(HOSTTYPE)
 SYSDIR   = /usr/local
 CLASSDIR = $(SYSDIR)/class/oop
@@ -26,6 +28,7 @@ TESTOBJ  = ${TESTSRC:%.cc=$(O_DIR)/%.o}
 
 $(TARG) : $(O_DIR) $(OBJS) $(TESTOBJ)
 	$(CXX) -o $@ $(CXXFLAGS) $(OBJS) $(TESTOBJ) $(LIBS)
+	g++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m vector --includes` vector.cc -o vector`python3-config --extension-suffix` `python3-config --ldflags`
 
 
 $(O_DIR) :
