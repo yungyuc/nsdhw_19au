@@ -33,7 +33,7 @@ FLAGS    = -O3 -Wall -shared -std=c++11 -fPIC
 BINDOBJ  = vec2$(SUFFIX)
 
 $(TARG) : $(O_DIR) $(OBJS) $(TESTOBJ)
-	#$(CXX) -o $@ $(CXXFLAGS) $(OBJS) $(TESTOBJ) $(LIBS)
+	$(CXX) -o $@ $(CXXFLAGS) $(OBJS) $(TESTOBJ) $(LIBS)
 	$(CXX) $(FLAGS) $(INCLUDE) $(BINDSRC).cc -o $(BINDOBJ) $(LDFLAGS)
 
 
