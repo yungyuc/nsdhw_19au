@@ -27,39 +27,41 @@ Vec2 &Vec2::operator=(Vec2 &&){
   return *this;
 }
 
-Vec2::Vec2(float x, float y){
+Vec2::Vec2(double x, double y){
   x_ = x, y_ = y;
 }
 
 Vec2::~Vec2(){ }
 
-float Vec2::size() const{
+double Vec2::size() const{
   return sqrt((x_ * x_) + (y_ * y_));
 }
 
-float Vec2::dot(Vec2 v) const{
+double Vec2::dot(Vec2 v) const{
   return x_ * v.x() + y_ * v.y();
 }
 
-float Vec2::angle(Vec2 v) const{
-  float mul_length = this->size() * v.size();
-  assert(mul_length != 0);
+double Vec2::angle(Vec2 v) const{
+  double mul_length = this->size() * v.size();
+
+  if(mul_length == 0)
+    throw std::runtime_error("cannot not calculate angle of zero length vec2");
   return acos(this->dot(v) / mul_length);
 }
 
-float const &Vec2::x() const{
+double const &Vec2::x() const{
   return x_;
 }
 
-float &Vec2::x(float v){
+double &Vec2::x(double v){
   return x_ = v;
 }
 
-float const &Vec2::y() const{
+double const &Vec2::y() const{
   return y_;
 }
 
-float &Vec2::y(float v){
+double &Vec2::y(double v){
   return y_ = v;
 }
 
