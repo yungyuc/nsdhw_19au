@@ -16,6 +16,7 @@ CFLAGS += -O3 -shared -Wall -std=c++14 -fPIC
 all: $(LIB)
 
 $(LIB_DIR)/pybind_vector2d$(SUFFIX): $(SRC)
+	@mkdir -p lib
 	$(CXX) $(CPPFLAGS) $(CFLAGS) $^ -o $@
 	unlink ./test/*.so
 	ln ./lib/*.so ./test/
@@ -24,4 +25,4 @@ test: all
 	pushd ./test && python3 -m pytest -q test.py; popd
 
 clean:
-	$(RM) $(LIB)
+	$(RM) -r $(LIB_DIR)
