@@ -1,16 +1,11 @@
 #!/bin/env python3.6
 import unittest
-import random
-
-import numpy as np
-
+import random, sys, math
 from vec2 import vec2
 
 """
 python implementation of vector computation
 """
-
-import math
 
 def dotproduct(v1, v2):
   return sum((a*b) for a, b in zip(v1, v2))
@@ -20,6 +15,9 @@ def length(v):
 
 def angle(v1, v2):
   return math.acos(dotproduct(v1, v2) / (length(v1) * length(v2)))
+
+def equal_float(v1, v2):
+    return abs(v1 - v2) < sys.float_info.epsilon
 
 class VecTC(unittest.TestCase):
 
@@ -67,20 +65,24 @@ class VecTC(unittest.TestCase):
         """test dot"""
         v = vec2(random.random(), random.random())
         w = vec2(random.random(), random.random())
-        self.assertEqual(w.dot(v), dotproduct([w.x(), w.y()], [v.x(), v.y()]))
+        self.assertTrue(
+                equal_float(w.dot(v),
+                            dotproduct([w.x(), w.y()], [v.x(), v.y()])))
 
     def test_length(self):
         """test length"""
         w = vec2(random.random(), random.random())
-        self.assertEqual(w.length(), length([w.x(), w.y()]))
+        self.assertTrue(
+                equal_float(w.length(), length([w.x(), w.y()])))
 
     def test_angle(self):
         """test angle"""
         v = vec2(random.random(), random.random())
         w = vec2(random.random(), random.random())
-        self.assertEqual(
-                angle([v.x(), v.y()], [w.x(), w.y()]),
-                v.angle(w))
+        self.assertTrue(
+                equal_float(
+                    angle([v.x(), v.y()], [w.x(), w.y()]),
+                    v.angle(w)))
 
     def test_operators(self):
         """test operators"""

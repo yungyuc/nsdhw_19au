@@ -2,6 +2,11 @@
 #include<string>
 #include<limits>
 
+bool double_equals(double a, double b)
+{
+    return std::abs(a - b) < std::numeric_limits<double>::epsilon();
+}
+
 class Vec2{
   public:
     Vec2();
@@ -22,18 +27,17 @@ class Vec2{
     std::string repr();
     Vec2 operator+(const Vec2 &v) const { return Vec2(x_ + v.x_, y_ + v.y_); }
     Vec2 operator-(const Vec2 &v) const { return Vec2(x_ - v.x_, y_ - v.y_); }
-    Vec2 operator*(const float value) const { return Vec2(x_ * value, y_ * value); }
+    Vec2 operator*(const double value) const { return Vec2(x_ * value, y_ * value); }
     Vec2& operator+=(const Vec2 &v) { x_ += v.x_; y_ += v.y_; return *this; }
-    Vec2& operator*=(const float v) { x_ *= v; y_ *= v; return *this; }
+    Vec2& operator*=(const double v) { x_ *= v; y_ *= v; return *this; }
     bool operator==(const Vec2 &v) const
-    { return abs(x_ - v.x_) < std::numeric_limits<double>::epsilon() &&
-             abs(y_ - v.y_) < std::numeric_limits<double>::epsilon(); }
+    { return double_equals(x_, v.x_) && double_equals(y_, v.y_); }
     bool operator!=(const Vec2 &v) const { return !((*this) == v); }
   private:
     double x_, y_;
 };
 
-Vec2 operator*(const float value, const Vec2 &v){
+Vec2 operator*(const double value, const Vec2 &v){
   return Vec2(v.x() * value, v.y() * value);
 }
 
