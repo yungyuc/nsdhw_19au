@@ -25,9 +25,11 @@ PYBIND11_MODULE(vec2, mod) {
     .def("__eq__", [](const Vec2 &self, const Vec2 &other){ return self == other; })
     .def("__ne__", [](const Vec2 &self, const Vec2 &other){ return self != other; })
     .def(py::self + py::self)
+    .def(py::self - py::self)
     .def(py::self += py::self)
     .def(py::self *= float())
     .def(float() * py::self)
     .def(py::self * float())
+    .def(+py::self)
     .def(-py::self);
 }

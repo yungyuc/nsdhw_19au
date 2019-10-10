@@ -33,24 +33,8 @@ class VecTC(unittest.TestCase):
             vec2(12, 3).angle(vec2(0, 0))
             vec2(0, 0).angle(vec2(0, 0))
 
-    def test_xcoord(self):
-        pass
-        #nx = (self.grid10.ncelm + self.grid10.BOUND_COUNT)*2 + 1
-        #golden_x = np.arange(0.0, 10.1, 0.5)
-        #golden_front = golden_x[0] - golden_x[self.grid10.BOUND_COUNT:0:-1]
-        #golden_back = golden_x[-1] - golden_x[-2:-self.grid10.BOUND_COUNT-2:-1]
-        #golden_back += golden_x[-1]
-        #golden_x = np.hstack([golden_front, golden_x, golden_back])
-
-        #self.assertEqual(nx, len(self.grid10.xcoord))
-        #self.assertEqual(golden_x.tolist(), self.grid10.xcoord.tolist())
-        #self.grid10.xcoord.fill(10)
-        #self.assertEqual([10]*nx, self.grid10.xcoord.tolist())
-
-    def test_number(self):
-
+    def test_constructor(self):
         """test constructor without any paramemter"""
-
         v = vec2()
         self.assertEqual(v.x(), 0)
         self.assertEqual(v.y(), 0)
@@ -62,29 +46,68 @@ class VecTC(unittest.TestCase):
         self.assertEqual(w.x(), x)
         self.assertEqual(w.y(), y)
 
+    def test_setter_getter(self):
         """test setter"""
-
+        v = vec2()
         x, y = (random.random(), random.random())
         v.x(x), v.y(y)
         self.assertEqual(v.x(), x)
         self.assertEqual(v.y(), y)
 
+    def test_copy(self):
         """test copy"""
+        v = vec2(random.random(), random.random())
         m = v.copy()
         self.assertEqual(m, v)
-        self.assertNotEqual(repr(w), repr(x))
+        self.assertNotEqual(repr(m), repr(v))
+        m.x(m.x() + 1), m.y(m.y() + 1)
+        self.assertNotEqual(m, v)
 
+    def test_dot(self):
         """test dot"""
+        v = vec2(random.random(), random.random())
+        w = vec2(random.random(), random.random())
         self.assertEqual(w.dot(v), dotproduct([w.x(), w.y()], [v.x(), v.y()]))
 
+    def test_length(self):
         """test length"""
+        w = vec2(random.random(), random.random())
         self.assertEqual(w.length(), length([w.x(), w.y()]))
 
+    def test_angle(self):
         """test angle"""
+        v = vec2(random.random(), random.random())
+        w = vec2(random.random(), random.random())
         self.assertEqual(
                 angle([v.x(), v.y()], [w.x(), w.y()]),
                 v.angle(w))
 
+    def test_operators(self):
+        """test operators"""
+        v = vec2(random.random(), random.random())
+        w = vec2(random.random(), random.random())
+        x, y = random.random(), random.random()
+        self.assertTrue(vec2(x, y) == vec2(x, y))
+        self.assertTrue(vec2(x, y) != vec2(x + 1, y + 1))
+        self.assertNotEqual(vec2(x, y), vec2(x + 1, y + 1))
+
+        self.assertEqual(v + w, vec2(v.x() + w.x(), v.y() + w.y()))
+        self.assertEqual(v - w, vec2(v.x() - w.x(), v.y() - w.y()))
+        self.assertEqual(+v, vec2(v.x(), v.y()))
+        self.assertEqual(-v, vec2(-v.x(), -v.y()))
+
+        m = random.random()
+        self.assertEqual(v * m, vec2(v.x() * m, v.y() * m))
+        self.assertEqual(m * v, vec2(m * v.x(), m * v.y()))
+
+        m = v.copy()
+        m += w
+        self.assertEqual(m, v + w)
+
+        m = v.copy()
+        r = random.random()
+        m *= r
+        self.assertEqual(m, v * r)
 
 if __name__ == '__main__':
     unittest.main()

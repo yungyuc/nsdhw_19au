@@ -1,5 +1,6 @@
 #include<stddef.h>
 #include<string>
+#include<limits>
 
 class Vec2{
   public:
@@ -20,11 +21,14 @@ class Vec2{
     double &y(double);
     std::string repr();
     Vec2 operator+(const Vec2 &v) const { return Vec2(x_ + v.x_, y_ + v.y_); }
+    Vec2 operator-(const Vec2 &v) const { return Vec2(x_ - v.x_, y_ - v.y_); }
     Vec2 operator*(const float value) const { return Vec2(x_ * value, y_ * value); }
     Vec2& operator+=(const Vec2 &v) { x_ += v.x_; y_ += v.y_; return *this; }
     Vec2& operator*=(const float v) { x_ *= v; y_ *= v; return *this; }
-    bool operator==(const Vec2 &v) const { return x_ == v.x_ && y_ == v.y_ ; }
-    bool operator!=(const Vec2 &v) const { return !(*this == v); }
+    bool operator==(const Vec2 &v) const
+    { return abs(x_ - v.x_) < std::numeric_limits<double>::epsilon() &&
+             abs(y_ - v.y_) < std::numeric_limits<double>::epsilon(); }
+    bool operator!=(const Vec2 &v) const { return !((*this) == v); }
   private:
     double x_, y_;
 };
@@ -35,4 +39,8 @@ Vec2 operator*(const float value, const Vec2 &v){
 
 Vec2 operator-(const Vec2 &v){
   return Vec2(-v.x(), -v.y());
+}
+
+Vec2 operator+(const Vec2 &v){
+  return Vec2(v.x(), v.y());
 }
