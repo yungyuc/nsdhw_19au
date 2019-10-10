@@ -18,10 +18,9 @@ all: $(LIB)
 $(LIB_DIR)/pybind_vector2d$(SUFFIX): $(SRC)
 	@mkdir -p lib
 	$(CXX) $(CPPFLAGS) $(CFLAGS) $^ -o $@
-	unlink ./test/*.so
-	ln ./lib/*.so ./test/
 
 test: all
+	ln -f ./lib/*.so ./test/
 	pushd ./test && python3 -m pytest -q test.py; popd
 
 clean:
