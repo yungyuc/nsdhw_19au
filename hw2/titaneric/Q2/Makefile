@@ -2,17 +2,8 @@
 
 CXX = g++
 
-angle: angle.o line.o
-	$(CXX) $^ -o $@
-
-angle.o: angle.cpp
-	$(CXX) -c $< -o $@
-
-line.o:	../Q1/line.cpp
-	$(CXX) -c $< -o $@
-
-run: angle
-	./angle
+build:
+	c++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` angle.cpp -o angle`python3-config --extension-suffix`
 
 clean:
 	rm *.o ./angle
