@@ -1,3 +1,4 @@
+#include <utility>
 #include <vector>
 
 using namespace std;
@@ -21,7 +22,5 @@ public:
 private:
     // Member data.
     void check_range(size_t it) const;
-    vector<float> m_x;
-    vector<float> m_y;
-    size_t m_size;
+    vector<pair<float, float>> list;
 }; /* end class Line */

@@ -2,24 +2,21 @@
 #include <algorithm>
 #include <vector>
 #include <iostream>
+#include <utility>
 
 #include "line.h"
 
-Line::Line(size_t size) : m_size(size), m_x(size, 0.0), m_y(size, 0.0) {}
+Line::Line(size_t size) :list(size, make_pair(0,0)){}
 /* Define the copy constructor */
 Line::Line(Line const &other)
 {
-    m_size = other.m_size;
-    m_x = vector<float>(other.m_x);
-    m_y = vector<float>(other.m_y);
+    list = vector<pair<float, float>>(other.list);
 }
 
 /* Define the move constructor */
 Line::Line(Line &&other)
 {
-    std::swap(other.m_size, m_size);
-    std::swap(other.m_x, m_x);
-    std::swap(other.m_y, m_y);
+    std::swap(other.list, list);
 }
 
 /* Define the copy assignment operator */
@@ -30,9 +27,7 @@ Line &Line::operator=(Line const &other)
         return *this;
     } // don't move to self.
     // This part is the same as what's in the copy constructor.
-    m_size = other.m_size;
-    m_x = vector<float>(other.m_x);
-    m_y = vector<float>(other.m_y);
+    list = vector<pair<float, float>>(other.list);
     return *this;
 }
 
@@ -43,43 +38,41 @@ Line &Line::operator=(Line &&other)
     {
         return *this;
     } // don't move to self.
-    std::swap(other.m_size, m_size);
-    std::swap(other.m_x, m_x);
-    std::swap(other.m_y, m_y);
+    std::swap(other.list, list);
     return *this;
 }
 
 void Line::check_range(size_t it) const
 {
-    if (it >= m_size)
+    if (it >= list.size())
     {
         throw std::out_of_range("Line index out of range");
     }
 }
 size_t Line::size() const
 {
-    return m_size;
+    return list.size();
 }
 float Line::x(const size_t it) const
 {
     check_range(it);
-    return m_x[it];
+    return list[it].first;
 }
 
 float &Line::x(const size_t it)
 {
     check_range(it);
-    return m_x[it];
+    return list[it].first;
 }
 
 float Line::y(const size_t it) const
 {
     check_range(it);
-    return m_y[it];
+    return list[it].second;
 }
 
 float &Line::y(const size_t it)
 {
     check_range(it);
-    return m_y[it];
+    return list[it].second;
 }
