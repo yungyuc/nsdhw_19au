@@ -14,7 +14,7 @@ double compute_angle(
     const double y1 = std::get<1>(vec1);
 
     const double dot = x0*x1 + y0*y1;
-    const double det = x0*y1 - y0*x1;
+    const double det = x0*y1 - y0*x1; 
 
     // Reference : http://www.cplusplus.com/reference/cmath/atan2/
     //

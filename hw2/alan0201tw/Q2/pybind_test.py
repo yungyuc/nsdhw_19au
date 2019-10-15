@@ -1,8 +1,7 @@
 import numpy as np
-from vector import *
+from vector import compute_angle
 
 # import nose for unit-test
-from nose import *
 
 c_PI = np.pi
 epsilon = np.finfo(np.float64).eps
