@@ -32,7 +32,20 @@ double compute_angle(
     if(det == 0.0 && dot == 0.0)
         return nan("");
 
-    return std::atan2(det, dot);
+    // Principal arc tangent of y/x, in the interval [-pi,+pi] radians.
+    // One radian is equivalent to 180/PI degrees.
+    // 
+    // When returning, the receiver should be expecting a positive angle.
+    // In order to deal with negative radians ( range from -pi to 0 ).
+    // We should map [-pi, 0) to [-pi + 2pi, 0 + 2pi) = [pi, 2pi)
+    // which leads to the bigger angle between the two vectors.
+    // So return 2*pi - value = [2*pi - pi, 2*pi- 2*pi)
+    // = [ pi, 0 ). and the result is ( 2pi - (2pi + result) )
+    // which is negative result, when result is negative.
+    //
+    // In conclusion, a simple abs will do the trick.
+
+    return std::abs(std::atan2(det, dot));
 }
 
 PYBIND11_MODULE(vector, mod)
