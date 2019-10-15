@@ -26,5 +26,8 @@ clean:
 	@echo "$(RM) -r $(BINDIR) $(TARGET)"; $(RM) -r $(BINDIR) $(TARGET)
 	@echo "$(RM) -r $(TESTBINDIR)"; $(RM) -r $(TESTBINDIR)
 
+run:
+	./main
+
 # Declare clean as utility, not a file
-.PHONY: clean
+.PHONY: clean run
