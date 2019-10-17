@@ -2,7 +2,7 @@
 #include <vector>
 #include <utility>
 
-typedef std::pair<float, float> dot_t; 
+typedef std::pair<float, float> point_t; 
 
 #ifndef LINE_H
 #define LINE_H
@@ -24,7 +24,7 @@ public:
     float & y(size_t it);
 
 private:
-    std::vector<dot_t> *m_dots = nullptr;
+    std::vector<point_t> *m_points = nullptr;
 };
 
 #endif
