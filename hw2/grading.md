@@ -69,6 +69,7 @@ make clean
 TA will read the code and also check:
 ```
 cd q2
+
 make test
 make clean
 ``
