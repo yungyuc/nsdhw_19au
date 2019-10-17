@@ -1,4 +1,4 @@
-# HW2 grading guideline
+# HW2 Grading Standard
 
 HW2: https://github.com/yungyuc/nsdhw_19au/tree/master/hw2
 
