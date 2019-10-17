@@ -1,5 +1,5 @@
 #include <cstddef>
-#include <list>
+#include <vector>
 #include <utility>
 
 typedef std::pair<float, float> dot_t; 
@@ -10,7 +10,7 @@ typedef std::pair<float, float> dot_t;
 class Line
 {
 public:
-    Line();
+    Line() = default;
     Line(Line const & );
     Line(Line       &&);
     Line & operator=(Line const & );
@@ -24,8 +24,7 @@ public:
     float & y(size_t it);
 
 private:
-    void check_range(size_t it) const;
-    std::list<dot_t> *m_dots;
+    std::vector<dot_t> *m_dots = nullptr;
 };
 
 #endif

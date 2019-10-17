@@ -1,14 +1,15 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
+CXXFLAGS = -std=c++11 -Wall
 
-EXEC = line
+EXEC = line-test
+OBJ = main.o line.o
 
 all: $(EXEC)
 
-# $(EXEC): %.o
-# 	$(CXX) $(CXXFLAGS) $^ -o $@	
+$(EXEC): $(OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@	
 
-line.o: line.cpp
+%.o: %.c
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: run
