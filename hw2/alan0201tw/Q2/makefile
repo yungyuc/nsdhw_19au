@@ -8,7 +8,7 @@ clean:
 	@echo "Cleaning...";
 	@echo "$(RM) *.so"; $(RM) *.so
 
-run:
+test:
 	nosetests -v -s pybind_test.py
 
 .PHONY: clean run
