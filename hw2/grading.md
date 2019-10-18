@@ -34,7 +34,7 @@ Please make sure your PR is compatible with Unix.
 
 ### Q1 has 2 points
 
-- Implementation gets 1 point. Dont's modify `main()`, TA will `diff` the output to the correct answer.
+- Implementation gets 1 point. Do not modify `main()`, TA will `diff` the output to the correct answer.
 - Makefile gets 1 point:
   * When a source file changes (you can touch it), `make` needs to pick it up
     and rebuild.
