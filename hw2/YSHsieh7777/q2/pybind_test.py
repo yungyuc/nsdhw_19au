@@ -12,7 +12,7 @@ def test_same_point():
 
 def test_0_degree():
     p1 = Point(0, 1)
-    p2 = Point(0, 1)
+    p2 = Point(0, 2)
     r_angle = calc_angle(p1, p2)
     assert math.isclose(r_angle, 0, abs_tol=1e-06)
 
