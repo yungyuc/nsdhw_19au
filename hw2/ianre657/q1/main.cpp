@@ -1,3 +1,6 @@
+#include <iostream>
+#include "Line.hpp"
+
 int main(int, char **)
 {
     Line line(3);
