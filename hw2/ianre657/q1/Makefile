@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = --std=c++11 -Wall
+CFLAGS = --std=c++11 -Wall -g
 TARGET = main
 .PHONY : clean run
 
