@@ -22,10 +22,12 @@ Working directory hierarchy may look like:
       - q1
         - Makefile
         - xxx.cc
+        - (any other you need)
       - q2
         - Makefile
         - xxx.cc
         - yyy.py
+        - (any other you need)
 ```
 
 Please make sure your PR is compatible with Unix.
