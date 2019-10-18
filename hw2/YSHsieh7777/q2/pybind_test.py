@@ -4,11 +4,11 @@ import math
 
 PI = 3.14159265358979323846
 
-def test_0():
+def test_same_point():
     p1 = Point(0, 0)
     p2 = Point(0, 0)
     r_angle = calc_angle(p1, p2)
-    assert math.isclose(r_angle, 0, abs_tol=1e-06)
+    assert math.isclose(r_angle, -1, abs_tol=1e-06)
 
 def test_0_degree():
     p1 = Point(0, 1)

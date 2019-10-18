@@ -17,8 +17,8 @@ public:
 
 float calc_angle(const Point &p1, const Point &p2)
 {
-    if(p1.x==0.0 && p1.y==0.0 && p2.x==0.0 &&p2.y==0.0)
-        return 0.0;
+    if(p1.x==p2.x && p1.y==p2.y)
+        return -1.0;
 
     float len1 = sqrt(p1.x * p1.x + p1.y * p1.y);
     float len2 = sqrt(p2.x * p2.x + p2.y * p2.y);
