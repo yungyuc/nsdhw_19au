@@ -10,7 +10,7 @@ main.o: main.cpp
 Line.o: Line.cpp Line.h
 	$(CC) -c Line.cpp
 
-# check if output exist or not, and make output if it don't exist.
+# do not check if output exist or not, and make output if it don't exist.
 run: 
 	./XXX
 
