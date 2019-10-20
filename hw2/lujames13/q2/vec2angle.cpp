@@ -3,9 +3,9 @@
 namespace py = pybind11;
 
 double vec2angle(std::pair<double, double> v1, std::pair<double, double> v2){
-	double nomalization = sqrt(pow(v1.first, 2) + pow(v1.second, 2)) * sqrt(pow(v2.first, 2) + pow(v2.second, 2));
+	double norm = sqrt(pow(v1.first, 2) + pow(v1.second, 2)) * sqrt(pow(v2.first, 2) + pow(v2.second, 2));
 	double dot = v1.first * v2.first + v1.second * v2.second;
-	double angle = acos(dot/nomalization);
+	double angle = acos(dot/norm);
 	return angle;
 }
 
