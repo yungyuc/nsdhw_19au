@@ -1,12 +1,24 @@
 #include <iostream>
 #include <vector>
+#include <tuple>
 
 class Line
 {
 public:
-    
+    Line() = default;
+    Line(Line const & l){
+        coord_vec = l.coord_vec;
+    } // copy constructor
+    Line(size_t size) { coord_vec.resize(size); }
+    size_t size() const { return coord_vec.size(); }
+    ~Line() {};
+    float   x(size_t it) const { return std::get<0>(coord_vec.at(it)); }
+    float & x(size_t it)       { return std::get<0>(coord_vec.at(it)); }
+    float   y(size_t it) const { return std::get<1>(coord_vec.at(it)); }
+    float & y(size_t it)       { return std::get<1>(coord_vec.at(it)); }
 private:
     // Member data.
+    std::vector< std::tuple<float,float> > coord_vec;
 }; /* end class Line */
 
 int main(int, char **)
