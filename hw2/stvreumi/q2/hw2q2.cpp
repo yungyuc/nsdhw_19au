@@ -14,9 +14,13 @@ double calculate_angle(
         sqrt(pow(std::get<0>(vec1), 2.0)+pow(std::get<1>(vec1), 2.0));
     const double vec2_length = 
         sqrt(pow(std::get<0>(vec2), 2.0)+pow(std::get<1>(vec2), 2.0));
+    if(vec1_length == 0 || vec2_length == 0) {
+        // if length == 0, return -100, invalid input
+        return -100.0;
+    }
     const double dot_product = std::get<0>(vec1)*std::get<1>(vec1) +
         std::get<0>(vec2)*std::get<1>(vec2);
-
+    
     return acos(dot_product/(vec1_length*vec2_length));
 
 }
