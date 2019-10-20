@@ -1,10 +1,5 @@
 #include <vector>
 
-struct Vertex
-{
-	float x, y;
-};
-
 class Line
 {
 public:
@@ -21,6 +16,7 @@ public:
     float const & y(size_t it) const;
     float & y(size_t it);
 private:
-	std::vector<Vertex> data;
-    // Member data.
-}; /* end class Line */
+	std::vector<std::pair<float, float> > data;
+    // originally trying to make struct that contain x, y
+    // but that struct is hard to use push_back function.
+}; 

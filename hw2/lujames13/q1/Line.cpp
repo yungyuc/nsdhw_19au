@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Line.h"	
 
+
 Line::Line(){};
 Line::Line(Line const& other) {
 	for (size_t i=0; i<other.data.size();i++){
@@ -32,22 +33,29 @@ Line& Line::operator=(Line&& other){
 	}
 };
 Line::Line(size_t size) {
-	this->data.reserve(size * 2);
+	for(size_t i=0; i<size; i++){
+		data.push_back(std::pair<float, float> (0, 0));
+	}
+// # TODO: maybe use reserve is the better way to to this thing,
+//         but the code below is not working.
+//	data.reserve(size+1);
+//	std::cout << "size: " << size  << std::endl;
+//	std::cout << "capacity: " << data.capacity() << std::endl;
 };
 Line::~Line(){};
 size_t Line::size() const{
 	return this->data.size();
 };
 float const & Line::x(size_t it) const{
-	return this->data.at(it).x;
+	return this->data.at(it).first;
 };
 float& Line::x(size_t it){
-	return this->data.at(it).x;
+	return this->data.at(it).first;
 };
 float const & Line::y(size_t it) const{
-	return this->data.at(it).y;
+	return this->data.at(it).second;
 };
 float& Line::y(size_t it){
-	return this->data.at(it).y;
+	return this->data.at(it).second;
 };
 
