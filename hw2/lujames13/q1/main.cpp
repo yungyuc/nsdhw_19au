@@ -1,29 +1,9 @@
 #include<iostream>
 #include<vector>
+#include "Line.h"
 using namespace std;
 
-class Line
-{
-public:
-    Line();
-    Line(Line const & right){
 
-    };
-    Line(Line       &&);
-    Line & operator=(Line const & );
-    Line & operator=(Line       &&);
-    Line(size_t size);
-    ~Line();
-    size_t size() const;
-    float & x(size_t it) const;
-    float & x(size_t it);
-    float & y(size_t it) const;
-    float & y(size_t it);
-private:
-	std::vector<float> data_x;
-	std::vector<float> data_y;
-    // Member data.
-}; /* end class Line */
 
 int main(int, char **)
 {
