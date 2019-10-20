@@ -1,7 +1,7 @@
 
 CC = g++
 
-output: main.o Line.o
+XXX: main.o Line.o
 	$(CC) main.o Line.o -o XXX
 
 main.o: main.cpp
