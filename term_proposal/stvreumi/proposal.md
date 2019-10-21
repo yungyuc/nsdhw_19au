@@ -21,3 +21,4 @@ GitHub@stvreumi
   - [python2 repo](https://github.com/AllenDowney/ThinkBayes)
   - [python3 repo](https://github.com/AllenDowney/ThinkBayes2)
 - [Automated Machine Learning Hyperparameter Tuning in Python](https://towardsdatascience.com/automated-machine-learning-hyperparameter-tuning-in-python-dfda59b72f8a)
+- [Bayesian optimization, Martin Krasser](http://krasserm.github.io/2018/03/21/bayesian-optimization/)
