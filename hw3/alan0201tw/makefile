@@ -1,8 +1,9 @@
 # Compile Info
 CC := g++
 SRCEXT := cpp
-CFLAGS := -O2 -std=c++11 -pthread -g -Wall
+CFLAGS := -O2 -std=c++17 -pthread -g -Wall
 INCDIR := -I include
+LIB := -llapack -lblas -llapacke
 
 # Source Info, target = cpplox, entry should be in cpplox.cpp
 SRCDIR := src
@@ -14,7 +15,7 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BINDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 # Compile main
 $(TARGET): $(OBJECTS) $(BINDIR)/$(TARGET).o
 	@echo "Linking..."
-	@echo "$(CC) $^ $(CFLAGS) -o $(TARGET) $(LIB)"; $(CC) $^ $(CFLAGS) -o $(TARGET)
+	@echo "$(CC) $^ $(CFLAGS) -o $(TARGET) $(LIB)"; $(CC) $^ $(CFLAGS) -o $(TARGET) $(LIB)
 
 $(BINDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BINDIR)
