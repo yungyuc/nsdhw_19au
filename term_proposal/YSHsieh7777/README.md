@@ -1,18 +1,21 @@
-# Term Proposal - Crowd Simulation
+# Term Proposal - Crowd Evacuation Simulation
 
 ## Motivation
 
-
+People often fall into panic when they meet dangers like fire and they will loss ability of thinking over calmly. Hence, they may lose the tiny opportunity of being out of danger. If we can simulate the situation that crowd evacuate from indoor to outdoor when breaking out of fire, then we can schedule the escape route more smoothly to prevent disaster.
 
 ## Ideas
 
- - Simulate the flocking behavior of humen.
- - Simulate the panic behavior of people when they meets threat.
+ - Randomly generate the escape route.
+ - Simulate the flocking behavior of human.
+ - Simulate the panic behavior of people when they meet fire.
  - Take human's thought into consideration.
+ - Calculate the amount of time that people evacuating from indoor to outdoor.
+ - Store the best escape route to help schedule the route.
 
 ## Example
 
-Crowd evacuation simulation exmaple. Each dot represents a persion. The circle on left side represents danger. The color on each dot is the panic degree.
+Crowd evacuation simulation example. Each dot represents a person. The circle on left side represents a danger. The color on each dot is the panic degree.
 
  ![evacuation_simulation](./imgs/evacuation_simulation.png)
 ---
