@@ -23,7 +23,9 @@ not be duplicated code.  If duplication is found, **all points** for the
 duplicated part of the latter submitter may be deducted.
 
 Please make sure your PR is compatible with the latest NSD AMI on AWS (Ubuntu
-18.04 LTS).
+18.04 LTS).  You are not required to use the AMI for doing the homework, but
+the grader will use the AMI.  If your code doesn't build or properly run, you
+**may not get any point**.
 
 Question
 ========
@@ -50,7 +52,7 @@ There are totally 5 points in this homework assignment.
 4. Time the two multiplication functions and compare the performance.  (1
    point)
 
-Grader will run the following commands:
+On the latest NSD AMI, the grader will run the following commands:
 
 .. code-block:: bash
 
