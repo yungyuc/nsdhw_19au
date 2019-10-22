@@ -27,7 +27,7 @@ class TestRads(TestCase):
         v1 = (0, 1)
         v2 = (1, 0)
 
-        self.assetAlmostEqual(rads(v1, v2), np.pi / 2, places=4)
+        self.assertAlmostEqual(rads(v1, v2), np.pi / 2, places=4)
 
         v1 = (1, 1)
         v2 = (0, -1)
@@ -39,6 +39,6 @@ class TestRads(TestCase):
 
         self.assertAlmostEqual(rads(v1, v2), 3.0648207, places=4)
 
-if __name__=='__manin__':
+if __name__=='__main__':
     unittest.main()
 

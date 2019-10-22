@@ -7,17 +7,23 @@
 #include <math.h>
 #include <cstdio>
 #include <iostream>
-
+#include <limits>
 
 
 #define PI 3.14159265359
 
-float rads(double* v1, double* v2){
+float rads(std::pair<float, float> v1, std::pair<float, float> v2){
 
-    float norm1 = sqrt((v1[0] * v1[0]) + (v1[1] * v1[1]));
-    float norm2 = sqrt((v2[0] * v2[0]) + (v2[1] * v2[1]));
+    if((v1.first == 0 and v1.second == 0) or (v2.first == 0 and v2.second == 0))
+    	return std::numeric_limits<float>::quiet_NaN();
 
-    float rad = acos(((v1[0] * v2[0]) + (v1[1] * v2[1])) / (norm1 * norm2));
+    if(v1.first / v2.first == v1.second / v2.second)
+    	return 0;
+
+    float norm1 = sqrt((v1.first * v1.first) + (v1.second * v1.second));
+    float norm2 = sqrt((v2.first * v2.first) + (v2.second * v2.second));
+
+    float rad = acos(((v1.first * v2.first) + (v1.second * v2.second)) / (norm1 * norm2));
 
     if(rad < 0 ) rad = -rad;
 
