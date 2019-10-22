@@ -2,6 +2,7 @@
 // Created by Yarin on 09-Oct-19.
 //
 
+#include <pybind11/pybind11.h>
 
 #include <math.h>
 #include <cstdio>
@@ -27,9 +28,8 @@ float rads(double* v1, double* v2){
     return rad;
 }
 
-int main(){
-
-    double v1[] = {-1, -1};
-    double v2[] = {-9, 1};
-    std::cout << rads(v1, v2) << std::endl;
+PYBIND11_MODULE(q2, mod){
+    mod.doc() = "The angle is";
+    mod.def("rads", &rads, "The angle is");
 }
+
