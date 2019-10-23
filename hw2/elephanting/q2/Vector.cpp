@@ -1,7 +1,9 @@
 #include <iostream>
+#include <stdexcept>
 #include <cmath>
 #include "Vector.h"
 #include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 Vector::Vector(float x, float y)
 {
@@ -14,12 +16,12 @@ float Vector::len()
     return sqrt(pow(m_x, 2) + pow(m_y, 2));
 }
 
-float Vector::getX()
+float Vector::getX() const
 {
     return m_x;
 }
 
-float Vector::getY()
+float Vector::getY() const
 {
     return m_y;
 }
@@ -35,18 +37,17 @@ float angle(Vector v1, Vector v2)
     return acos(dot_product(v1, v2) / (v1.len() * v2.len()));
 }
 
+
 PYBIND11_MODULE(Vector, m) {
     m.doc() = "angle (in radians) between two vectors";
-    py::class_<Vector> Vector(m, "Vector");
-        .def(py::init<float, float>());
-        .def_readwrite("m_x", &Vector::m_x);
-        .def_readwrite("m_y", &Vector::m_y);
-        .def("getX", &Vector::getX());
-        .def("getY", &Vector::getY());
-        .def("get length", &Vector::len());        
+    py::class_<Vector>(m, "Vector")
+        .def(py::init<float, float>())
+        .def("getX", &Vector::getX)
+        .def("getY", &Vector::getY)
+        .def("len", &Vector::len);    
  
-    m.def("dot_product", &dot_product, "vector dot product")
-    m.def("angle", &angle, "angle between teo vectors")
+    m.def("dot_product", &dot_product, "vector dot product");
+    m.def("angle", &angle, "angle between teo vectors");
 }
 
 
