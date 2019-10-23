@@ -41,7 +41,7 @@ And since I have a working (simple, but working!) ray tracer at hand, I can do s
     * stb_image is a single header library, and do not require extra set ups, so it probably won't complicate stuffs
     * ffmpeg can be used as an external tool, and be used with shell scripts, thus not affecting the build chain, so it should be okay, too
 
-### TBD
+### Considering design choices
 
 * Use physics-based shading or not?
 * Is providing surface normal the responsibility of the surface, or should be evaluated by ray-casting?
@@ -49,10 +49,21 @@ And since I have a working (simple, but working!) ray tracer at hand, I can do s
 
 ## Implementation
 
-My first instinct is to implement everything in c++, but having a python interface for setting up scenes sounds quite nice, so I might do that (if I have the time).
+The render engine itslef will be implemented in c++. It will be a standalone application. Scene contents will be controlled through c++ code.
+
+There will be no GUI for the render engine. It is designed to be an offline render engine, controlled by c++ program.
+
+Unittests will be used for intersection and random number generators...etc, those that requires more complicated math. Other testings can be done by visualization, checking the result image or dumping normals as colors. These should be sufficient to eliminate most potential bugs in this program.
 
 The first milestone will be just rendering some cubes or spheres on the image, then I can build extra features on top of it. Like lighting, materials, and mesh operations like masking and blending.
 
+## Extra : C++ and Python interface
+
+It is also possible to wrap the engine to a library. In which case there will be a controlling interface exposed for c++ and/or python.
+
+There will be a set of helper functions for adding objects to the scene, start rendering, and output results. These functions can be wrapped as python APIs to allow control through python scripts.
+
+The python interface will be wrapped through pybind11.
 
 ## Reference
 
