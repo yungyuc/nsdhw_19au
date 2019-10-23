@@ -49,7 +49,7 @@ And since I have a working (simple, but working!) ray tracer at hand, I can do s
 
 ## Implementation
 
-The render engine itslef will be implemented in c++. It will be a standalone application. Scene contents will be controlled through c++ code.
+The render engine itslef will be implemented in c++. It will be a standalone executable. Scene contents will be controlled through c++ code.
 
 There will be no GUI for the render engine. It is designed to be an offline render engine, controlled by c++ program.
 
