@@ -113,34 +113,13 @@ int main(int, char **)
 	line2 = line1;
 	
 	line2.x(0) = 2;
-	std::cout << "line1  = " << line1.x(0) << std::endl;
-	std::cout << "line2  = " << line2.x(0) << std::endl;
 	
 	assert(line1.x(0) == line2.x(0));
-	//assert(&line1 == &line2);
 
 	Line line3(line2);
 	
 	assert(line3.x(0) == line2.x(0));
 	assert(&line2 != &line3);
-	
-/*
-	// supposed to be the same
-	std::cout << "line  = " << &line << std::endl;
-	std::cout << "line2 = " << &line2 << std::endl;
-
-	Line line3(4);
-	line3.y(0) = 1;
-
-	printl(line3);
-
-	line2 = line3;
-	std::cout << "line  = " << &line << std::endl;
-	std::cout << "line2 = " << &line2 << std::endl;
-
-	printl(line2);
-	printl(line);
-*/
 
 	return 0;
 }
