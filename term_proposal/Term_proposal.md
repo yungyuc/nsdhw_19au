@@ -12,14 +12,18 @@ I propose a software project that implements small part of XGBoost algorithm rel
 
 ## What am I going to do in this project?
 Learn and understand the math background of XGBoost algorithm (1 week).
+
 Implement XGBoost algorithm for linear regression (2 weeks).
+
 Plot all results to get better understanding of the XGBoost algorithm (1 day):
 
 -	Approximation on test data by original XGBoost and XGBoost implemented by me.
 -	Loss function on train and test data.
 
 Write unit tests (3 days).
+
 Compare to the original XGBoost (1 day).
+
 Prepare final report and presentation (1 week).
 
 ## References.
