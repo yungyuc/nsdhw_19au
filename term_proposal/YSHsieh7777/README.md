@@ -10,22 +10,22 @@
 
 ## Motivation
 
-People often fall into **panic** when they meet dangers like fire or earthquake. Losing the ability of thinking and acting calmly make them lose the opportunity of being out of danger. If we can **simulate the situation** that crowd evacuate from indoor to outdoor when breaking out of fire, then we can schedule the escape route more smoothly to prevent disaster.
+People often fall into **panic** when they meet dangers like fire or earthquake. Losing the ability to thinking and acting calmly make them lose the opportunity of being out of danger. If we can **simulate the situation** that crowd evacuate from indoor to outdoor when breaking out of the fire, then we can schedule the escape route more smoothly to prevent disaster.
 
 ## Ideas
 
 ### Behaviors of Human
- - Simulate the **flocking behavior** of human.
- - Simulate the **herd behavior** of human.
- - Simulate the **panic behavior** of people when they encounter dangers.
+ - Simulate the **flocking behavior** of humans.
+ - Simulate the **herd behavior** of humans.
+ - Simulate the **panic behavior** of humans when encountering dangers.
  - All behaviors listed above are factors that will affect people's actions. Each factor will be assigned a **floating weight** so that each factor will have different influences under different situations.
 
 ### Targets of Program
- - **Visualize and simulate** the situation that crowd evacuate from indoor to outdoor.
+ - **Simulate and visualize** the situation that crowd evacuate from indoor to outdoor.
  - Take **human behaviors** into consideration to determine crowd's action.
  - Let user **design** the indoor traffic flow.
  - Calculate the amount of time that people evacuate from indoor to outdoor.
- - Calculate the amount of people that die in fire. 
+ - Calculate the number of people that die in the fire. 
  - Store the **best** traffic flow.
 
 ## To-Do List
