@@ -15,6 +15,42 @@ GitHub@stvreumi
 
 - My goal of the term project is trying to finish the materials, and implement some core functions of Bayesian Optimization in C++.
 - I want to bind the core functions with `pybind11`, and I will write a Python program to call it to generate data and do some analysis on it.
+- I will try to package my code to a python package called `simpleBayes`. There is a function in it called `maximize`, which can take search space , objective function and iterate numbers as parameters. The `maxmize` function will try to maximize the value of the objective function. The code may looks like:
+  ```python
+  from simpleBayes import maximize
+  
+  # objective function
+  def f(x,y):
+      return -((x-2)*(x-2) + (y+3)*(y+3))
+  
+  
+  # search space is a `dict` in the form: 
+  # parameter name of objective function: (lower bound, upper bound)
+  # the type of lower bound and upper bound is `double`
+  
+  search_space = {
+      'x': (-50.0, 50.0),
+      'y': (-50.0, 50.0)
+  }
+  
+  """
+  try to maximize the value of objective function
+  parameters:
+      search_space: search space definition. 
+      if the search space doesn't meet the spec, it will throw an error.
+      f: the objective function we want to optimize
+      num: the iterate number of of the experiment
+  
+  return:
+      best: the best value of each parameter(`dict`)
+      history: the history of the experiment (suggested parameters, objective function)(`list`)
+  """
+  best, history = maximize(search_space=search_space, f=f, num=50)
+  ```
+- I will use some simple funcions like `f` in the above code to test if it really can find values close to maxmimal. 
+- After this course:
+  - I may try to research on how to find better results in fewer iterations.
+  - I could research on the related GitHub repos in the future. If possible, I may try to contribute some PRs to their repos.
 
 ## Resources
 - [Think in Bayes](http://www.greenteapress.com/thinkbayes/thinkbayes.pdf)
