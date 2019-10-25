@@ -67,4 +67,13 @@ On the latest NSD AMI, the grader will run the following commands:
 ``make bench`` should reproduce the file ``performance.txt``.  The reproduced
 performance numbers may differ.  Grader will check if they are reasonable.
 
+``performance.txt`` may looks like:
+
+.. code-block:: log
+
+  Start multiply_naive (repeat=5), take min = 1.2351381540065631 seconds
+  Start multiply_mkl (repeat=5), take min = 0.056176671001594514 seconds
+  MKL speed-up over naive: 21.9867 x
+
+
 .. vim: set ft=rst ff=unix fenc=utf8 et sw=2 ts=2 sts=2:
