@@ -30,8 +30,8 @@ the grader will use the AMI.  If your code doesn't build or properly run, you
 Question
 ========
 
-Develop your own matrix-vector multiplication code, measure the runtime, and
-compare with that of BLAS ``DGEMV`` subroutine.  The matrix size should be
+Develop your own matrix-matrix multiplication code, measure the runtime, and
+compare with that of BLAS ``DGEMM`` subroutine.  The matrix size should be
 larger than or equal to :math:`1000\times1000`.
 
 Grading guideline
@@ -41,6 +41,7 @@ There are totally 5 points in this homework assignment.
 
 1. Develop a two-dimensional matrix class (you may reuse the code in the course
    note) in C++.  (2 points)
+
    1. Implement a free function performing naive matrix-matrix multiplication.
    2. Implement another free frunction that uses ``DGEMM`` for the multiplication.
    3. The ``validate.py`` script needs to pass.
