@@ -42,8 +42,7 @@ There are totally 5 points in this homework assignment.
 1. Develop a two-dimensional matrix class (you may reuse the code in the course
    note) in C++.  (2 points)
    1. Implement a free function performing naive matrix-matrix multiplication.
-   2. Implement another free frunction that uses ``DGEMM`` for the
-      multiplication.
+   2. Implement another free frunction that uses ``DGEMM`` for the multiplication.
    3. The ``validate.py`` script needs to pass.
 2. Make Python unit tests for the C++ matrix class and multiplication
    functions.  (1 point)
