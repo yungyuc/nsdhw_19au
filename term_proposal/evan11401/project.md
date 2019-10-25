@@ -1,5 +1,5 @@
 # High Dynamic Range Imaging using Multiple Exposure Images with Tone Mapping
-
+![img1](./img1.jpg)
 ## Motivation
 The real world is high dynamic range, but the camera is limited dynamic range. In case to get the image that looks more like the real world image, high dynamic range imaging (HDRI) is invented.
 
