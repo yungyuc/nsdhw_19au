@@ -19,6 +19,8 @@ Quantized models from pytorch would be export to onnx format.
 
 So, I only need to implement 2 things which is the frontend and backend of my inference engine.
 
+Also, I'll provide a python interface for ease of use.
+
 ### 1. The interpreter for onnx operators
 onnx define a lot of operators for neural network model such as conv and maxpool.
 I need to parse the data, according to the parameters to build the corresponding model and pass it to my backend system.
@@ -30,7 +32,9 @@ It should maximize the use of SIMD to speed up, and minimize the memory footprin
 
 The prototype of the engine should be able to build a simple AlexNet model, so I would at least implement the basic operators need by AlexNet.
 
-Furthermore, the dataloader and more operators(e.g. LSTM) could be support if I have free time.
+I'll provide a mnist dataloader for demo, too.
+
+Furthermore, more operators(e.g. LSTM) and graph optimization could be support if I have free time.
 
 ## Evaluation
 I'll benchmark my inference engine through the below form.
@@ -41,3 +45,22 @@ I hope the result could be better than the plain FP32 pytorch model.
 |---|---|---|---|---|---|
 |1|
 |32|
+
+## How to use the engine
+This is a possible use case of the engine.
+
+```python
+import MyEngine
+import time
+
+model = MyEngine.load_onnx_model('mnist_alex.onnx')
+test_loader = MyEngine.load_mnist(batch_size = 32)
+t = time.time()
+for data, label in test_loader:
+  output = model(data)
+  predict = output.argmax(axis=1)
+  correct += (predict==label).sum()
+  
+print('Accuracy:', correct / test_loader.size)
+print('Time elapsed:', time.time() - t)
+```
