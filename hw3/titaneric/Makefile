@@ -23,13 +23,14 @@ MKLLINKLINE := \
 CXX = g++
 CXXFLAGS := ${CXXFLAGS} \
 	-std=c++17 -O3 -g -m64 \
-	-I${MKLROOT}/include \
-	${MKLLINKLINE} \
 	${FLAGS}
 
+INCLUDES = 	-I${MKLROOT}/include \
+	${MKLLINKLINE}
+
 build: matrix.cpp
-	${CXX} ${CXXFLAGS} -o $@ $<
+	${CXX} ${CXXFLAGS} ${INCLUDES} -o $@ $<
 
 .PHONY: clean
 clean:
-	rm -rf *.o *.dSYM/ ${BINS}
+	rm -rf *.o
