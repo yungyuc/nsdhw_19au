@@ -14,11 +14,11 @@ For nonlinear case, SVM do a kernel trick on the data. By applying the kernel to
 
 ## Motivation
 
-I have taken a class about web search and mining, and I learned some SVM concepts from it. The professor also introduce the widely used implementation -- [libsvm](https://www.csie.ntu.edu.tw/~cjlin/libsvm/). the whole implementation code is small and refined (about 4,000 lines), so I will refer the papers and the project to reimplementat the most functionality libsvm has provided to have a deeper understand of the algorithm. Besides implementation, according the [FAQ](https://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html), for the parallel execution, the maintainer give the recommendation code for OpenMP on the bottleneck (but the code is not included in the source code). For this part, I'd like to do other apporaches to parallelize and optimize the code to get better performance.
+I have taken a class about web search and mining, and I learned some SVM concepts from it. The professor also introduce the widely used implementation -- [libsvm](https://www.csie.ntu.edu.tw/~cjlin/libsvm/). The whole implementation code is small and refined (about 4,000 lines), so I will refer the papers and the project to reimplement the most functionality libsvm has provided to have a deeper understand of the algorithm. Besides implementation, according the [FAQ](https://www.csie.ntu.edu.tw/~cjlin/libsvm/faq.html), for the parallel execution, the maintainer gave the recommendation code for OpenMP on the bottleneck (but the code is not included in the source code). For this part, I'd like to do other approaches to parallelize and optimize the code to get better performance.
 
 ## Approaches
 
-I will implementat SVM in C++11, and optimize the code with different apporaches, such as OpenMP, SIMD, loop tilig. For different version of apporaches, I will also provide make rules for building different executables. Besides implementation, some unit tests for the functions will be included in the project. Some python bindings written in pybind11 will also be provided as the interface. In the end, I will take some benchmarks to compare the implementations.
+I will implement SVM in C++11, and optimize the code with different approaches, such as OpenMP, SIMD, loop tiling. For different version of approaches, I will also provide make rules for building different executables. Besides implementation, some unit tests for the functions will be included in the project. Some python bindings written in pybind11 will also be provided as the interface. In the end, I will take some benchmarks to compare the implementations.
 
 ## Reference
 
