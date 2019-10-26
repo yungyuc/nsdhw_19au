@@ -14,22 +14,31 @@ MKLEXT ?= so
 CXXFLAGS := -Wl,--no-as-needed
 endif
 
-MKLLINKLINE := \
-	${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
-	${MKLROOT}/lib/libmkl_sequential.${MKLEXT} \
-	${MKLROOT}/lib/libmkl_core.${MKLEXT} \
-	-lpthread -lm -ldl
-
 CXX = g++
 CXXFLAGS := ${CXXFLAGS} \
 	-std=c++17 -O3 -g -m64 \
 	${FLAGS}
 
-INCLUDES = 	-I${MKLROOT}/include \
-	${MKLLINKLINE}
+# For MKL
 
-build: matrix.cpp
-	${CXX} ${CXXFLAGS} ${INCLUDES} -o $@ $<
+MKLLINKLINE := ${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
+	${MKLROOT}/lib/libmkl_sequential.${MKLEXT} \
+	${MKLROOT}/lib/libmkl_core.${MKLEXT} \
+	-lpthread -lm -ldl
+
+INCLUDES = 	-I${MKLROOT}/include \
+	${MKLLINKLINE} 
+
+# For pybind11
+
+TARGET = _matrix`python3-config --extension-suffix`
+
+INCLUDES += `python3 -m pybind11 --includes`
+
+CXXFLAGS += -shared -Wall -fPIC
+
+test: matrix.cpp
+	${CXX} ${CXXFLAGS} ${INCLUDES} -o ${TARGET} $<
 
 .PHONY: clean
 clean:
