@@ -28,13 +28,21 @@ I need to parse the data, according to the parameters to build the corresponding
 In the computing stage, the runtime need to manage memory, data flow and multi-threading.
 It should maximize the use of SIMD to speed up, and minimize the memory footprint.
 
----
+## Implementation
 
-The prototype of the engine should be able to build a simple AlexNet model, so I would at least implement the basic operators need by AlexNet.
+The prototype will at least support mnist dataset on AlexNet.
 
-I'll provide a mnist dataloader for demo, too.
+To support more operator and dataset, I'll define a generic abstract layer for them.
+User could define their own operator and dataset through inheritance
 
-Furthermore, more operators(e.g. LSTM) and graph optimization could be support if I have free time.
+Below is the architecture of the project.
+
+![architecture](./architecture.svg)
+
+## Testing
+To ensure the correctness of this engine, I'll mainly test on 2 things.
+1. Test each operator's correctness with unittest.
+2. Feed in mnist dataset to see if there is a strange accuracy drop.
 
 ## Evaluation
 I'll benchmark my inference engine through the below form.
