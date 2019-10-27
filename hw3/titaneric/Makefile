@@ -36,10 +36,16 @@ INCLUDES += `python3 -m pybind11 --includes`
 
 CXXFLAGS += -shared -Wall -fPIC
 
-test: matrix.cpp
+
+build: matrix.cpp
 	${CXX} ${CXXFLAGS} ${INCLUDES} -o ${TARGET} $< ${MKLLINKLINE}
 	export PRELOAD_MKL=True
+
+test: build
 	python3 matrix_test.py
+
+bench: build
+	bash setup.sh
 
 .PHONY: clean
 clean:
