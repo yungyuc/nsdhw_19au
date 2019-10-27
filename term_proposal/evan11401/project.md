@@ -5,7 +5,7 @@ The real world is high dynamic range, but the camera is limited dynamic range. I
 
 HDRI is widely used in the imaging and photography industry, such as the APPLE iPhone's camera also use this to get a better image.
 
-## Target
+## Target 
 I have read some tutorial to teach people how to implement the HDRI algorithm, but most of the function is provided by the OpenCV library.
 
 I know the library is powerful, but I think if I can do it on my own, I will learn the details and understand what it works. Moreover, I want to design the architecture like moving the time-consuming computation into c++, creating a user interface that users can easily use this program, and then merge it together.
