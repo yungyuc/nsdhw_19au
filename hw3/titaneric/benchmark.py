@@ -28,7 +28,7 @@ if __name__ == "__main__":
     B_nrow, B_ncol = 1000, 1000
     total_size = A_nrow * B_ncol
 
-    population_size = 3 * 10e6
+    population_size = 100000
     random_population = [int(random.randrange(100, 1000)) for _ in range(int(population_size))]
 
     naive_list = [0 for _ in range(test_num)]
@@ -36,14 +36,16 @@ if __name__ == "__main__":
 
     print("Begin benchmark...")
     for i in range(test_num):
-        A_content = random.sample(random_population, A_nrow * A_ncol)
+        A_content = random.choices(random_population, k=A_nrow * A_ncol)
         A = _matrix.Matrix(A_nrow, A_ncol, A_content)
 
-        B_content = random.sample(random_population, B_nrow * B_ncol)
+        B_content = random.choices(random_population, k=B_nrow * B_ncol)
         B = _matrix.Matrix(B_nrow, B_ncol, B_content)
 
-        _, naive_time = naive_MM(A, B)
-        _, MKL_time = MKL_MM(A, B)
+        naive_result, naive_time = naive_MM(A, B)
+        MKL_result, MKL_time = MKL_MM(A, B)
+        assert naive_result == MKL_result
+
         naive_list[i] = naive_time
         MKL_list[i] = MKL_time
     
