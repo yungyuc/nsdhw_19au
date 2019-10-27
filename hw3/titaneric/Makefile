@@ -39,7 +39,7 @@ CXXFLAGS += -shared -Wall -fPIC
 test: matrix.cpp
 	${CXX} ${CXXFLAGS} ${INCLUDES} -o ${TARGET} $< ${MKLLINKLINE}
 	export PRELOAD_MKL=True
-	python3 test.py
+	python3 matrix_test.py
 
 .PHONY: clean
 clean:
