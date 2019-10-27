@@ -3,7 +3,7 @@
 #include <mkl.h>
 
 #include <iostream>
-#include <utility>
+// #include <utility>
 #include <vector>
 #include <stdexcept>
 #include <numeric>
@@ -94,7 +94,7 @@ public:
         {
             for (size_t j = 0; j < ncol(); ++j)
             {
-                s += to_string(this->operator()(i,j)) + " ";
+                s += to_string(this->operator()(i, j)) + " ";
             }
             s += "\n";
         }
@@ -183,5 +183,7 @@ PYBIND11_MODULE(_matrix, m)
         .def(py::init<size_t, size_t, vector<double>>())
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
-        .def("__repr__", &Matrix::repr);
+        .def("__repr__", &Matrix::repr)
+        .def("__getitem__", [](const Matrix &self, pair<size_t, size_t> idx) { return self(idx.first, idx.second); })
+        .def("__setitem__", [](Matrix &self, pair<size_t, size_t> idx, double val) { self(idx.first, idx.second) = val; });
 }

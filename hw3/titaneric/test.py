@@ -8,4 +8,5 @@ print(A)
 print(B)
 
 print(_matrix.multiply_naive(A, B))
+print(_matrix.multiply_mkl(A, B))
 

@@ -26,8 +26,7 @@ MKLLINKLINE := ${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
 	${MKLROOT}/lib/libmkl_core.${MKLEXT} \
 	-lpthread -lm -ldl
 
-INCLUDES = 	-I${MKLROOT}/include \
-	${MKLLINKLINE} 
+INCLUDES = 	-I${MKLROOT}/include
 
 # For pybind11
 
@@ -38,8 +37,10 @@ INCLUDES += `python3 -m pybind11 --includes`
 CXXFLAGS += -shared -Wall -fPIC
 
 test: matrix.cpp
-	${CXX} ${CXXFLAGS} ${INCLUDES} -o ${TARGET} $<
+	${CXX} ${CXXFLAGS} ${INCLUDES} -o ${TARGET} $< ${MKLLINKLINE}
+	export PRELOAD_MKL=True
+	python3 test.py
 
 .PHONY: clean
 clean:
-	rm -rf *.o
+	rm -rf *.so
