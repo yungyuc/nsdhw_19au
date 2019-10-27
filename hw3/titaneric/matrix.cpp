@@ -37,6 +37,11 @@ public:
             }
         }
     };
+    Matrix(const Matrix &) = default;
+    Matrix(Matrix &&) = default;
+    ~Matrix() = default;
+    Matrix &operator=(const Matrix &) = default;
+    Matrix &operator=(Matrix &&) = default;
     double operator()(size_t row, size_t col) const { return data[row][col]; }
     double &operator()(size_t row, size_t col)
     {
@@ -162,14 +167,14 @@ Matrix multiply_mkl(Matrix A, Matrix B)
     auto B_vec = B.getFlatData();
     double *B_flat = B_vec.data();
 
-    Matrix result = Matrix(m, n);
-
-    double *C_flat = result.getFlatData().data();
+    double *C_flat = new double[m * n];
 
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 m, n, k, alpha, A_flat, k, B_flat, n, beta, C_flat, n);
 
-    result = Matrix(m, n, C_flat);
+    Matrix result(m, n, C_flat);
+    delete C_flat;
+    
     return result;
 }
 
