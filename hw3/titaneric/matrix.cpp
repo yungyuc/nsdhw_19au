@@ -174,7 +174,7 @@ Matrix multiply_mkl(Matrix A, Matrix B)
 
     Matrix result(m, n, C_flat);
     delete C_flat;
-    
+
     return result;
 }
 
@@ -189,6 +189,8 @@ PYBIND11_MODULE(_matrix, m)
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
         .def("__repr__", &Matrix::repr)
+        .def("__eq__", [](const Matrix &self, const Matrix &other) { return self == other; })
+        .def("__ne__", [](const Matrix &self, const Matrix &other) { return self != other; })
         .def("__getitem__", [](const Matrix &self, pair<size_t, size_t> idx) { return self(idx.first, idx.second); })
         .def("__setitem__", [](Matrix &self, pair<size_t, size_t> idx, double val) { self(idx.first, idx.second) = val; });
 }
