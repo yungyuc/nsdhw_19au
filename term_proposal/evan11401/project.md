@@ -5,7 +5,7 @@ The real world is high dynamic range, but the camera is limited dynamic range. I
 
 HDRI is widely used in the imaging and photography industry, such as the APPLE iPhone's camera also use this to get a better image.
 
-## Target 
+## Target
 I have read some tutorial to teach people how to implement the HDRI algorithm, but most of the function is provided by the OpenCV library.
 
 I know the library is powerful, but I think if I can do it on my own, I will learn the details and understand what it works. Moreover, I want to design the architecture like moving the time-consuming computation into c++, creating a user interface that users can easily use this program, and then merge it together.
@@ -14,6 +14,8 @@ I know the library is powerful, but I think if I can do it on my own, I will lea
 ## Implement
 
 ### 1. Upload several images with different exposures 
+Just a simple PyQt interface that will have some buttons, preview windows and parameters adjustment that user can do some operations and show the result.
+P.S. But if the deadline is tight, this part will be optional.
 => implement user interface
 
 ### 2. Align Images
@@ -44,7 +46,6 @@ These methods also have some parameters that can adjust, so we need to find the 
 
 ## Unittest
 - test the function correctness
-- test the user interface 
 
 ## Todo List
 * [x] find topic
@@ -57,7 +58,6 @@ These methods also have some parameters that can adjust, so we need to find the 
     * [ ] TonemapDrago
     * [ ] TonemapReinhard
 * [ ] testing
-    * [ ] user interface
     * [ ] alignMTB function
     * [ ] calibrateDebevec(CRF in OpenCV) 
     * [ ] MergeDebevec(merge in OpenCV) 
