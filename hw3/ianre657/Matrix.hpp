@@ -1,6 +1,7 @@
 #ifndef __MATRIX_H_
 #define __MATRIX_H_
 
+#include <stdexcept>
 #include <vector>
 class Matrix {
 
@@ -34,5 +35,9 @@ private:
     double * m_buffer;
 
 };
+
+Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2);
+Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2);
+
 
 #endif
