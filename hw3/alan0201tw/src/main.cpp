@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
             " Intel(R) MKL function dgemm, where A, B, and  C are matrices and \n"
             " alpha and beta are double precision scalars\n\n");
 
-    m = 2000, k = 200, n = 1000;
+    m = 6, k = 6, n = 6;
     printf (" Initializing data for matrix multiplication C=A*B for matrix \n"
             " A(%ix%i) and matrix B(%ix%i)\n\n", m, k, k, n);
     alpha = 1.0; beta = 0.0;
@@ -51,7 +51,8 @@ int main(int argc, char* argv[])
 
     printf (" Computing matrix product using Intel(R) MKL dgemm function via CBLAS interface \n\n");
 
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, alpha, A, k, B, n, beta, C, n);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+      m, n, k, alpha, A, k, B, n, beta, C, n);
 
     printf ("\n Computations completed.\n\n");
 
