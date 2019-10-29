@@ -27,7 +27,7 @@ CC := g++
 SRCEXT := cpp
 CFLAGS := -O3 -std=c++17 -g -Wall -shared -fPIC -m64
 INCDIR = -I include `python3 -m pybind11 --includes` -I${MKLROOT}/include
-LIB := ${MKLLINKLINE}
+LIB := -llapack -lblas -llapacke ${MKLLINKLINE}
 
 # Source Info, target = cpplox, entry should be in cpplox.cpp
 SRCDIR := src
