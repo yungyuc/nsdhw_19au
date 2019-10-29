@@ -1,9 +1,33 @@
+# from mkl makefile in nsd repo
+FLAGS ?=
+
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+MKLROOT ?= /opt/intel/mkl
+MKLEXT ?= a
+CXXFLAGS :=
+endif
+
+ifeq ($(UNAME_S),Linux)
+MKLROOT ?= ${HOME}/opt/conda
+MKLEXT ?= so
+CXXFLAGS := -Wl,--no-as-needed
+endif
+
+MKLLINKLINE := \
+	${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
+	${MKLROOT}/lib/libmkl_sequential.${MKLEXT} \
+	${MKLROOT}/lib/libmkl_core.${MKLEXT} \
+	-lpthread -lm -ldl
+#
+
 # Compile Info
 CC := g++
 SRCEXT := cpp
-CFLAGS := -O2 -std=c++17 -g -Wall -shared -fPIC
-INCDIR = -I include `python3 -m pybind11 --includes`
-LIB := -llapack -lblas -llapacke
+CFLAGS := -O3 -std=c++17 -g -Wall -shared -fPIC -m64
+INCDIR = -I include `python3 -m pybind11 --includes` -I${MKLROOT}/include
+LIB := -llapack -lblas -llapacke ${MKLLINKLINE}
 
 # Source Info, target = cpplox, entry should be in cpplox.cpp
 SRCDIR := src

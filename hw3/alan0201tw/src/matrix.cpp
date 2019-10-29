@@ -5,8 +5,7 @@
 
 #include <sstream>
 
-#include <lapacke.h>
-#include <cblas.h>
+#include <mkl.h>
 
 
 namespace py = pybind11;
