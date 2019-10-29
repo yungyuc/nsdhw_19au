@@ -22,6 +22,16 @@ public:
         (*this) = vec;
     }
 
+    Matrix(size_t nrow, size_t ncol, double* vec)
+      : m_nrow(nrow), m_ncol(ncol)
+    {
+        if (m_buffer) { delete[] m_buffer; }
+        m_nrow = nrow;
+        m_ncol = ncol;
+
+        m_buffer = vec;
+    }
+
     Matrix & operator=(std::vector<double> const & vec)
     {
         if (size() != vec.size())
@@ -107,6 +117,32 @@ public:
     std::vector<double> buffer_vector() const { return std::vector<double>(m_buffer, m_buffer+size()); }
 
     std::string ToString();
+
+    bool operator==(const Matrix &other) const
+    {
+        if(nrow() == other.nrow() && ncol() == other.ncol())
+        {
+            for (size_t i = 0; i < nrow(); ++i)
+            {
+                for (size_t k = 0; k < ncol(); ++k)
+                {
+                    if(this->operator()(i, k) != other(i, k))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool operator!=(const Matrix &other) const
+    {
+        return !(*this == other);
+    }
 
 private:
 

@@ -1,12 +1,15 @@
 #include "matrix.hpp"
 
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+
 #include <sstream>
 
 #include <lapacke.h>
 #include <cblas.h>
 
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+
+namespace py = pybind11;
 
 /*
  * Naive matrix matrix multiplication.
@@ -22,12 +25,12 @@ Matrix operator*(Matrix const & mat1, Matrix const & mat2)
 
     Matrix ret(mat1.nrow(), mat2.ncol());
 
-    for (size_t i=0; i<ret.nrow(); ++i)
+    for (size_t i = 0; i < ret.nrow(); ++i)
     {
-        for (size_t k=0; k<ret.ncol(); ++k)
+        for (size_t k = 0; k < ret.ncol(); ++k)
         {
             double v = 0;
-            for (size_t j=0; j<mat1.ncol(); ++j)
+            for (size_t j = 0; j < mat1.ncol(); ++j)
             {
                 v += mat1(i,j) * mat2(j,k);
             }
@@ -69,20 +72,20 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
     );
 
     // Reference : https://www.techiedelight.com/convert-array-vector-cpp/
-    std::vector<double> result_vec(result, result + mat1.nrow() * mat2.ncol());
+    // std::vector<double> result_vec(result, result + mat1.nrow() * mat2.ncol());
 
-    return Matrix(mat1.nrow(), mat2.ncol(), result_vec);
+    return Matrix(mat1.nrow(), mat2.ncol(), result);
 }
 
 std::string Matrix::ToString()
 {
     std::stringstream result("");
-    for (size_t i=0; i<mat.nrow(); ++i)
+    for (size_t i=0; i<nrow(); ++i)
     {
         result << std::endl << " ";
-        for (size_t j=0; j<mat.ncol(); ++j)
+        for (size_t j=0; j<ncol(); ++j)
         {
-            result << " " << std::setw(2) << mat(i, j);
+            result << " " << std::setw(2) << this->operator()(i, j);
         }
     }
 
@@ -105,13 +108,18 @@ std::ostream & operator << (std::ostream & ostr, Matrix const & mat)
 
 PYBIND11_MODULE(_matrix, mod)
 {
-    mod.doc() = "Matrix class implementing naive multiplication and mkl delegation"
+    mod.doc() = "Matrix class implementing naive multiplication and mkl delegation";
     mod.def("multiply_naive", &multiply_naive, "Naive implementation");
     mod.def("multiply_mkl", &multiply_mkl, "MKL implementation delegate");
 
-    pybind11::class_<Matrix>( mod, "Matrix" )
+    py::class_<Matrix>(mod, "Matrix")
         .def( py::init<size_t, size_t>() )
         .def( py::init<size_t, size_t, std::vector<double>>() )
-        .def("__repr__", &Matrix::ToString );
-
+        .def_property_readonly("nrow", &Matrix::nrow)
+        .def_property_readonly("ncol", &Matrix::ncol)
+        .def("__repr__", &Matrix::ToString )
+        .def("__eq__", [](const Matrix &self, const Matrix &other) { return self == other; })
+        .def("__ne__", [](const Matrix &self, const Matrix &other) { return self != other; })
+        .def("__getitem__", [](const Matrix &self, std::pair<size_t, size_t> idx) { return self(idx.first, idx.second); })
+        .def("__setitem__", [](Matrix &self, std::pair<size_t, size_t> idx, double val) { self(idx.first, idx.second) = val; });
 }
