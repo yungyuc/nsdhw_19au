@@ -30,7 +30,7 @@ People often fall into **panic** when they meet dangers like fire or earthquake.
 
 ## Project Structure
 
-Written with `C++`. If it's hard to visualize the simulation with `C++`, `C++`(for large amount of computations) + `Pybind11` + `Python`(for user input processing and visualization).
+Written with `C++` because it needs a large amount of computations. If it's hard to visualize the simulation with `C++`, `C++`(for large amount of computations) + `Pybind11` + `Python`(for user input processing and visualization).
 
 The program will need a **long loop** to update map and people's conditions, so a very efficient way to update conditions is necessary. It means that I need a well data structure that is easy to traverse, compute and update. Also, parallel programming is a possible strategy to improve performance.
 
