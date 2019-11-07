@@ -1,12 +1,12 @@
-#include "matrix.hpp"
-
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/operators.h>
+
+#include "matrix.hpp"
 
 #include <sstream>
 
 #include <mkl.h>
-
 
 namespace py = pybind11;
 
@@ -58,8 +58,7 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
             "differs from that of second matrix row");
     }
 
-    double* result = (double *)aligned_alloc(64 , 
-        mat1.nrow() * mat2.ncol() * sizeof(double));
+    double* result = new double [mat1.nrow() * mat2.ncol()];
 
     cblas_dgemm(
         CblasRowMajor, CblasNoTrans, CblasNoTrans,
@@ -70,10 +69,9 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
         result, mat2.ncol()
     );
 
-    // Reference : https://www.techiedelight.com/convert-array-vector-cpp/
-    // std::vector<double> result_vec(result, result + mat1.nrow() * mat2.ncol());
+    Matrix ret(mat1.nrow(), mat2.ncol(), result);
 
-    return Matrix(mat1.nrow(), mat2.ncol(), result);
+    return ret;
 }
 
 std::string Matrix::ToString()
@@ -105,6 +103,16 @@ std::ostream & operator << (std::ostream & ostr, Matrix const & mat)
     return ostr;
 }
 
+/**
+ *  Reference :
+ *  
+ *  Basics : https://pybind11.readthedocs.io/en/stable/classes.html
+ *  Operators : https://pybind11.readthedocs.io/en/stable/advanced/classes.html#operator-overloading
+ *  Indexing operator : 
+ *  https://pybind11.readthedocs.io/en/stable/reference.html#_CPPv4NK10object_apiixE6handle
+ *  https://github.com/pybind/pybind11/blob/master/tests/test_sequences_and_iterators.cpp#L182
+ */
+
 PYBIND11_MODULE(_matrix, mod)
 {
     mod.doc() = "Matrix class implementing naive multiplication and mkl delegation";
@@ -116,9 +124,19 @@ PYBIND11_MODULE(_matrix, mod)
         .def( py::init<size_t, size_t, std::vector<double>>() )
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
+        .def("__str__", &Matrix::ToString )
         .def("__repr__", &Matrix::ToString )
-        .def("__eq__", [](const Matrix &self, const Matrix &other) { return self == other; })
-        .def("__ne__", [](const Matrix &self, const Matrix &other) { return self != other; })
-        .def("__getitem__", [](const Matrix &self, std::pair<size_t, size_t> idx) { return self(idx.first, idx.second); })
-        .def("__setitem__", [](Matrix &self, std::pair<size_t, size_t> idx, double val) { self(idx.first, idx.second) = val; });
+        .def(py::self == py::self)
+        .def(py::self != py::self)
+        .def("__getitem__",
+            [](const Matrix &matrix, std::pair<size_t, size_t> index)
+            {
+                if (index.first >= matrix.nrow() || index.second >= matrix.ncol()) throw py::index_error();
+                return matrix(index.first, index.second);
+            }, py::is_operator())
+        .def("__setitem__",
+            [](Matrix &matrix, std::pair<size_t, size_t> index, double value)
+            {
+                matrix(index.first, index.second) = value;
+            }, py::is_operator());
 }

@@ -25,10 +25,7 @@ public:
     Matrix(size_t nrow, size_t ncol, double* vec)
       : m_nrow(nrow), m_ncol(ncol)
     {
-        if (m_buffer) { delete[] m_buffer; }
-        m_nrow = nrow;
-        m_ncol = ncol;
-
+        reset_buffer(nrow, ncol);
         m_buffer = vec;
     }
 
@@ -148,7 +145,7 @@ private:
 
     size_t index(size_t row, size_t col) const
     {
-        return row + col * m_nrow;
+        return row * m_ncol + col;
     }
 
     void reset_buffer(size_t nrow, size_t ncol)
