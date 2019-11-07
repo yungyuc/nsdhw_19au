@@ -157,7 +157,7 @@ class GradingTest(unittest.TestCase):
         time_mkl = min(t_mkl.repeat(10, 1))
         ratio = time_tile/time_mkl
 
-        return ratio
+        return ratio, time_tile
 
     def test_tile(self):
 
@@ -165,26 +165,26 @@ class GradingTest(unittest.TestCase):
 
         mat1, mat2, *_ = self.make_matrices(500)
 
-        ratio0 = self.check_tile(mat1, mat2, 0)
+        ratio0, time0 = self.check_tile(mat1, mat2, 0)
         if show_ratio:
             print("naive ratio:", ratio0)
 
-        ratio16 = self.check_tile(mat1, mat2, 16)
+        ratio16, time16 = self.check_tile(mat1, mat2, 16)
         if show_ratio:
             print("tile 16 ratio:", ratio16)
-            print("tile 16 / native ratio:", ratio16/ratio0)
+            print("time16/time0:", time16/time0)
         self.assertLess(ratio16/ratio0, 0.8)
 
-        ratio17 = self.check_tile(mat1, mat2, 17)
+        ratio17, time17 = self.check_tile(mat1, mat2, 17)
         if show_ratio:
             print("tile 17 ratio:", ratio17)
-            print("tile 17 / native ratio:", ratio17/ratio0)
+            print("time17/time0:", time17/time0)
         self.assertLess(ratio17/ratio0, 0.8)
 
-        ratio19 = self.check_tile(mat1, mat2, 19)
+        ratio19, time19 = self.check_tile(mat1, mat2, 19)
         if show_ratio:
             print("tile 19 ratio:", ratio19)
-            print("tile 19 / native ratio:", ratio19/ratio0)
+            print("time19/time0:", time19/time0)
         self.assertLess(ratio19/ratio0, 0.8)
 
 # vim: set fenc=utf8 ff=unix et sw=4 ts=4 sts=4:

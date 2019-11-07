@@ -28,9 +28,10 @@ the grader will use the AMI.  If your code doesn't build or properly run, you
 Question
 ========
 
-Based on what you wrote in ``hw3`` or that in the course notes, use tiling
-technique to speed up the matrix-matrix multiplication without limiting the
-matrix or tiling size.
+Based on what you wrote in the previous homework assignment or that in the
+course notes, use tiling technique to speed up the matrix-matrix multiplication
+without limiting the matrix or tiling size.  The speed-up must be more than 20%
+(runtime must be less than 80%).
 
 Grading guideline
 =================
