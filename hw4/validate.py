@@ -50,6 +50,7 @@ exit 0
 
 import unittest
 import timeit
+import os
 
 # The python module that wraps the matrix code.
 import _matrix
@@ -160,18 +161,30 @@ class GradingTest(unittest.TestCase):
 
     def test_tile(self):
 
+        show_ratio = bool(os.environ.get('SHOW_RATIO', False))
+
         mat1, mat2, *_ = self.make_matrices(500)
 
-        ratio = self.check_tile(mat1, mat2, 0)
-        self.assertGreater(ratio, 20)
+        ratio0 = self.check_tile(mat1, mat2, 0)
+        if show_ratio:
+            print("naive ratio:", ratio0)
 
-        ratio = self.check_tile(mat1, mat2, 16)
-        self.assertLess(ratio, 20)
+        ratio16 = self.check_tile(mat1, mat2, 16)
+        if show_ratio:
+            print("tile 16 ratio:", ratio16)
+            print("tile 16 / native ratio:", ratio16/ratio0)
+        self.assertLess(ratio16/ratio0, 0.8)
 
-        ratio = self.check_tile(mat1, mat2, 17)
-        self.assertLess(ratio, 20)
+        ratio17 = self.check_tile(mat1, mat2, 17)
+        if show_ratio:
+            print("tile 17 ratio:", ratio17)
+            print("tile 17 / native ratio:", ratio17/ratio0)
+        self.assertLess(ratio17/ratio0, 0.8)
 
-        ratio = self.check_tile(mat1, mat2, 19)
-        self.assertLess(ratio, 20)
+        ratio19 = self.check_tile(mat1, mat2, 19)
+        if show_ratio:
+            print("tile 19 ratio:", ratio19)
+            print("tile 19 / native ratio:", ratio19/ratio0)
+        self.assertLess(ratio19/ratio0, 0.8)
 
 # vim: set fenc=utf8 ff=unix et sw=4 ts=4 sts=4:
