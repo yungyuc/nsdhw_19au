@@ -1,8 +1,10 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 #include <vector>
+#include <utility>
 #include <stddef.h>
 
-#include "mkl.h"
+// #include "mkl.h"
 
 namespace py = pybind11;
 
@@ -24,6 +26,28 @@ public:
     double   operator() (size_t row, size_t col) const { return m_buffer[index(row, col)]; }
     double & operator() (size_t row, size_t col)       { return m_buffer[index(row, col)]; }
 
+    bool operator== (const Matrix &other) const
+    {
+        if(!((m_nrow == other.nrow()) && (m_ncol == other.ncol())))
+        {
+            return false;
+        }      
+        else
+        {
+            size_t s = this->size();
+            for(size_t i=0; i<s; i++)
+            {
+                if(this->buffer(i) != other.buffer(i))
+                    return false;
+            }
+            return true;
+        }        
+    }
+    bool operator!= (const Matrix &other) const
+    {
+        return !(*this == other);
+    }
+
     size_t nrow() const { return m_nrow; }
     size_t ncol() const { return m_ncol; }
     double * buffer() const { return m_buffer; }
@@ -36,14 +60,18 @@ private:
 
     size_t index(size_t row, size_t col) const
     {
-        return row + col * m_nrow;
+        return m_ncol*row + col;
     }
 
     void reset_buffer(size_t nrow, size_t ncol)
     {
-        if (m_buffer) { mkl_free(m_buffer); }
+        // if (m_buffer) { mkl_free(m_buffer); }
+        // const size_t nelement = nrow * ncol;
+        // if (nelement) { m_buffer = (double *)mkl_malloc( nrow*ncol*sizeof( double ), 64 ); }
+        // else          { m_buffer = nullptr; }
+        if (m_buffer) { delete[] m_buffer; }
         const size_t nelement = nrow * ncol;
-        if (nelement) { m_buffer = (double *)mkl_malloc( nrow*ncol*sizeof( double ), 64 ); }
+        if (nelement) { m_buffer = new double[nelement]; }
         else          { m_buffer = nullptr; }
         m_nrow = nrow;
         m_ncol = ncol;
@@ -85,29 +113,39 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
     return ret;
 }
 
-Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
-{
-    float alpha = 1.0; 
-    float beta = 0.0;
-    Matrix ret(mat1.nrow(), mat2.ncol());
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-                mat1.nrow(), mat2.ncol(), mat1.ncol(), alpha, 
-                mat1.buffer(), mat1.ncol(), mat2.buffer(), mat2.ncol(), 
-                beta, ret.buffer(), mat2.ncol());
+// Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
+// {
+//     float alpha = 1.0; 
+//     float beta = 0.0;
+//     Matrix ret(mat1.nrow(), mat2.ncol());
+//     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+//                 mat1.nrow(), mat2.ncol(), mat1.ncol(), alpha, 
+//                 mat1.buffer(), mat1.ncol(), mat2.buffer(), mat2.ncol(), 
+//                 beta, ret.buffer(), mat2.ncol());
 
-    return ret;
-}
+//     return ret;
+// }
 
 PYBIND11_MODULE(_matrix, m) {
     m.doc() = "pybind11 matrix class";      // module doc string
     py::class_<Matrix>(m, "Matrix")
-    .def(py::init<size_t, size_t>());
+        .def(py::init<size_t, size_t>())
+        .def("__getitem__", [](const Matrix &m_matrix, std::pair<size_t, size_t> index) {
+            return m_matrix(index.first, index.second);
+        })
+        .def("__setitem__", [](Matrix &m_matrix, std::pair<size_t, size_t> index, double value) {
+            m_matrix(index.first, index.second) = value;
+        })
+        .def_property_readonly("nrow", &Matrix::nrow)
+        .def_property_readonly("ncol", &Matrix::ncol)
+        .def(py::self == py::self)
+        .def(py::self != py::self);
     m.def("multiply_naive",                              // function name
         &multiply_naive,                               // function pointer
         "A function which multiply two matrices in naive way." //function doc string
         );
-    m.def("multiply_mkl",                              // function name
-        &multiply_mkl,                               // function pointer
-        "A function which multiply two matrices with mkl library." //function doc string
-       );
+    // m.def("multiply_mkl",                              // function name
+    //     &multiply_mkl,                               // function pointer
+    //     "A function which multiply two matrices with mkl library." //function doc string
+    //    );
 }
