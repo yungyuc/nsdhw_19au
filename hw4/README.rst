@@ -44,7 +44,9 @@ grader will run the following commands:
   cd nsdhw_19au/hw4/username
   ../validate.py | grep "GET POINTS"
 
-You will earn points for what is printed on screen.
+You will earn points for what is printed on screen.  The grader will run on a
+`m5.large` in `us-east-1`.  Please test your code in the same or a similar
+environment.
 
 The grader may attempt to run the above commands with the environment variable
 ``PRELOAD_MKL`` set, if ``validate.py`` doesn't pass without it.  Your work is
