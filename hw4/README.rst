@@ -3,9 +3,9 @@ Homework assignment #4
 ======================
 
 Your submission PR needs to create a sub-directory using exactly your GitHub
-username as your working directory (``nsdhw_19au/hw4/$username``).  **You also
+username as your working directory (``nsdhw_19au/hw4/$username/``).  **You also
 need to submit your PR link on E3.** The PR needs to be created against the
-``hw3`` branch.  (Not ``master``!)
+``hw4`` branch.  (Not ``master``!)
 
 Working directory hierarchy may look like::
 
@@ -28,13 +28,15 @@ the grader will use the AMI.  If your code doesn't build or properly run, you
 Question
 ========
 
-Based on the matrix-matrix multiplication code you wrote or that in the course
-notes to apply the tiling technique for speeding up.
+Based on what you wrote in ``hw3`` or that in the course notes, use tiling
+technique to speed up the matrix-matrix multiplication without limiting the
+matrix or tiling size.
 
 Grading guideline
 =================
 
-On the latest NSD AMI, the grader will run the following commands:
+As usual, this homework assignment has 5 points.  On the latest NSD AMI, the
+grader will run the following commands:
 
 .. code-block:: bash
 
