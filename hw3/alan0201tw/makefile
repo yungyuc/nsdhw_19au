@@ -58,6 +58,7 @@ test: $(TARGET)
 
 bench: $(TARGET)
 	@echo " Procuding bench mark...";
+	chmod a+x ./matrix_bench.py
 	./matrix_bench.py
 
 # Declare clean as utility, not a file

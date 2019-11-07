@@ -5,9 +5,8 @@ path="${BASH_SOURCE[0]}"
 
 if [[ (-n "$PRELOAD_MKL") && ("Linux" == "$(uname)") ]] ; then
     # Workaround for cmake + MKL in conda.
-    #MKL_ROOT=$HOME/opt/conda
-    MKL_ROOT=/opt/intel/mkl
-    MKL_LIB_DIR=$MKL_ROOT/lib/intel64_lin
+    MKL_ROOT=$HOME/opt/conda
+    MKL_LIB_DIR=$MKL_ROOT/lib
     MKL_LIBS=$MKL_LIB_DIR/libmkl_def.so
     MKL_LIBS=$MKL_LIBS:$MKL_LIB_DIR/libmkl_avx2.so
     MKL_LIBS=$MKL_LIBS:$MKL_LIB_DIR/libmkl_core.so
