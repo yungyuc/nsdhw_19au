@@ -35,10 +35,14 @@ class Test:
         naive_time_min = 1e9
         naive_time_max = 0
         naive_time_sum = 0
+        
+        mkl_time_min = 1e9
+        mkl_time_max = 0
+        mkl_time_sum = 0
 
         for i in range(5):
-            matrix0 = _matrix.Matrix(2048, 1024, [random.randrange(1, 50, 1) for i in range(2048 * 1024)])
-            matrix1 = _matrix.Matrix(1024, 2048, [random.randrange(1, 50, 1) for i in range(1024 * 2048)])
+            matrix0 = _matrix.Matrix(1024, 1024, [random.randrange(1, 50, 1) for i in range(1024 * 1024)])
+            matrix1 = _matrix.Matrix(1024, 1024, [random.randrange(1, 50, 1) for i in range(1024 * 1024)])
 
             naive_start = time.time()
             result_matrix_naive = _matrix.multiply_naive(matrix0, matrix1)
@@ -49,14 +53,6 @@ class Test:
             naive_time_max = max(naive_time_max, naive_time)
             naive_time_sum += naive_time
 
-        mkl_time_min = 1e9
-        mkl_time_max = 0
-        mkl_time_sum = 0
-
-        for i in range(5):
-            matrix0 = _matrix.Matrix(2048, 1024, [random.randrange(1, 50, 1) for i in range(2048 * 1024)])
-            matrix1 = _matrix.Matrix(1024, 2048, [random.randrange(1, 50, 1) for i in range(1024 * 2048)])
-
             mkl_start = time.time()
             result_matrix_mkl = _matrix.multiply_mkl(matrix0, matrix1)
             mkl_end = time.time()
@@ -66,6 +62,7 @@ class Test:
             mkl_time_max = max(mkl_time_max, mkl_time)
             mkl_time_sum += mkl_time
 
+            assert(result_matrix_naive == result_matrix_mkl)
 
         f = open("performance.txt", "w+")
         f.write("Start multiply_naive (repeat=5), take min = {0} seconds \n".format(naive_time_min))
