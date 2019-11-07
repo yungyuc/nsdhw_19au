@@ -53,7 +53,12 @@ clean:
 	@echo "$(RM) -r $(TESTBINDIR)"; $(RM) -r $(TESTBINDIR)
 
 test: $(TARGET)
-	@echo " Testing..."; 
+	@echo " Testing...";
+	pytest matrix_unittest.py -v -s
+
+bench: $(TARGET)
+	@echo " Procuding bench mark...";
+	./matrix_bench.py
 
 # Declare clean as utility, not a file
 .PHONY: clean test

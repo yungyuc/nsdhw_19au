@@ -137,6 +137,7 @@ PYBIND11_MODULE(_matrix, mod)
         .def("__setitem__",
             [](Matrix &matrix, std::pair<size_t, size_t> index, double value)
             {
+                if (index.first >= matrix.nrow() || index.second >= matrix.ncol()) throw py::index_error();
                 matrix(index.first, index.second) = value;
             }, py::is_operator());
 }
