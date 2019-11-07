@@ -18,6 +18,19 @@ public:
         reset_buffer(nrow, ncol);
     }
 
+    Matrix(Matrix const & other)
+      : m_nrow(other.m_nrow), m_ncol(other.m_ncol)
+    {
+        reset_buffer(other.m_nrow, other.m_ncol);
+        for (size_t i=0; i<m_nrow; ++i)
+        {
+            for (size_t j=0; j<m_ncol; ++j)
+            {
+                (*this)(i,j) = other(i,j);
+            }
+        }
+    }
+
     ~Matrix()
     {
         reset_buffer(0, 0);
@@ -128,6 +141,7 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
 
 PYBIND11_MODULE(_matrix, m) {
     m.doc() = "pybind11 matrix class";      // module doc string
+
     py::class_<Matrix>(m, "Matrix")
         .def(py::init<size_t, size_t>())
         .def("__getitem__", [](const Matrix &m_matrix, std::pair<size_t, size_t> index) {
@@ -140,6 +154,7 @@ PYBIND11_MODULE(_matrix, m) {
         .def_property_readonly("ncol", &Matrix::ncol)
         .def(py::self == py::self)
         .def(py::self != py::self);
+
     m.def("multiply_naive",                              // function name
         &multiply_naive,                               // function pointer
         "A function which multiply two matrices in naive way." //function doc string

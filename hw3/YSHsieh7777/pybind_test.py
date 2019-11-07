@@ -48,41 +48,41 @@ class GradingTest(unittest.TestCase):
         self.assertEqual(mat1, mat2)
         self.assertTrue(mat1 is not mat2)
 
-    # def test_match(self):
+    def test_match(self):
 
-    #     size = 100
-    #     mat1, mat2, *_ = self.make_matrices(size)
+        size = 100
+        mat1, mat2, *_ = self.make_matrices(size)
 
-    #     ret_naive = _matrix.multiply_naive(mat1, mat2)
-    #     ret_mkl = _matrix.multiply_mkl(mat1, mat2)
+        ret_naive = _matrix.multiply_naive(mat1, mat2)
+        # ret_mkl = _matrix.multiply_mkl(mat1, mat2)
 
-    #     self.assertEqual(size, ret_naive.nrow)
-    #     self.assertEqual(size, ret_naive.ncol)
-    #     self.assertEqual(size, ret_mkl.nrow)
-    #     self.assertEqual(size, ret_mkl.ncol)
+        self.assertEqual(size, ret_naive.nrow)
+        self.assertEqual(size, ret_naive.ncol)
+        # self.assertEqual(size, ret_mkl.nrow)
+        # self.assertEqual(size, ret_mkl.ncol)
 
-    #     for i in range(ret_naive.nrow):
-    #         for j in range(ret_naive.ncol):
-    #             self.assertNotEqual(mat1[i,j], ret_mkl[i,j])
-    #             self.assertEqual(ret_naive[i,j], ret_mkl[i,j])
+        # for i in range(ret_naive.nrow):
+        #     for j in range(ret_naive.ncol):
+        #         self.assertNotEqual(mat1[i,j], ret_mkl[i,j])
+        #         self.assertEqual(ret_naive[i,j], ret_mkl[i,j])
 
-    # def test_zero(self):
+    def test_zero(self):
 
-    #     size = 100
-    #     mat1, mat2, mat3, *_ = self.make_matrices(size)
+        size = 100
+        mat1, mat2, mat3, *_ = self.make_matrices(size)
 
-    #     ret_naive = _matrix.multiply_naive(mat1, mat3)
-    #     ret_mkl = _matrix.multiply_mkl(mat1, mat3)
+        ret_naive = _matrix.multiply_naive(mat1, mat3)
+        # ret_mkl = _matrix.multiply_mkl(mat1, mat3)
 
-    #     self.assertEqual(size, ret_naive.nrow)
-    #     self.assertEqual(size, ret_naive.ncol)
-    #     self.assertEqual(size, ret_mkl.nrow)
-    #     self.assertEqual(size, ret_mkl.ncol)
+        self.assertEqual(size, ret_naive.nrow)
+        self.assertEqual(size, ret_naive.ncol)
+        # self.assertEqual(size, ret_mkl.nrow)
+        # self.assertEqual(size, ret_mkl.ncol)
 
-    #     for i in range(ret_naive.nrow):
-    #         for j in range(ret_naive.ncol):
-    #             self.assertEqual(0, ret_naive[i,j])
-    #             self.assertEqual(0, ret_mkl[i,j])
+        # for i in range(ret_naive.nrow):
+        #     for j in range(ret_naive.ncol):
+        #         self.assertEqual(0, ret_naive[i,j])
+        #         self.assertEqual(0, ret_mkl[i,j])
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
