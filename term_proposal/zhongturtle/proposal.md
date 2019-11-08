@@ -9,7 +9,8 @@
 ## TO-DO List
 - I separate the whole project into many sub-project, and most of them are divided into same topic in deep learning.
 - I list whole to-list below.
-### Activate Fuction
+- We add " * " mark after each action items, more  " * " means piority is more higher
+### Activate Fuction (***)
 - [ ] Relu
 - [ ] Sigmoid
 - [ ] Tanh
@@ -18,11 +19,11 @@
 - [ ] Hyperbolic tangent function
 - [ ] Softplus function
 - [ ] Radial basis function
-### Layers
+### Layers (***)
 - [ ] Fully Connected layer
 - [ ] Convolution layer
 - [ ] Linear layer
-### Loss Fuction
+### Loss Fuction (***)
 - [ ] Mean square error (MSE)
 - [ ] Mean absolute error (MAE)
 - [ ] L1 loss
