@@ -4,85 +4,94 @@ import unittest
 import _matrix
 
 
-class GradingTest(unittest.TestCase):
+class MatrixTest(unittest.TestCase):
 
-    def make_matrices(self, size):
+    def test_matrix_init_100_100(self):
+        mat = _matrix.Matrix(100, 100)
 
-        mat1 = _matrix.Matrix(size,size)
-        mat2 = _matrix.Matrix(size,size)
-        mat3 = _matrix.Matrix(size,size)
+        for it in range(100):
+            for jt in range(100):
+                mat[it, jt] = it + jt
 
-        for it in range(size):
-            for jt in range(size):
-                mat1[it, jt] = it * size + jt + 1
-                mat2[it, jt] = it * size + jt + 1
-                mat3[it, jt] = 0
+        self.assertEqual(100, mat.nrow)
+        self.assertEqual(100, mat.ncol)
+        self.assertEqual(0, mat[0, 0])
+        self.assertEqual(1, mat[0, 1])
+        self.assertEqual(1, mat[1, 0])
+        self.assertEqual(100, mat[50, 50])
+        self.assertEqual(198, mat[99, 99])
 
-        print(mat1[0, 0])
+    def test_matrix_init_200_100(self):
+        mat = _matrix.Matrix(200, 100)
 
-        return mat1, mat2, mat3
+        for it in range(200):
+            for jt in range(100):
+                mat[it, jt] = it + jt
 
-    def test_basic(self):
+        self.assertEqual(200, mat.nrow)
+        self.assertEqual(100, mat.ncol)
+        self.assertEqual(0, mat[0, 0])
+        self.assertEqual(1, mat[0, 1])
+        self.assertEqual(1, mat[1, 0])
+        self.assertEqual(100, mat[50, 50])
+        self.assertEqual(198, mat[99, 99])
+        self.assertEqual(298, mat[199, 99])
+         
+    def test_matrix_init_100_200(self):
+        mat = _matrix.Matrix(100, 200)
 
-        size = 100
-        mat1, mat2, mat3, *_ = self.make_matrices(size)
+        for it in range(100):
+            for jt in range(200):
+                mat[it, jt] = it + jt
 
-        self.assertEqual(size, mat1.nrow)
-        self.assertEqual(size, mat1.ncol)
-        self.assertEqual(size, mat2.nrow)
-        self.assertEqual(size, mat2.ncol)
-        self.assertEqual(size, mat3.nrow)
-        self.assertEqual(size, mat3.ncol)
+        self.assertEqual(100, mat.nrow)
+        self.assertEqual(200, mat.ncol)
+        self.assertEqual(0, mat[0, 0])
+        self.assertEqual(1, mat[0, 1])
+        self.assertEqual(1, mat[1, 0])
+        self.assertEqual(100, mat[50, 50])
+        self.assertEqual(198, mat[99, 99])
+        self.assertEqual(298, mat[99, 199])
 
-        self.assertEqual(2, mat1[0,1])
-        self.assertEqual(size+2, mat1[1,1])
-        self.assertEqual(size*2, mat1[1,size-1])
-        self.assertEqual(size*size, mat1[size-1,size-1])
+    def test_matrix_naive_multiply_100_100_100(self):
+        mat1 = _matrix.Matrix(100, 100)
+        mat2 = _matrix.Matrix(100, 100)
 
-        for i in range(mat1.nrow):
-            for j in range(mat1.ncol):
-                self.assertNotEqual(0, mat1[i,j])
-                self.assertEqual(mat1[i,j], mat2[i,j])
-                self.assertEqual(0, mat3[i,j])
+        for it in range(100):
+            for jt in range(100):
+                mat1[it, jt] = 1
+                mat2[it, jt] = 2
 
-        self.assertEqual(mat1, mat2)
-        self.assertTrue(mat1 is not mat2)
+        ret_mat = _matrix.multiply_naive(mat1, mat2)
 
-    def test_match(self):
+        self.assertEqual(100, ret_mat.nrow)
+        self.assertEqual(100, ret_mat.ncol)
+        self.assertEqual(200, ret_mat[0, 0])
+        self.assertEqual(200, ret_mat[0, 1])
+        self.assertEqual(200, ret_mat[1, 0])
+        self.assertEqual(200, ret_mat[50, 50])
+        self.assertEqual(200, ret_mat[99, 99])
 
-        size = 100
-        mat1, mat2, *_ = self.make_matrices(size)
+    def test_matrix_naive_multiply_100_200_100(self):
+        mat1 = _matrix.Matrix(100, 200)
+        mat2 = _matrix.Matrix(200, 100)
 
-        ret_naive = _matrix.multiply_naive(mat1, mat2)
-        # ret_mkl = _matrix.multiply_mkl(mat1, mat2)
+        for it in range(100):
+            for jt in range(200):
+                mat1[it, jt] = 1
+        for it in range(200):
+            for jt in range(100):
+                mat2[it, jt] = 2
 
-        self.assertEqual(size, ret_naive.nrow)
-        self.assertEqual(size, ret_naive.ncol)
-        # self.assertEqual(size, ret_mkl.nrow)
-        # self.assertEqual(size, ret_mkl.ncol)
+        ret_mat = _matrix.multiply_naive(mat1, mat2)
 
-        # for i in range(ret_naive.nrow):
-        #     for j in range(ret_naive.ncol):
-        #         self.assertNotEqual(mat1[i,j], ret_mkl[i,j])
-        #         self.assertEqual(ret_naive[i,j], ret_mkl[i,j])
-
-    def test_zero(self):
-
-        size = 100
-        mat1, mat2, mat3, *_ = self.make_matrices(size)
-
-        ret_naive = _matrix.multiply_naive(mat1, mat3)
-        # ret_mkl = _matrix.multiply_mkl(mat1, mat3)
-
-        self.assertEqual(size, ret_naive.nrow)
-        self.assertEqual(size, ret_naive.ncol)
-        # self.assertEqual(size, ret_mkl.nrow)
-        # self.assertEqual(size, ret_mkl.ncol)
-
-        # for i in range(ret_naive.nrow):
-        #     for j in range(ret_naive.ncol):
-        #         self.assertEqual(0, ret_naive[i,j])
-        #         self.assertEqual(0, ret_mkl[i,j])
+        self.assertEqual(100, ret_mat.nrow)
+        self.assertEqual(100, ret_mat.ncol)
+        self.assertEqual(400, ret_mat[0, 0])
+        self.assertEqual(400, ret_mat[0, 1])
+        self.assertEqual(400, ret_mat[1, 0])
+        self.assertEqual(400, ret_mat[50, 50])
+        self.assertEqual(400, ret_mat[99, 99])
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
