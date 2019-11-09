@@ -1,3 +1,32 @@
+#!/bin/bash
+
+''':'
+test_path="${BASH_SOURCE[0]}"
+
+if [[ (-n "$PRELOAD_MKL") && ("Linux" == "$(uname)") ]] ; then
+    # Workaround for cmake + MKL in conda.
+    MKL_ROOT=$HOME/opt/conda
+    MKL_LIB_DIR=$MKL_ROOT/lib
+    MKL_LIBS=$MKL_LIB_DIR/libmkl_def.so
+    MKL_LIBS=$MKL_LIBS:$MKL_LIB_DIR/libmkl_avx2.so
+    MKL_LIBS=$MKL_LIBS:$MKL_LIB_DIR/libmkl_core.so
+    MKL_LIBS=$MKL_LIBS:$MKL_LIB_DIR/libmkl_intel_lp64.so
+    MKL_LIBS=$MKL_LIBS:$MKL_LIB_DIR/libmkl_sequential.so
+    export LD_PRELOAD=$MKL_LIBS
+    echo "set LD_PRELOAD=$LD_PRELOAD for MKL"
+else
+    echo "set PRELOAD_MKL if you see (Linux) MKL linking error"
+fi
+
+fail_msg="*** test failed"
+
+python3 -m pytest $test_path -v -s ; ret=$?
+if [ 0 -ne $ret ] ; then echo "$fail_msg" ; exit $ret ; fi
+
+echo "test pass"
+exit 0
+':'''
+
 import unittest
 
 # The python module that wraps the matrix code.
@@ -84,6 +113,46 @@ class MatrixTest(unittest.TestCase):
                 mat2[it, jt] = 2
 
         ret_mat = _matrix.multiply_naive(mat1, mat2)
+
+        self.assertEqual(100, ret_mat.nrow)
+        self.assertEqual(100, ret_mat.ncol)
+        self.assertEqual(400, ret_mat[0, 0])
+        self.assertEqual(400, ret_mat[0, 1])
+        self.assertEqual(400, ret_mat[1, 0])
+        self.assertEqual(400, ret_mat[50, 50])
+        self.assertEqual(400, ret_mat[99, 99])
+
+    def test_matrix_mkl_multiply_100_100_100(self):
+        mat1 = _matrix.Matrix(100, 100)
+        mat2 = _matrix.Matrix(100, 100)
+
+        for it in range(100):
+            for jt in range(100):
+                mat1[it, jt] = 1
+                mat2[it, jt] = 2
+
+        ret_mat = _matrix.multiply_mkl(mat1, mat2)
+
+        self.assertEqual(100, ret_mat.nrow)
+        self.assertEqual(100, ret_mat.ncol)
+        self.assertEqual(200, ret_mat[0, 0])
+        self.assertEqual(200, ret_mat[0, 1])
+        self.assertEqual(200, ret_mat[1, 0])
+        self.assertEqual(200, ret_mat[50, 50])
+        self.assertEqual(200, ret_mat[99, 99])
+
+    def test_matrix_mkl_multiply_100_200_100(self):
+        mat1 = _matrix.Matrix(100, 200)
+        mat2 = _matrix.Matrix(200, 100)
+
+        for it in range(100):
+            for jt in range(200):
+                mat1[it, jt] = 1
+        for it in range(200):
+            for jt in range(100):
+                mat2[it, jt] = 2
+
+        ret_mat = _matrix.multiply_mkl(mat1, mat2)
 
         self.assertEqual(100, ret_mat.nrow)
         self.assertEqual(100, ret_mat.ncol)

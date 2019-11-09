@@ -78,14 +78,14 @@ private:
 
     void reset_buffer(size_t nrow, size_t ncol)
     {
-        // if (m_buffer) { mkl_free(m_buffer); }
-        // const size_t nelement = nrow * ncol;
-        // if (nelement) { m_buffer = (double *)mkl_malloc( nrow*ncol*sizeof( double ), 64 ); }
-        // else          { m_buffer = nullptr; }
-        if (m_buffer) { delete[] m_buffer; }
+        if (m_buffer) { mkl_free(m_buffer); }
         const size_t nelement = nrow * ncol;
-        if (nelement) { m_buffer = new double[nelement]; }
+        if (nelement) { m_buffer = (double *)mkl_malloc( nrow*ncol*sizeof( double ), 64 ); }
         else          { m_buffer = nullptr; }
+        // if (m_buffer) { delete[] m_buffer; }
+        // const size_t nelement = nrow * ncol;
+        // if (nelement) { m_buffer = new double[nelement]; }
+        // else          { m_buffer = nullptr; }
         m_nrow = nrow;
         m_ncol = ncol;
     }
@@ -126,18 +126,18 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
     return ret;
 }
 
-// Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
-// {
-//     float alpha = 1.0; 
-//     float beta = 0.0;
-//     Matrix ret(mat1.nrow(), mat2.ncol());
-//     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-//                 mat1.nrow(), mat2.ncol(), mat1.ncol(), alpha, 
-//                 mat1.buffer(), mat1.ncol(), mat2.buffer(), mat2.ncol(), 
-//                 beta, ret.buffer(), mat2.ncol());
+Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
+{
+    float alpha = 1.0; 
+    float beta = 0.0;
+    Matrix ret(mat1.nrow(), mat2.ncol());
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+                mat1.nrow(), mat2.ncol(), mat1.ncol(), alpha, 
+                mat1.buffer(), mat1.ncol(), mat2.buffer(), mat2.ncol(), 
+                beta, ret.buffer(), mat2.ncol());
 
-//     return ret;
-// }
+    return ret;
+}
 
 PYBIND11_MODULE(_matrix, m) {
     m.doc() = "pybind11 matrix class";      // module doc string

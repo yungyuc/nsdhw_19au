@@ -1,14 +1,15 @@
 CXX = g++
 CXXFLAGS = -O3 -Wall -shared -std=c++11 -fPIC
 PY = python3
+TARGET = _matrix.*.so
 
-all: _matrix.*.so
+all: $(TARGET)
 
-_matrix.*.so: matrix.cpp
+$(TARGET): matrix.cpp
 	$(CXX) $(CXXFLAGS) `$(PY) -m pybind11 --includes` matrix.cpp -o _matrix`$(PY)-config --extension-suffix`
 
 .PHONY: test
-test: _matrix.*.so
+test: $(TARGET)
 	$(PY) pybind_test.py
 
 .PHONY: clean
