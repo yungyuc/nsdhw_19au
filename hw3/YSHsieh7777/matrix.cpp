@@ -4,7 +4,7 @@
 #include <utility>
 #include <stddef.h>
 
-// #include "mkl.h"
+#include <mkl.h>
 
 namespace py = pybind11;
 
