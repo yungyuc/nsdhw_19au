@@ -32,8 +32,8 @@
 - [ ] Huber Loss
 - [ ] Focal loss
 ### Optimization
-- [ ] SGD
-- [ ] Adam
+- [ ] SGD (**)
+- [ ] Adam (***)
 - [ ] Momentum
 - [ ] Ada
 - [ ] Adamax
@@ -42,38 +42,38 @@
 - [ ] RMSprop
 - [ ] Nesterov
 - [ ] Nadam
-### Method
+### Method (**)
 - [ ] Autograd
 - [ ] data
 - [ ] Normalization
 - [ ] Drop out
 - [ ] Batch
 - [ ] Epoach
-### Data processing
+### Data processing (***)
 - [ ] Crop
 - [ ] RGB to Gray
 - [ ] pikle
 - [ ] Argumentation
 - [ ] Flip
 - [ ] Tensor
-### Deploy
-- [ ] Cuda
-- [ ] CPU
-- [ ] Muti-GPU
+### Deploy 
+- [ ] Cuda (**)
+- [ ] CPU (***)
+- [ ] Muti-GPU (**)
 - [ ] Distributed
 - [ ] onBoard
 - [ ] mobile
-### Format/Storage/Data Utilize
+### Format/Storage/Data Utilize (*)
 - [ ] ONNX
 - [ ] Storage
 - [ ] Data loader
 ### Model
-- [ ] CNN
-- [ ] RNN
-- [ ] LSTM
-- [ ] ResNet
-- [ ] FCN
-- [ ] U-Net
+- [ ] CNN (***)
+- [ ] RNN (**)
+- [ ] LSTM (**)
+- [ ] ResNet (***)
+- [ ] FCN (***)
+- [ ] U-Net (***)
 - [ ] GAN
 - [ ] DCGAN
 - [ ] W-GAN
@@ -81,24 +81,24 @@
 - [ ] CycleGAN
 - [ ] VAE
 - [ ] Conditional-VAE
-### Case/Application
-- [ ] MNIST classfication
-- [ ] MNIST generation
-- [ ] Binary Addition
-- [ ] Iris classfication
-- [ ] Cifar10 classfication
-- [ ] House price predict
+### Case/Application 
+- [ ] MNIST classfication (***)
+- [ ] MNIST generation (**)
+- [ ] Binary Addition (***)
+- [ ] Iris classfication (***)
+- [ ] Cifar10 classfication (***)
+- [ ] House price predict (***)
 ### Visualize
-- [ ] Loss graph
-- [ ] Accuracy curve
+- [ ] Loss graph (***)
+- [ ] Accuracy curve (***)
 - [ ] Hot spot
 - [ ] Compute Graph
 - [ ] Real Time update
 ### Analyze
-- [ ] Time
-- [ ] Space
+- [ ] Time (***)
+- [ ] Space (***)
 - [ ] Efficiency
-- [ ] Flops_count
+- [ ] Flops_count (***)
 - [ ] Balance
 
 ## Reference
