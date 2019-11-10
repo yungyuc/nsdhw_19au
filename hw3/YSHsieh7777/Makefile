@@ -1,18 +1,9 @@
 FLAGS ?=
 
 UNAME_S := $(shell uname -s)
-
-ifeq ($(UNAME_S),Darwin)
-MKLROOT ?= /opt/intel/mkl
-MKLEXT ?= a
-CXXFLAGS :=
-endif
-
-ifeq ($(UNAME_S),Linux)
 MKLROOT ?= ${HOME}/opt/conda
 MKLEXT ?= so
-CXXFLAGS := -Wl,--no-as-needed
-endif
+CXXFLAGS := -Wl,--no-as-needed -Wall -shared -fPIC
 
 MKLLINKLINE := \
 	${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
@@ -32,7 +23,7 @@ TARGET = _matrix.*.so
 all: $(TARGET)
 
 $(TARGET): matrix.cpp
-	$(CXX) $(CXXFLAGS) `$(PY) -m pybind11 --includes` matrix.cpp -o _matrix`$(PY)-config --extension-suffix`
+	$(CXX) $(CXXFLAGS) `$(PY) -m pybind11 --includes` $^ -o _matrix`$(PY)-config --extension-suffix`
 
 .PHONY: test
 test: $(TARGET)
@@ -40,4 +31,4 @@ test: $(TARGET)
 
 .PHONY: clean
 clean:
-	rm -rf *.so __pycache__ .pytest_cache
+	rm -rf *.so

@@ -159,8 +159,8 @@ PYBIND11_MODULE(_matrix, m) {
         &multiply_naive,                               // function pointer
         "A function which multiply two matrices in naive way." //function doc string
         );
-    // m.def("multiply_mkl",                              // function name
-    //     &multiply_mkl,                               // function pointer
-    //     "A function which multiply two matrices with mkl library." //function doc string
-    //    );
+    m.def("multiply_mkl",                              // function name
+        &multiply_mkl,                               // function pointer
+        "A function which multiply two matrices with mkl library." //function doc string
+        );
 }
