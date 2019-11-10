@@ -11,7 +11,7 @@ endif
 ifeq ($(UNAME_S),Linux)
 MKLROOT ?= ${HOME}/opt/conda
 MKLEXT ?= so
-CXXFLAGS := -Wl,--no-as-needed
+CXXFLAGS := -Wall -shared -fPIC
 endif
 
 MKLLINKLINE := \
@@ -21,19 +21,19 @@ MKLLINKLINE := \
 	-lpthread -lm -ldl
 
 CXX = g++
+PYBIND = $(shell python3 -m pybind11 --includes)
 CXXFLAGS := ${CXXFLAGS} \
-	-std=c++17 -O3 -g -m64 \
+	-std=c++11 -O3  \
 	-I${MKLROOT}/include \
 	${MKLLINKLINE} \
-	${FLAGS}
-
-BINS := matrix
+	${FLAGS} \
+	${PYBIND}
 
 .PHONY: default
-default: ${BINS}
+default: _matrix.so
 
-%: %.cpp Makefile
-	${CXX} ${CXXFLAGS} -o $@ $<
+_matrix.so: matrix.cpp Makefile
+	${CXX} ${CXXFLAGS} matrix.cpp -o _matrix.so
 
 .PHONY: clean
 clean:

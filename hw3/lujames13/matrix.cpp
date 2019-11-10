@@ -286,15 +286,15 @@ int main(int argc, char ** argv)
 PYBIND11_MODULE(_matrix, m){
     m.doc() = "pybin11 plugin to calculate the matrix matrix multiply";
     py::class_<Matrix>(m, "matrix")
-        ,def(py::init<size_t, size_t>())
+        .def(py::init<size_t, size_t>())
         .def("nrow", &Matrix::nrow)
         .def("ncol", &Matrix::ncol)
         .def("__getitem__", [](Matrix &self, std::pair<size_t, size_t> index)
             { return self(index.first, index.second); })
         .def("__setitem__", [](Matrix &self, std::pair<size_t, size_t> index, double value)
                 { self(index.first, index.second) = value;})
-        .def("__equal__", [](Matrix & mat1, Matrix & mat2){ return assertEqual(mat1, mat2); })
+        .def("__equal__", [](Matrix & mat1, Matrix & mat2){ return assertEqual(mat1, mat2); });
 
     m.def("multiply_naive", &multiply_naive, "Naive matrix-matrix multiply");
-    m.def("multiply_mkl", &multiply_mkl, "mkl matrix-matrix multiply")
+    m.def("multiply_mkl", &multiply_mkl, "mkl matrix-matrix multiply");
 }
