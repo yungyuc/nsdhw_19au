@@ -1,5 +1,5 @@
-# MKL
-# https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor/
+# MKL linker
+# https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
 
 MKLROOT = /home/ryan/intel/mkl
 
@@ -13,16 +13,16 @@ MKLLINKLINE := \
 
 CXX = g++
 
-CXXFLAGS := -std=c++17 -O3 -g -m64 -DMKL_ILP64
+CXXFLAGS := -std=c++11 -O3 -g -shared -m64 -DMKL_ILP64 -fPIC
 
-out: main.o Matrix.o
-	${CXX} $^ ${MKLLINKLINE} -I${MKLROOT}/include ${CXXFLAGS} -o $@
-
-main.o: main.cpp Matrix.h
-	${CXX} -c $< ${CXXFLAGS} -o $@
-
-Matrix.o: Matrix.cpp Matrix.h
-	${CXX} -c $< ${CXXFLAGS} -o $@
+_matrix.*.so: Matrix.cpp Matrix.h
+	${CXX} ${CXXFLAGS} `python3 -m pybind11 --includes ` $< -o _matrix`python3-config --extension-suffix` ${MKLLINKLINE}
 
 clean:
-	rm -f *.o
+	@rm -f *.o *.so per*
+
+bench: _matrix.*.so bench.py
+	@python3 bench.py
+
+test: _matrix.*.so test_matrix.py
+	@python3 test_matrix.py

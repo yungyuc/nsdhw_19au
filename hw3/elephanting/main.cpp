@@ -1,12 +1,9 @@
 #include <iostream>
 #include <ctime>
 #include "Matrix.h"
-#include "mkl.h"
 
 int main(int argc, char **argv)
 {
-    double alpha = 1.0;
-    double beta = 0.0;
     size_t Arow = 1000;
     size_t Acol = 1200;
     size_t Brow = 1200;

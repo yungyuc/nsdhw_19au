@@ -2,8 +2,12 @@
 #include <random>
 #include <stdexcept>
 #include <cmath>
+#include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 #include "mkl.h"
 #include "Matrix.h"
+
+namespace py = pybind11;
 
 /* generate matrix entries using uniform distribution between -1 and 1 */
 Matrix::Matrix(size_t nrow, size_t ncol)
@@ -115,11 +119,29 @@ size_t Matrix::ncol() const
     return m_ncol;
 }
 
-void DGEMM(Matrix const &A1, Matrix const &A2, Matrix &ret)
+void mkl_MM(Matrix const &A, Matrix const &B, Matrix &ret)
 {
+    if (A.ncol() != B.nrow())
+    {
+        throw std::out_of_range("invalid matrix size of matrix multiplication.");
+    }
+    double alpha = 1.0;
+    double beta = 0.0;
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 A.nrow(), B.ncol(), A.ncol(), alpha,
                 A.buffer(), A.ncol(), B.buffer(), B.ncol(), beta, ret.buffer(), ret.ncol());
+}
+
+bool ifequal(Matrix& A, Matrix& B)
+{
+    if (A == B)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 Matrix operator*(Matrix const &A1, Matrix const &A2)
@@ -166,4 +188,17 @@ Matrix operator*(Matrix const &A, double const &c)
             ret(row, col) = c * ret(row, col);
         }
     }
+}
+
+PYBIND11_MODULE(_matrix, m) {
+    m.doc() = "matrix class implements matrix multiplication";
+    m.def("mkl_MM", &mkl_MM, "mkl matrix multiplication");
+    m.def("ifequal", &ifequal, "compare two matrics");
+    py::class_<Matrix>(m, "Matrix")
+        .def(py::init<size_t, size_t>())
+        .def("nrow", &Matrix::nrow)
+        .def("ncol", &Matrix::ncol)
+        .def(py::self * py::self)
+        .def(py::self * double())
+        .def(double() * py::self);
 }

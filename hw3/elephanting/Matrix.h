@@ -20,7 +20,9 @@ private:
     void resetbuf(size_t, size_t);
 };
 
-void DGEMM(Matrix const &, Matrix const &, Matrix &);
+void mkl_MM(Matrix const &, Matrix const &, Matrix &);
+
+bool ifequal(Matrix &, Matrix &);
 
 Matrix operator*(Matrix const &, Matrix const &);
 
