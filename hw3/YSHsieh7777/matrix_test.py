@@ -140,8 +140,8 @@ class MatrixTest(unittest.TestCase):
 
         for it in range(100):
             for jt in range(100):
-                mat1[it, jt] = random.uniform(-100,100)
-                mat2[it, jt] = random.uniform(-100,100)
+                mat1[it, jt] = random.randint(-100,100)
+                mat2[it, jt] = random.randint(-100,100)
 
         naive_mat = _matrix.multiply_naive(mat1, mat2)
         mkl_mat = _matrix.multiply_mkl(mat1, mat2)

@@ -24,9 +24,9 @@ def benchmark_gen():
     mkl_time = time.time() - start_time
 
     with open("performance.txt", "w") as out:
-        out.write("Start multiply_naive (repeat=5), take min = {} seconds".format(naive_time))
-        out.write("Start multiply_mkl (repeat=5), take min = {} seconds".format(naive_time))
-        out.write("MKL speed-up over naive: {} x".format(naive_time/mkl_time))
+        out.write("Start multiply_naive (repeat=5), take min = {} seconds\n".format(naive_time))
+        out.write("Start multiply_mkl (repeat=5), take min = {} seconds\n".format(mkl_time))
+        out.write("MKL speed-up over naive: {} x\n".format(naive_time/mkl_time))
 
 if __name__ == '__main__':
     benchmark_gen()
