@@ -144,7 +144,7 @@ private:
 /*
  * Naive matrix matrix multiplication.
  */
-Matrix operator*(Matrix const & mat1, Matrix const & mat2)
+Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
 {
     if (mat1.ncol() != mat2.nrow())
     {
@@ -171,12 +171,12 @@ Matrix operator*(Matrix const & mat1, Matrix const & mat2)
     return ret;
 }
 
-
+/*
 Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
 {
     return mat1 * mat2; // use existing function
 }
-
+*/
 Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
 {
     if (mat1.ncol() != mat2.nrow())
@@ -277,10 +277,10 @@ int main(int argc, char ** argv)
 
 PYBIND11_MODULE(_matrix, m){
     m.doc() = "pybin11 plugin to calculate the matrix matrix multiply";
-    py::class_<Matrix>(m, "matrix")
+    py::class_<Matrix>(m, "Matrix")
         .def(py::init<size_t, size_t>())
-        .def("nrow", &Matrix::nrow)
-        .def("ncol", &Matrix::ncol)
+        .def_property_readonly("nrow", &Matrix::nrow())
+        .def_property_readonly("ncol", &Matrix::ncol())
         .def("__getitem__", [](Matrix &self, std::pair<size_t, size_t> index)
             { return self(index.first, index.second); })
         .def("__setitem__", [](Matrix &self, std::pair<size_t, size_t> index, double value)

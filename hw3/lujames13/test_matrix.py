@@ -11,11 +11,11 @@ class TestMatrix(unittest.TestCase):
 
         for it in range(size_n):
             for jt in range(size_k):
-                mat1[it, jt] = it * size + jt + 1
+                mat1[it, jt] = it * size_n + jt + 1
 
         for it in range(size_k):
             for jt in range(size_m):
-                mat2[it, jt] = it * size + jt + 1
+                mat2[it, jt] = it * size_k + jt + 1
 
         for it in range(size_n):
             for jt in range(size_m):
@@ -66,14 +66,14 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(2, mat1[0,1])
         self.assertEqual(size_k+2, mat1[1,1])
         self.assertEqual(size_k*2, mat1[1,size_k-1])
-        self.assertEqual(size_n*size_k, mat1[size-1,size-1])
+        self.assertEqual(size_n*size_k, mat1[size_n-1,size_k-1])
 
         for i in range(mat1.nrow):
             for j in range(mat1.ncol):
                 self.assertNotEqual(0, mat1[i,j])
         for i in range(mat3.nrow):
             for j in range(mat3.ncol):
-		        self.assertEqual(0, mat3[i,j])
+               self.assertEqual(0, mat3[i,j])
 
     def test_match(self):
 
