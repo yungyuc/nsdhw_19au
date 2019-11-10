@@ -1,4 +1,5 @@
 import unittest
+import random
 
 # The python module that wraps the matrix code.
 import _matrix
@@ -132,6 +133,20 @@ class MatrixTest(unittest.TestCase):
         self.assertEqual(400, ret_mat[1, 0])
         self.assertEqual(400, ret_mat[50, 50])
         self.assertEqual(400, ret_mat[99, 99])
+
+    def test_matrix_naive_mkl_result(self):
+        mat1 = _matrix.Matrix(100, 100)
+        mat2 = _matrix.Matrix(100, 100)
+
+        for it in range(100):
+            for jt in range(100):
+                mat1[it, jt] = random.uniform(-100,100)
+                mat2[it, jt] = random.uniform(-100,100)
+
+        naive_mat = _matrix.multiply_naive(mat1, mat2)
+        mkl_mat = _matrix.multiply_mkl(mat1, mat2)
+
+        self.assertEqual(naive_mat, mkl_mat)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

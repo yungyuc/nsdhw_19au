@@ -17,17 +17,23 @@ CXXFLAGS := ${CXXFLAGS} \
 	-I${MKLROOT}/include \
 	${MKLLINKLINE} \
 	${FLAGS}
+	
 PY = python3
-TARGET = _matrix.*.so
+SUFFIX = $(shell python3-config --extension-suffix)
+TARGET = _matrix$(SUFFIX)
 
 all: $(TARGET)
 
 $(TARGET): matrix.cpp
-	$(CXX) $(CXXFLAGS) `$(PY) -m pybind11 --includes` $^ -o _matrix`$(PY)-config --extension-suffix`
+	$(CXX) $(CXXFLAGS) `$(PY) -m pybind11 --includes` $^ -o $@
 
 .PHONY: test
 test: $(TARGET)
-	$(PY) pybind_test.py
+	$(PY) matrix_test.py
+
+.PHONY: bench
+bench: $(TARGET)
+	$(PY) matrix_benchmark.py
 
 .PHONY: clean
 clean:
