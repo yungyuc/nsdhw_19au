@@ -2,14 +2,17 @@
 #include <iomanip>
 #include <vector>
 #include <stdexcept>
-/*
+
 #ifdef NOMKL
 #include <lapacke.h>
 #else // NOMKL
 #include <mkl_lapacke.h>
 #endif // NOMKL
-*/
-#include <cblas.h>
+
+#include <mkl.h>
+#include <mkl_cblas.h>
+#include <mkl_blas.h>
+#include <cmath>
 
 class Matrix {
 
@@ -196,8 +199,8 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
     size_t k = mat1.ncol();
     double alpha = 1.0;
     double beta = 0;
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNotrans,
-                    m, n, k, alpha, mat1.data(), k, mat2.data(), n, bata, result.data(), n);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                    m, n, k, alpha, mat1.data(), k, mat2.data(), n, beta, result.data(), n);
 
     return result;
 }
@@ -254,9 +257,9 @@ int main(int argc, char ** argv)
     Matrix result1(mat.nrow(), b.ncol());
     Matrix result2(mat.nrow(), b.ncol());
     result1 = multiply_naive(mat, b);
-    std::cout << "result1:" << result << std::endl;
-    result2 = multiply_mkl(mat, b)
-    std::cout << "result2:" << result << std::endl;
+    std::cout << "result1:" << result1 << std::endl;
+    result2 = multiply_mkl(mat, b);
+    std::cout << "result2:" << result2 << std::endl;
 
     return 0;
 }
