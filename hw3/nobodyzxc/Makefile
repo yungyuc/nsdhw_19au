@@ -8,9 +8,8 @@ CXX      = g++
 LDFLAGS  = -lm -llapacke -lcblas
 CXXFLAGS = -O3 -std=c++11 -fPIC -g -Wno-deprecated -Wall #-DNOMKL
 
-MKLROOT = /opt/intel/mkl
-INCLUDE += -I${MKLROOT}/include
-LDFLAGS += -L${MKLROOT}/lib -lpthread -ldl -m64
+INCLUDE += -I${MKL_ROOT}/include
+LDFLAGS += -L${MKL_LIB_DIR} -lpthread -ldl -m64
 
 $(O_DIR) :
 	mkdir $@
