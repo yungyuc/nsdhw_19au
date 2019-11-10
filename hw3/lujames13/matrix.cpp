@@ -13,6 +13,8 @@
 #include <mkl_cblas.h>
 #include <mkl_blas.h>
 #include <cmath>
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 class Matrix {
 
@@ -205,6 +207,23 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
     return result;
 }
 
+bool assertEqual(Matrix const & mat1, Matrix const & mat2)
+{
+    if (mat1.nrow() != mat2.nrow())
+        return false;
+    if (mat1.ncol() != mat2.ncol())
+        return false;
+    for (size_t i=0; i<mat1.nrow();++i)
+    {
+        for (size_t j=0; j<mat1.ncol();++j)
+        {
+            if (mat1(i,j) != mat2(i,j))
+                return false;
+        }
+    }
+    return true;
+}
+
 std::ostream & operator << (std::ostream & ostr, Matrix const & mat)
 {
     for (size_t i=0; i<mat.nrow(); ++i)
@@ -234,7 +253,7 @@ std::ostream & operator << (std::ostream & ostr, std::vector<double> const & vec
 
     return ostr;
 }
-
+/*
 int main(int argc, char ** argv)
 {
     const size_t n = 3;
@@ -262,4 +281,20 @@ int main(int argc, char ** argv)
     std::cout << "result2:" << result2 << std::endl;
 
     return 0;
+}*/
+
+PYBIND11_MODULE(_matrix, m){
+    m.doc() = "pybin11 plugin to calculate the matrix matrix multiply";
+    py::class_<Matrix>(m, "matrix")
+        ,def(py::init<size_t, size_t>())
+        .def("nrow", &Matrix::nrow)
+        .def("ncol", &Matrix::ncol)
+        .def("__getitem__", [](Matrix &self, std::pair<size_t, size_t> index)
+            { return self(index.first, index.second); })
+        .def("__setitem__", [](Matrix &self, std::pair<size_t, size_t> index, double value)
+                { self(index.first, index.second) = value;})
+        .def("__equal__", [](Matrix & mat1, Matrix & mat2){ return assertEqual(mat1, mat2); })
+
+    m.def("multiply_naive", &multiply_naive, "Naive matrix-matrix multiply");
+    m.def("multiply_mkl", &multiply_mkl, "mkl matrix-matrix multiply")
 }
