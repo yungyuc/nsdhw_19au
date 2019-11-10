@@ -39,6 +39,10 @@ _matrix${PYBIND_POSTFIX}: matrix.cpp
 test: ${BINS}
 	python3 validate.py
 
+.PHONY: bench
+bench:
+	python3 bench.py
+
 .PHONY: clean
 clean:
 	rm -rf ${BINS} *.o *.dSYM/
