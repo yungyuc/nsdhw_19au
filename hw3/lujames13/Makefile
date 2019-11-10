@@ -18,6 +18,9 @@ $(TARGET): matrix.cpp
 test: test_matrix.py $(TARGET)
 	python3 -m unittest test_matrix.py
 
+bench: bench.py $(TARGET)
+	python3 bench.py
+
 .PHONY: clean
 clean:
-	rm -rf *.so __pycache__
+	rm -rf *.so __pycache__ performance.txt
