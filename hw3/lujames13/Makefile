@@ -20,4 +20,4 @@ test: test_matrix.py $(TARGET)
 
 .PHONY: clean
 clean:
-	rm -rf *.so
+	rm -rf *.so __pycache__
