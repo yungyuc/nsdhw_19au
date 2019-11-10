@@ -18,19 +18,6 @@ public:
         reset_buffer(nrow, ncol);
     }
 
-    Matrix(size_t nrow, size_t ncol, bool column_major)
-            : m_nrow(nrow), m_ncol(ncol), m_column_major(column_major)
-    {
-        reset_buffer(nrow, ncol);
-    }
-
-    Matrix(size_t nrow, size_t ncol, bool column_major, std::vector<double> const & vec)
-            : m_nrow(nrow), m_ncol(ncol), m_column_major(column_major)
-    {
-        reset_buffer(nrow, ncol);
-        (*this) = vec;
-    }
-
     Matrix & operator=(std::vector<double> const & vec)
     {
         if (size() != vec.size())
@@ -52,7 +39,7 @@ public:
     }
 
     Matrix(Matrix const & other)
-            : m_nrow(other.m_nrow), m_ncol(other.m_ncol), m_column_major(other.m_column_major)
+            : m_nrow(other.m_nrow), m_ncol(other.m_ncol)
     {
         reset_buffer(other.m_nrow, other.m_ncol);
         for (size_t i=0; i<m_nrow; ++i)
@@ -82,7 +69,7 @@ public:
     }
 
     Matrix(Matrix && other)
-            : m_nrow(other.m_nrow), m_ncol(other.m_ncol), m_column_major(other.m_column_major)
+            : m_nrow(other.m_nrow), m_ncol(other.m_ncol)
     {
         reset_buffer(0, 0);
         std::swap(m_buffer, other.m_buffer);
@@ -95,7 +82,6 @@ public:
         std::swap(m_nrow, other.m_nrow);
         std::swap(m_ncol, other.m_ncol);
         std::swap(m_buffer, other.m_buffer);
-        m_column_major = other.m_column_major;
         return *this;
     }
 
@@ -120,8 +106,7 @@ private:
 
     size_t index(size_t row, size_t col) const
     {
-        if (m_column_major) { return row          + col * m_nrow; }
-        else                { return row * m_ncol + col         ; }
+        return row * m_ncol + col;
     }
 
     void reset_buffer(size_t nrow, size_t ncol)
@@ -136,7 +121,6 @@ private:
 
     size_t m_nrow = 0;
     size_t m_ncol = 0;
-    bool m_column_major = false;
     double * m_buffer = nullptr;
 
 };
@@ -279,8 +263,8 @@ PYBIND11_MODULE(_matrix, m){
     m.doc() = "pybin11 plugin to calculate the matrix matrix multiply";
     py::class_<Matrix>(m, "Matrix")
         .def(py::init<size_t, size_t>())
-        .def_property_readonly("nrow", &Matrix::nrow())
-        .def_property_readonly("ncol", &Matrix::ncol())
+        .def_property_readonly("nrow", &Matrix::nrow)
+        .def_property_readonly("ncol", &Matrix::ncol)
         .def("__getitem__", [](Matrix &self, std::pair<size_t, size_t> index)
             { return self(index.first, index.second); })
         .def("__setitem__", [](Matrix &self, std::pair<size_t, size_t> index, double value)
