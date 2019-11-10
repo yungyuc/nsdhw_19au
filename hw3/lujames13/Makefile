@@ -15,6 +15,9 @@ all: $(TARGET)
 $(TARGET): matrix.cpp
 	${CXX} ${CXXFLAGS} $< -o $@ ${LDFLAGS}
 
+test: test_matrix.py $(TARGET)
+	python3 -m unittest test_matrix.py
+
 .PHONY: clean
 clean:
 	rm -rf *.so
