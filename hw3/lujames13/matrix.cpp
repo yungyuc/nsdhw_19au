@@ -18,6 +18,12 @@ public:
         reset_buffer(nrow, ncol);
     }
 
+    Matrix(size_t nrow, size_t ncol, std::vector<double> const &vec)
+            : m_nrow(nrow), m_ncol(ncol) {
+        reset_buffer(nrow, ncol);
+        (*this) = vec;
+    }
+
     Matrix & operator=(std::vector<double> const & vec)
     {
         if (size() != vec.size())
@@ -72,6 +78,8 @@ public:
             : m_nrow(other.m_nrow), m_ncol(other.m_ncol)
     {
         reset_buffer(0, 0);
+        std::swap(m_nrow, other.m_nrow);
+        std::swap(m_ncol, other.m_ncol);
         std::swap(m_buffer, other.m_buffer);
     }
 
@@ -89,7 +97,18 @@ public:
     {
         reset_buffer(0, 0);
     }
-
+    bool operator==(Matrix &right) {
+        if (m_nrow != right.nrow() && m_ncol != right.ncol()) {
+            return false;
+        }
+        const double *right_buf = right.data();
+        size_t len = m_nrow * m_ncol;
+        for (size_t i = 0; i < len; ++i) {
+            if (m_buffer[i] != right_buf[i])
+                return false;
+        }
+        return true;
+    }
     double   operator() (size_t row, size_t col) const { return m_buffer[index(row, col)]; }
     double & operator() (size_t row, size_t col)       { return m_buffer[index(row, col)]; }
 
@@ -143,13 +162,15 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
     {
         for (size_t k=0; k<ret.ncol(); ++k)
         {
-            double v = 0;
+            double v = 0.0;
             for (size_t j=0; j<mat1.ncol(); ++j)
             {
                 v += mat1(i,j) * mat2(j,k);
             }
             ret(i,k) = v;
-        }
+	}
+	//printf("[%zu,%zu]: %f", i, 13, mat1(i,13));
+
     }
 
     return ret;
@@ -170,7 +191,7 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
                 "differs from that of second matrix row");
     }
 
-    Matrix result(mat1.nrow(), mat2.ncol());
+    Matrix ret(mat1.nrow(), mat2.ncol());
 
     size_t m = mat1.nrow();
     size_t n = mat2.ncol();
@@ -178,9 +199,9 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
     double alpha = 1.0;
     double beta = 0;
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                    m, n, k, alpha, mat1.data(), k, mat2.data(), n, beta, result.data(), n);
+                    m, n, k, alpha, mat1.data(), k, mat2.data(), n, beta, ret.data(), n);
 
-    return result;
+    return ret;
 }
 
 bool assertEqual(Matrix const & mat1, Matrix const & mat2)
@@ -236,11 +257,11 @@ int main(int argc, char ** argv)
     int status;
 
     std::cout << ">>> Solve Ax=b (row major)" << std::endl;
-    Matrix mat(n, n, false);
+    Matrix mat(n, n);
     mat(0,0) = 3; mat(0,1) = 5; mat(0,2) = 2;
     mat(1,0) = 2; mat(1,1) = 1; mat(1,2) = 3;
     mat(2,0) = 4; mat(2,1) = 3; mat(2,2) = 2;
-    Matrix b(n, 2, false);
+    Matrix b(n, 2);
     b(0,0) = 57; b(0,1) = 23;
     b(1,0) = 22; b(1,1) = 12;
     b(2,0) = 41; b(2,1) = 84;
@@ -257,8 +278,8 @@ int main(int argc, char ** argv)
     std::cout << "result2:" << result2 << std::endl;
 
     return 0;
-}*/
-
+}
+*/
 PYBIND11_MODULE(_matrix, m){
     m.doc() = "pybin11 plugin to calculate the matrix matrix multiply";
     py::class_<Matrix>(m, "Matrix")
@@ -271,7 +292,8 @@ PYBIND11_MODULE(_matrix, m){
                 { self(index.first, index.second) = value;})
         .def("__eq__", [](Matrix & mat1, Matrix & mat2){ return assertEqual(mat1, mat2); })
         .def("__ne__", [](Matrix & mat1, Matrix & mat2){ return !assertEqual(mat1, mat2); });
-
+//	.def(py::self == py::self)
+//	.def(py::self != py::self);
     m.def("multiply_naive", &multiply_naive, "Naive matrix-matrix multiply");
     m.def("multiply_mkl", &multiply_mkl, "mkl matrix-matrix multiply");
 }
