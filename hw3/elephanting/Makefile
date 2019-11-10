@@ -1,33 +1,28 @@
-FLAGS ?=
+# MKL
+# https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor/
 
-UNAME_S := $(shell uname -s)
-
-ifeq ($(UNAME_S),Darwin)
-MKLROOT ?= /home/ryan/intel/mkl
-CXXFLAGS :=
-endif
-
-ifeq ($(UNAME_S),Linux)
-MKLROOT ?= ${HOME}/intel/mkl
-CXXFLAGS := -Wl,--no-as-needed
-endif
+MKLROOT = /home/ryan/intel/mkl
 
 MKLLINKLINE := \
-	${MKLROOT}/lib/intel64/libmkl_intel_lp64.a \
-	${MKLROOT}/lib//intel64/libmkl_sequential.a \
+	-Wl,--start-group \
+	${MKLROOT}/lib/intel64/libmkl_intel_ilp64.a \
+	${MKLROOT}/lib/intel64/libmkl_sequential.a \
 	${MKLROOT}/lib/intel64/libmkl_core.a \
-	${MKLROOT}/lib/intel64/libmkl_blacs_intelmpi_lp64.a \
+	-Wl,--end-group \
 	-lpthread -lm -ldl
 
 CXX = g++
-CXXFLAGS := ${CXXFLAGS} \
-	-std=c++17 -O3 -g -m64 \
-	-I${MKLROOT}/include \
-	${MKLLINKLINE} \
-	${FLAGS}
 
-gg: Matrix.cpp Makefile
-	${CXX} ${CXXFLAGS} -o $@ $<
+CXXFLAGS := -std=c++17 -O3 -g -m64 -DMKL_ILP64
 
+out: main.o Matrix.o
+	${CXX} $^ ${MKLLINKLINE} -I${MKLROOT}/include ${CXXFLAGS} -o $@
 
-g++ -std=c++17 -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl -m64 -I${MKLROOT}/include Matrix.cpp -o gg
+main.o: main.cpp Matrix.h
+	${CXX} -c $< ${CXXFLAGS} -o $@
+
+Matrix.o: Matrix.cpp Matrix.h
+	${CXX} -c $< ${CXXFLAGS} -o $@
+
+clean:
+	rm -f *.o
