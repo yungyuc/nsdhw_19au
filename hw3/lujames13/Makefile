@@ -14,6 +14,8 @@ MKLEXT ?= so
 CXXFLAGS := -Wall -shared -fPIC
 endif
 
+MKLINC = -I$(MKLROOT)/include
+LDFLAGS  = $(MKLROOT)/lib/intel64/libmkl_scalapack_lp64.a -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_sequential.a -Wl,--end-group $(MKLROOT)/lib/intel64/libmkl_blacs_intelmpi_lp64.a -lpthread -lm -ldl
 MKLLINKLINE := \
 	${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
 	${MKLROOT}/lib/libmkl_sequential.${MKLEXT} \
