@@ -3,20 +3,7 @@
 #include <vector>
 #include <stdexcept>
 
-#ifdef NOMKL
-#include <lapacke.h>
-#else // NOMKL
-#include <mkl_lapacke.h>
-#endif // NOMKL
-
-#include <cstdio>
-#include <cstdlib>
 #include <mkl.h>
-#include <mkl_cblas.h>
-#include <mkl_blas.h>
-#include <mkl_lapack.h>
-#include <mkl_lapacke.h>
-#include <cmath>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
