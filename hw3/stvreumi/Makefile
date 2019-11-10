@@ -1,4 +1,4 @@
-# modify from: 
+# modify from:
 # https://github.com/yungyuc/nsd/blob/master/notebook/matrix/Makefile
 FLAGS ?=
 
@@ -16,18 +16,18 @@ MKLLINKLINE := \
 	${MKLROOT}/lib/libmkl_core.${MKLEXT} \
 	-lpthread -lm -ldl
 
-PYBIND_INCLUDE = $(shell python3 -m pybind11 --includes)
-PYBIND_POSTFIX = $(shell python3-config --extension-suffix)
+PYBIND_INCLUDE := $(shell python3 -m pybind11 --includes)
+PYBIND_POSTFIX := $(shell python3-config --extension-suffix)
 
-CXX=g++
+CXX := g++
 CXXFLAGS := ${CXXFLAGS} \
-	-std=c++17 -O3 -g -m64 -fPIC \
+	-std=c++17 -O3 -g -m64 -Wall -shared -fPIC \
+	${PYBIND_INCLUDE} \
 	-I${MKLROOT}/include \
 	${MKLLINKLINE} \
 	${FLAGS} \
-	${PYBIND_INCLUDE}
 
-BINS: _matrix${PYBIND_POSTFIX}
+BINS := _matrix${PYBIND_POSTFIX}
 
 .PHONY: default
 default: ${BINS}
@@ -36,9 +36,9 @@ _matrix${PYBIND_POSTFIX}: matrix.cpp
 	${CXX} $< ${CXXFLAGS} -o $@
 
 .PHONY: test
-test:
-	python3 ../validate.py
+test: ${BINS}
+	python3 validate.py
 
 .PHONY: clean
 clean:
-	rm -rf *.o *.dSYM/ ${BINS}
+	rm -rf ${BINS} *.o *.dSYM/

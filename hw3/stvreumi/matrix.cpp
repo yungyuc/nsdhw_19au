@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 
 #include <iostream>
 #include <iomanip>
@@ -10,6 +11,8 @@
 #else // NOMKL
 #include <mkl_cblas.h>
 #endif // NOMKL
+
+namespace py = pybind11;
 
 // copy from 07_matrix_matrix.cpp
 class Matrix {
@@ -48,6 +51,29 @@ public:
 
         return *this;
     }
+
+    bool operator==(Matrix const & mat) const
+    {
+        if (size() != mat.size())
+        {
+            return false;
+        }
+
+        for (size_t i=0; i<m_nrow; ++i)
+        {
+            for (size_t j=0; j<m_ncol; ++j)
+            {
+                if((*this)(i,j) != mat(i,j))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    bool operator!=(Matrix const & mat) const { return !operator==(mat); }
 
     Matrix(Matrix const & other)
       : m_nrow(other.m_nrow), m_ncol(other.m_ncol)
@@ -112,7 +138,7 @@ public:
     size_t size() const { return m_nrow * m_ncol; }
     double buffer(size_t i) const { return m_buffer[i]; }
     std::vector<double> buffer_vector() const { return std::vector<double>(m_buffer, m_buffer+size()); }
-
+    double * data() const { return m_buffer; }
 private:
 
     size_t index(size_t row, size_t col) const
@@ -175,7 +201,6 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
             "differs from that of second matrix row");
     }
 
-    int status;
     Matrix ret(mat1.nrow(), mat2.ncol());
 
     // reference:
@@ -184,7 +209,7 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
     // http://sep.stanford.edu/sep/claudio/Research/Prst_ExpRefl/ShtPSPI/intel/mkl/10.0.3.020/include/mkl_cblas.h
     // http://www.netlib.org/lapack/explore-html/dc/d18/cblas__dgemm_8c.html
     cblas_dgemm( // C = (alpha)AB + (beta)C
-        CblasRowMajor, CblasNoTrans, CblasNoTrans
+        CblasRowMajor, CblasNoTrans, CblasNoTrans,
         mat1.nrow(), //M, number of rows in A and C
         mat2.ncol(), //N, number of columns in B and C
         mat1.ncol(), //K, number fo columns in A; number of rows in B
@@ -195,7 +220,7 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
         mat2.nrow(), // lda, first dimention of B
         1.0, // beta
         ret.data(), // matrix C
-        ldc.nrow() // lad, the first dimention of C
+        ret.nrow() // lad, the first dimention of C
     );
 
     return ret;
@@ -209,26 +234,36 @@ PYBIND11_MODULE(_matrix, mod)
 
     // export class
     py::class_<Matrix>(mod, "Matrix")
-        .def(py::init<size_t, size_t>)
-        .def("nrow", &Matrix::nrow)
-        .def("ncol", &Matrix::ncol)
+        .def(py::init<size_t, size_t>())
+        .def_property_readonly("nrow", &Matrix::nrow)
+        .def_property_readonly("ncol", &Matrix::ncol)
         // ref: https://github.com/pybind/pybind11/blob/master/tests/test_sequences_and_iterators.cpp#L182
-        .def("__getitem__", [](const Matrix &m, size_t row, size_t col) {
+        .def("__getitem__", [](const Matrix &m, 
+            std::tuple<size_t, size_t> const & idx)
+        {
+            size_t row = std::get<0>(idx);
+            size_t col = std::get<1>(idx);
             if (row >= m.nrow()) throw py::index_error();
-            if (row >= m.ncol()) throw py::index_error();
+            if (col >= m.ncol()) throw py::index_error();
             return m(row, col);
         })
-        .def("__setitem__", [](Matrix &m, size_t row, size_t col, double v) {
+        .def("__setitem__", [](Matrix &m, 
+            std::tuple<size_t, size_t> const & idx, double v) 
+        {
+            size_t row = std::get<0>(idx);
+            size_t col = std::get<1>(idx);
             if (row >= m.nrow()) throw py::index_error();
-            if (row >= m.ncol()) throw py::index_error();
+            if (col >= m.ncol()) throw py::index_error();
             m(row, col) = v;
         })
+        .def(py::self == py::self)
+        .def(py::self != py::self)
         ;
     
     // export free function
     mod.def("multiply_naive", 
         &multiply_naive, "native method of multiplication");
-    mod.edf("multiply_mkl", 
+    mod.def("multiply_mkl", 
         &multiply_mkl, "mkl-BLAS method of multiplication");
 
 }
