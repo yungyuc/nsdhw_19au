@@ -5,11 +5,12 @@ HEADER   = matrix.hpp
 O_DIR    = obj
 
 CXX      = g++
-LDFLAGS  = -lm -llapacke -lcblas
+LDFLAGS  = -lm
 CXXFLAGS = -O3 -std=c++11 -fPIC -g -Wno-deprecated -Wall #-DNOMKL
 
-INCLUDE += -I${MKL_ROOT}/include
-LDFLAGS += -L${MKL_LIB_DIR} -lpthread -ldl -m64
+MKLROOT ?= $(HOME)/opt/conda
+INCLUDE += -I$(MKLROOT)/include
+LDFLAGS += -L$(MKLROOT)/lib -lmkl_rt -lpthread -lm -ldl
 
 $(O_DIR) :
 	mkdir $@
