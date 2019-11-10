@@ -21,9 +21,7 @@ int main(int argc, char **argv)
     size_t c_end = std::clock();
     std::cout << c_end - c_start << std::endl;
     size_t c_start2 = std::clock();
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                A.nrow(), B.ncol(), A.ncol(), alpha,
-                A.buffer(), A.ncol(), B.buffer(), B.ncol(), beta, D.buffer(), D.ncol());
+    DGEMM(A, B, D);
     size_t c_end2 = std::clock();
     std::cout << c_end2 - c_start2 << std::endl;
     bool ret = false;

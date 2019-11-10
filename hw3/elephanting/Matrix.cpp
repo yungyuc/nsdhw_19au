@@ -2,6 +2,7 @@
 #include <random>
 #include <stdexcept>
 #include <cmath>
+#include "mkl.h"
 #include "Matrix.h"
 
 /* generate matrix entries using uniform distribution between -1 and 1 */
@@ -112,6 +113,13 @@ size_t Matrix::nrow() const
 size_t Matrix::ncol() const
 {
     return m_ncol;
+}
+
+void DGEMM(Matrix const &A1, Matrix const &A2, Matrix &ret)
+{
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                A.nrow(), B.ncol(), A.ncol(), alpha,
+                A.buffer(), A.ncol(), B.buffer(), B.ncol(), beta, ret.buffer(), ret.ncol());
 }
 
 Matrix operator*(Matrix const &A1, Matrix const &A2)

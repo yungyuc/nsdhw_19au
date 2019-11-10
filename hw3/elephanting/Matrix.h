@@ -20,9 +20,11 @@ private:
     void resetbuf(size_t, size_t);
 };
 
-Matrix operator*(Matrix const &A1, Matrix const &A2);
+void DGEMM(Matrix const &, Matrix const &, Matrix &);
+
+Matrix operator*(Matrix const &, Matrix const &);
 
 /* broadcasting */
-Matrix operator*(double const &c, Matrix const &A);
+Matrix operator*(double const &, Matrix const &);
 
-Matrix operator*(Matrix const &A, double const &c);
+Matrix operator*(Matrix const &, double const &);
