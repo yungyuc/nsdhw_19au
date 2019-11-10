@@ -1,3 +1,5 @@
+#include <pybind11/pybind11.h>
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -197,4 +199,36 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
     );
 
     return ret;
+}
+
+PYBIND11_MODULE(_matrix, mod)
+{
+
+    mod.doc() = 
+        "matrix class and multiplication operation";
+
+    // export class
+    py::class_<Matrix>(mod, "Matrix")
+        .def(py::init<size_t, size_t>)
+        .def("nrow", &Matrix::nrow)
+        .def("ncol", &Matrix::ncol)
+        // ref: https://github.com/pybind/pybind11/blob/master/tests/test_sequences_and_iterators.cpp#L182
+        .def("__getitem__", [](const Matrix &m, size_t row, size_t col) {
+            if (row >= m.nrow()) throw py::index_error();
+            if (row >= m.ncol()) throw py::index_error();
+            return m(row, col);
+        })
+        .def("__setitem__", [](Matrix &m, size_t row, size_t col, double v) {
+            if (row >= m.nrow()) throw py::index_error();
+            if (row >= m.ncol()) throw py::index_error();
+            m(row, col) = v;
+        })
+        ;
+    
+    // export free function
+    mod.def("multiply_naive", 
+        &multiply_naive, "native method of multiplication");
+    mod.edf("multiply_mkl", 
+        &multiply_mkl, "mkl-BLAS method of multiplication");
+
 }
