@@ -9,6 +9,8 @@
 #include <mkl_lapacke.h>
 #endif // NOMKL
 */
+#include <cblas.h>
+
 class Matrix {
 
 public:
@@ -177,12 +179,29 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
 {
     return mat1 * mat2; // use existing function
 }
-/*
+
 Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
 {
-    pass
+    if (mat1.ncol() != mat2.nrow())
+    {
+        throw std::out_of_range(
+                "the number of first matrix column "
+                "differs from that of second matrix row");
+    }
+
+    Matrix result(mat1.nrow(), mat2.ncol());
+
+    size_t m = mat1.nrow();
+    size_t n = mat2.ncol();
+    size_t k = mat1.ncol();
+    double alpha = 1.0;
+    double beta = 0;
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNotrans,
+                    m, n, k, alpha, mat1.data(), k, mat2.data(), n, bata, result.data(), n);
+
+    return result;
 }
-*/
+
 std::ostream & operator << (std::ostream & ostr, Matrix const & mat)
 {
     for (size_t i=0; i<mat.nrow(); ++i)
@@ -232,52 +251,12 @@ int main(int argc, char ** argv)
     std::cout << "A:" << mat << std::endl;
     std::cout << "b:" << b << std::endl;
 
-    Matrix result(mat.nrow(), b.ncol());
-    result = multiply_naive(mat, b);
-    std::cout << "result:" << result << std::endl;
-/*
-    status = LAPACKE_dgesv(
-            LAPACK_ROW_MAJOR // int matrix_layout
-            , n // lapack_int n
-            , b.ncol() // lapack_int nrhs
-            , mat.data() // double * a
-            , mat.ncol() // lapack_int lda
-            , ipiv.data() // lapack_int * ipiv
-            , b.data() // double * b
-            , b.ncol() // lapack_int ldb
-            // for row major matrix, ldb becomes the trailing dimension.
-    );
+    Matrix result1(mat.nrow(), b.ncol());
+    Matrix result2(mat.nrow(), b.ncol());
+    result1 = multiply_naive(mat, b);
+    std::cout << "result1:" << result << std::endl;
+    result2 = multiply_mkl(mat, b)
+    std::cout << "result2:" << result << std::endl;
 
-    std::cout << "solution x:" << b << std::endl;
-    std::cout << "dgesv status: " << status << std::endl;
-
-    std::cout << ">>> Solve Ax=b (column major)" << std::endl;
-    Matrix mat2 = Matrix(n, n, true);
-    mat2(0,0) = 3; mat2(0,1) = 5; mat2(0,2) = 2;
-    mat2(1,0) = 2; mat2(1,1) = 1; mat2(1,2) = 3;
-    mat2(2,0) = 4; mat2(2,1) = 3; mat2(2,2) = 2;
-    Matrix b2(n, 2, true);
-    b2(0,0) = 57; b2(0,1) = 23;
-    b2(1,0) = 22; b2(1,1) = 12;
-    b2(2,0) = 41; b2(2,1) = 84;
-
-    std::cout << "A:" << mat2 << std::endl;
-    std::cout << "b:" << b2 << std::endl;
-
-    status = LAPACKE_dgesv(
-            LAPACK_COL_MAJOR // int matrix_layout
-            , n // lapack_int n
-            , b2.ncol() // lapack_int nrhs
-            , mat2.data() // double * a
-            , mat2.nrow() // lapack_int lda
-            , ipiv.data() // lapack_int * ipiv
-            , b2.data() // double * b
-            , b2.nrow() // lapack_int ldb
-            // for column major matrix, ldb remains the leading dimension.
-    );
-
-    std::cout << "solution x:" << b2 << std::endl;
-    std::cout << "dgesv status: " << status << std::endl;
-*/
     return 0;
 }
