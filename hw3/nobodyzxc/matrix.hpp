@@ -94,7 +94,6 @@ class Matrix {
       std::swap(m_nrow, other.m_nrow);
       std::swap(m_ncol, other.m_ncol);
       std::swap(m_buffer, other.m_buffer);
-      m_transpose = other.m_transpose;
       return *this;
     }
 
@@ -130,23 +129,13 @@ class Matrix {
 
     double * data() const { return m_buffer; }
 
-    bool is_transposed() const { return m_transpose; }
-
-    Matrix & transpose()
-    {
-      m_transpose = !m_transpose;
-      std::swap(m_nrow, m_ncol);
-      return *this;
-    }
-
     std::string show() const;
 
   private:
 
     size_t index(size_t row, size_t col) const
     {
-      if (m_transpose) { return row          + col * m_nrow; }
-      else             { return row * m_ncol + col         ; }
+      return row * m_ncol + col;
     }
 
     void reset_buffer(size_t nrow, size_t ncol)
@@ -161,7 +150,6 @@ class Matrix {
 
     size_t m_nrow = 0;
     size_t m_ncol = 0;
-    bool m_transpose = false;
     double * m_buffer = nullptr;
 
 };
@@ -181,7 +169,7 @@ Matrix &operator*(Matrix const & mat1, Matrix const & mat2)
   {
     for (size_t k=0; k<ret->ncol(); ++k)
     {
-      double v = 0;
+      double v = 0.0;
       for (size_t j=0; j<mat1.ncol(); ++j)
       {
         v += mat1(i,j) * mat2(j,k);
@@ -225,16 +213,18 @@ Matrix &multiply_mkl(const Matrix &m, const Matrix &n)
 {
   double alpha = 1;
   double beta = 0;
+
   Matrix *o = new Matrix(m.nrow(), n.ncol());
   assert(m.ncol() == n.nrow());
   cblas_dgemm(CblasRowMajor,
       CblasNoTrans, CblasNoTrans,
       o->nrow(), o->ncol(), m.ncol(),
       alpha,
-      m.data(), m.nrow(),
+      m.data(), m.ncol(),
       n.data(), n.ncol(),
       beta,
       o->data(), o->ncol());
+
   return *o;
 }
 
@@ -278,4 +268,3 @@ std::string Matrix::show() const
   repr += "] (" + std::to_string(m_nrow) + ", " + std::to_string(m_ncol) + ")";
   return repr;
 }
-

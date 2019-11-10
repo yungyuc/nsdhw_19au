@@ -35,7 +35,7 @@ $(BINDOBJ): $(O_DIR)
 bench: $(BINDOBJ) $(BINDSRCS) $(HEADER) benchmark.py
 	python benchmark.py
 
-test: $(BINDOBJ)
+test: $(BINDOBJ) $(HEADER)
 	python -m pytest testing.py -v -s
 
 clean:
