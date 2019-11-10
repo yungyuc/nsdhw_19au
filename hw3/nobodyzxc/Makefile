@@ -18,9 +18,9 @@ $(O_DIR) :
 $(O_DIR)/%.o: %.cc
 	$(CXX) $(INCLUDE) $(CXXFLAGS) -c -o $@ $<  $(LDFLAGS)
 
-INCLUDE += $(shell python-config --includes)
-SUFFIX   = $(shell python-config --extension-suffix)
-LDFLAGS += $(shell python-config --ldflags)
+INCLUDE += $(shell python3-config --includes)
+SUFFIX   = $(shell python3-config --extension-suffix)
+LDFLAGS += $(shell python3-config --ldflags)
 BINDTAR      = _matrix
 BINDNAME     = binding
 BINDSRCS     = ${BINDNAME:%=%.cc}
