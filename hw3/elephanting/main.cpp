@@ -7,12 +7,17 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    double alpha, beta = 1.0, 0.0;
-    std::clock_t c_start = std::clock();
-    size_t Arow, Acol = 1000, 1200;
-    size_t Brow, Bcol = 1200, 1500;
-    size_t Crow, Ccol = 1000, 1500;
-    size_t Drow, Dcol = 1000, 1500;
+    double alpha = 1.0;
+    double beta = 0.0;
+    //std::clock_t c_start = std::clock();
+    size_t Arow = 1000;
+    size_t Acol = 1200;
+    size_t Brow = 1200;
+    size_t Bcol = 1500;
+    size_t Crow = 1000;
+    size_t Ccol = 1500;
+    size_t Drow = Crow;
+    size_t Dcol = Ccol;
     Matrix A(Arow, Acol), B(Brow, Bcol), C(Crow, Ccol), D(Drow, Dcol);
     C = A * B;
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
