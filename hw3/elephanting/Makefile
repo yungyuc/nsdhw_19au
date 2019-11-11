@@ -1,22 +1,39 @@
 # MKL linker
 # https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
 
-MKLROOT = ${HOME}/opt/conda
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+MKLROOT ?= /opt/intel/mkl
+MKLEXT ?= a
+CXXFLAGS :=
+endif
+
+ifeq ($(UNAME_S),Linux)
+MKLROOT ?= ${HOME}/opt/conda
+MKLEXT ?= so
+CXXFLAGS := -Wl,--no-as-needed
+endif
+
+${PRELOAD_MKL} = true
 
 MKLLINKLINE := \
-	-Wl,--start-group \
-	${MKLROOT}/lib/intel64/libmkl_intel_ilp64.a \
-	${MKLROOT}/lib/intel64/libmkl_sequential.a \
-	${MKLROOT}/lib/intel64/libmkl_core.a \
-	-Wl,--end-group \
+	${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
+	${MKLROOT}/lib/libmkl_sequential.${MKLEXT} \
+	${MKLROOT}/lib/libmkl_core.${MKLEXT} \
 	-lpthread -lm -ldl
 
 CXX = g++
 
-CXXFLAGS := -std=c++11 -O3 -g -shared -m64 -DMKL_ILP64 -fPIC
+CXXFLAGS := ${CXXFLAGS} \
+	-std=c++17 -O3 -g -m64 \
+	-I${MKLROOT}/include \
+	-fPIC -shared \
+	${MKLLINKLINE} \
+	${FLAGS}
 
 _matrix.*.so: Matrix.cpp Matrix.h
-	${CXX} ${CXXFLAGS} `python3 -m pybind11 --includes ` $< -o _matrix`python3-config --extension-suffix` ${MKLLINKLINE}
+	${CXX} ${CXXFLAGS} `python3 -m pybind11 --includes ` $< -o _matrix`python3-config --extension-suffix`
 
 clean:
 	@rm -f *.o *.so
