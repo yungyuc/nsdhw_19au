@@ -30,8 +30,8 @@ the grader will use the AMI.  If your code doesn't build or properly run, you
 Question
 ========
 
-Develop your own matrix-vector multiplication code, measure the runtime, and
-compare with that of BLAS ``DGEMV`` subroutine.  The matrix size should be
+Develop your own matrix-matrix multiplication code, measure the runtime, and
+compare with that of BLAS ``DGEMM`` subroutine.  The matrix size should be
 larger than or equal to :math:`1000\times1000`.
 
 Grading guideline
@@ -41,6 +41,7 @@ There are totally 5 points in this homework assignment.
 
 1. Develop a two-dimensional matrix class (you may reuse the code in the course
    note) in C++.  (2 points)
+
    1. Implement a free function performing naive matrix-matrix multiplication.
    2. Implement another free frunction that uses ``DGEMM`` for the
       multiplication.
@@ -64,7 +65,20 @@ On the latest NSD AMI, the grader will run the following commands:
   make bench
   diff performance.txt.orig performance.txt
 
+The grader may attempt to run the above commands with the environment variable
+``PRELOAD_MKL`` set, if ``validate.py`` doesn't pass without it.  Your work is
+considered pass in either case.
+
 ``make bench`` should reproduce the file ``performance.txt``.  The reproduced
 performance numbers may differ.  Grader will check if they are reasonable.
+
+``performance.txt`` may looks like:
+
+.. code-block:: log
+
+  Start multiply_naive (repeat=5), take min = 1.2351381540065631 seconds
+  Start multiply_mkl (repeat=5), take min = 0.056176671001594514 seconds
+  MKL speed-up over naive: 21.9867 x
+
 
 .. vim: set ft=rst ff=unix fenc=utf8 et sw=2 ts=2 sts=2:
