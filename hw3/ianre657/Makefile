@@ -22,6 +22,9 @@ $(TARGET): Matrix_pybind.cpp Matrix.o Matrix.hpp
 test: $(TARGET)
 	pytest test_Matrix.py
 
+bench:
+	./benchmark.py --times 3
+
 clean:
 	rm -f *.o $(TARGET)
 	rm -rf __pycache__ .pytest_cache
