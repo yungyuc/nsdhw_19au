@@ -15,8 +15,6 @@ MKLEXT ?= so
 CXXFLAGS := -Wl,--no-as-needed
 endif
 
-${PRELOAD_MKL} = true
-
 MKLLINKLINE := \
 	${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
 	${MKLROOT}/lib/libmkl_sequential.${MKLEXT} \
