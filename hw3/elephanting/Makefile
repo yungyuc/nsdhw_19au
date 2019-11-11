@@ -1,7 +1,7 @@
 # MKL linker
 # https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
 
-MKLROOT = /home/ryan/intel/mkl
+MKLROOT = ${HOME}/opt/conda
 
 MKLLINKLINE := \
 	-Wl,--start-group \
@@ -19,10 +19,11 @@ _matrix.*.so: Matrix.cpp Matrix.h
 	${CXX} ${CXXFLAGS} `python3 -m pybind11 --includes ` $< -o _matrix`python3-config --extension-suffix` ${MKLLINKLINE}
 
 clean:
-	@rm -f *.o *.so per*
+	@rm -f *.o *.so
 
 bench: _matrix.*.so bench.py
 	@python3 bench.py
 
 test: _matrix.*.so test_matrix.py
-	@python3 test_matrix.py
+	@python3 bench.py
+	@pytest -v test_matrix.py

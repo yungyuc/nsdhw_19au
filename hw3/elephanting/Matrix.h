@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 class Matrix
 {
@@ -11,6 +12,7 @@ public:
     double& operator()(size_t const, size_t const);
     double operator()(size_t const, size_t const) const;
     double* buffer() const;
+    std::string repr() const;
     size_t nrow() const;
     size_t ncol() const;
 private:
@@ -20,9 +22,11 @@ private:
     void resetbuf(size_t, size_t);
 };
 
-void mkl_MM(Matrix const &, Matrix const &, Matrix &);
+Matrix mkl_MM(Matrix const &, Matrix const &);
 
-bool ifequal(Matrix &, Matrix &);
+bool isequal(Matrix &, Matrix &);
+
+Matrix multiply_naive(Matrix const &, Matrix const &);
 
 Matrix operator*(Matrix const &, Matrix const &);
 
