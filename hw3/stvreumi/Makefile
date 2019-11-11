@@ -46,7 +46,7 @@ _matrix${PYBIND_POSTFIX}: matrix.cpp
 
 .PHONY: test
 test: ${MATRIX_TARGET}
-	python3 validate.py
+	python3 -m pytest -v -s
 
 .PHONY: bench
 bench: ${MATRIX_TARGET}

@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <vector>
 #include <stdexcept>
 
 #ifdef NOMKL
@@ -23,33 +22,6 @@ public:
       : m_nrow(nrow), m_ncol(ncol)
     {
         reset_buffer(nrow, ncol);
-    }
-
-    Matrix(size_t nrow, size_t ncol, std::vector<double> const & vec)
-      : m_nrow(nrow), m_ncol(ncol)
-    {
-        reset_buffer(nrow, ncol);
-        (*this) = vec;
-    }
-
-    Matrix & operator=(std::vector<double> const & vec)
-    {
-        if (size() != vec.size())
-        {
-            throw std::out_of_range("number of elements mismatch");
-        }
-
-        size_t k = 0;
-        for (size_t i=0; i<m_nrow; ++i)
-        {
-            for (size_t j=0; j<m_ncol; ++j)
-            {
-                (*this)(i,j) = vec[k];
-                ++k;
-            }
-        }
-
-        return *this;
     }
 
     bool operator==(Matrix const & mat) const
@@ -137,7 +109,6 @@ public:
 
     size_t size() const { return m_nrow * m_ncol; }
     double buffer(size_t i) const { return m_buffer[i]; }
-    std::vector<double> buffer_vector() const { return std::vector<double>(m_buffer, m_buffer+size()); }
     double * data() const { return m_buffer; }
 private:
 
@@ -235,6 +206,7 @@ PYBIND11_MODULE(_matrix, mod)
     // export class
     py::class_<Matrix>(mod, "Matrix")
         .def(py::init<size_t, size_t>())
+        .def(py::init<Matrix &&>())
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
         // ref: https://github.com/pybind/pybind11/blob/master/tests/test_sequences_and_iterators.cpp#L182
