@@ -1,0 +1,6 @@
+__pycache__/
+vscode/
+validate.py
+settings.json
+*.so
+bin/
