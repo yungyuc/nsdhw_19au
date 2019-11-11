@@ -63,10 +63,6 @@ class GradingTest(unittest.TestCase):
             for j in range(ret_naive.ncol):
                 self.assertNotEqual(mat1[i,j], ret_mkl[i,j])
                 self.assertEqual(ret_naive[i,j], ret_mkl[i,j])
-                # self-added
-                val = i*size+j+1
-                self.assertEqual(val, ret_naive[i,j])
-                self.assertEqual(val, ret_mkl[i,j])
         
         # self-added
         self.assertEqual(ret_naive, ret_mkl)
@@ -104,4 +100,19 @@ class GradingTest(unittest.TestCase):
         self.assertEqual(ret_matrix, ret_naive)
         self.assertEqual(ret_matrix, ret_mkl)
 
+    def test_mul_diffColRowNum(self):
+        size_a, size_b = 100, 200
+        mat1 = _matrix.Matrix(size_a, size_b)
+        mat2 = _matrix.Matrix(size_b, size_a)
+
+        for it in range(size_a):
+            for jt in range(size_b):
+                mat1[it, jt] = it * size_a + jt + 1
+                mat2[jt, it] = it * size_a + jt + 1
+        
+        ret_naive = _matrix.multiply_naive(mat1, mat2)
+        ret_mkl = _matrix.multiply_mkl(mat1, mat2)
+
+        self.assertEqual(ret_naive, ret_mkl)
+        self.assertNotEqual(mat1, mat2)
 # vim: set fenc=utf8 ff=unix et sw=4 ts=4 sts=4:

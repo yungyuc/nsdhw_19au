@@ -5,11 +5,7 @@
 #include <iomanip>
 #include <stdexcept>
 
-#ifdef NOMKL
-#include <cblas.h>
-#else // NOMKL
-#include <mkl_cblas.h>
-#endif // NOMKL
+#include <mkl.h>
 
 namespace py = pybind11;
 
@@ -27,6 +23,11 @@ public:
     bool operator==(Matrix const & mat) const
     {
         if (size() != mat.size())
+        {
+            return false;
+        }
+
+        if (nrow() != mat.nrow() || ncol() != mat.ncol())
         {
             return false;
         }
@@ -114,7 +115,7 @@ private:
 
     size_t index(size_t row, size_t col) const
     {
-        return row + col * m_nrow;
+        return row*m_ncol + col;
     }
 
     void reset_buffer(size_t nrow, size_t ncol)
@@ -186,12 +187,12 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
         mat1.ncol(), //K, number fo columns in A; number of rows in B
         1.0, // alpha
         mat1.data(), // matrix A 
-        mat1.nrow(), // lda, first dimention of A
+        mat1.ncol(), // lda, first dimention of A
         mat2.data(), // matrix B
-        mat2.nrow(), // lda, first dimention of B
-        1.0, // beta
+        mat2.ncol(), // lda, first dimention of B
+        0.0, // beta
         ret.data(), // matrix C
-        ret.nrow() // lad, the first dimention of C
+        ret.ncol() // lad, the first dimention of C
     );
 
     return ret;
@@ -206,7 +207,7 @@ PYBIND11_MODULE(_matrix, mod)
     // export class
     py::class_<Matrix>(mod, "Matrix")
         .def(py::init<size_t, size_t>())
-        .def(py::init<Matrix &&>())
+        .def(py::init<Matrix>())
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
         // ref: https://github.com/pybind/pybind11/blob/master/tests/test_sequences_and_iterators.cpp#L182
