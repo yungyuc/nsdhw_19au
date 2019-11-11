@@ -28,3 +28,22 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
 
     return ret;
 }
+
+Matrix &multiply_mkl(Matrix const & mat1, Matrix const & mat2)
+{
+    double alpha = 1.0;
+    double beta = 0.0;
+
+    Matrix *mat = new Matrix(mat1.nrow(), mat2.ncol());
+    cblas_dgemm(
+        CblasRowMajor,
+        CblasNoTrans,CblasNoTrans,
+        mat->nrow(), mat->ncol(), mat1.ncol(),
+        alpha,
+        mat1.raw_data(), mat1.ncol(),
+        mat2.raw_data(), mat2.ncol(),
+        beta,
+        mat->raw_data(), mat->ncol()
+    );
+    return *mat;
+}
