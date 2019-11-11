@@ -5,6 +5,7 @@
 #include <memory>
 #include <utility>
 #include "mkl.h"
+#include <cstring>
 
 class Matrix {
 
@@ -16,10 +17,17 @@ public:
         size_t nelement = nrow * ncol;
         m_buffer = new double[nelement](); 
     }
+    Matrix(const Matrix &m){
+        m_nrow = m.m_nrow;
+        m_ncol = m.m_ncol;
+        size_t nelement = m_nrow * m_ncol;
+        m_buffer = new double[nelement](); 
+        memcpy(m_buffer, m.m_buffer, nelement*sizeof(double));
+    }
 
-    // TODO: copy and move constructors and assignment operators.
-
-    ~Matrix() = default;
+    ~Matrix(){
+        delete []m_buffer;
+    }
 
     // No bound check.
     double   operator() (size_t row, size_t col) const { return m_buffer[row*m_ncol + col]; }
