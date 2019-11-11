@@ -16,6 +16,15 @@ MKLLINKLINE := \
 	${MKLROOT}/lib/libmkl_core.${MKLEXT} \
 	-lpthread -lm -ldl
 
+# set LD_PRELOAD workaround for mkl
+MKL_ROOT:=${HOME}/opt/conda
+MKL_LIB_DIR:=${MKL_ROOT}/lib
+MKL_LIBS:=${MKL_LIB_DIR}/libmkl_def.so
+MKL_LIBS:=${MKL_LIBS}:${MKL_LIB_DIR}/libmkl_avx2.so
+MKL_LIBS:=${MKL_LIBS}:${MKL_LIB_DIR}/libmkl_core.so
+MKL_LIBS:=${MKL_LIBS}:${MKL_LIB_DIR}/libmkl_intel_lp64.so
+MKL_LIBS:=${MKL_LIBS}:${MKL_LIB_DIR}/libmkl_sequential.so
+
 PYBIND_INCLUDE := $(shell python3 -m pybind11 --includes)
 PYBIND_POSTFIX := $(shell python3-config --extension-suffix)
 
@@ -27,22 +36,22 @@ CXXFLAGS := ${CXXFLAGS} \
 	${MKLLINKLINE} \
 	${FLAGS} \
 
-BINS := _matrix${PYBIND_POSTFIX}
+MATRIX_TARGET := _matrix${PYBIND_POSTFIX}
 
 .PHONY: default
-default: ${BINS}
+default: ${MATRIX_TARGET}
 
 _matrix${PYBIND_POSTFIX}: matrix.cpp
 	${CXX} $< ${CXXFLAGS} -o $@
 
 .PHONY: test
-test: ${BINS}
+test: ${MATRIX_TARGET}
 	python3 validate.py
 
 .PHONY: bench
-bench:
-	python3 bench.py
+bench: ${MATRIX_TARGET}
+	export LD_PRELOAD=${MKL_LIBS}; python3 bench.py
 
 .PHONY: clean
 clean:
-	rm -rf ${BINS} *.o *.dSYM/
+	rm -rf ${MATRIX_TARGET} *.o *.dSYM/
