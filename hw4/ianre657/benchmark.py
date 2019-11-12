@@ -89,11 +89,10 @@ if __name__ == "__main__":
         naive_runtime[idx] = sum(naive_list) / len(naive_list)
         mkl_runtime[idx] = sum(MKL_list) / len(MKL_list)
         mkl_speedup[idx] = naive_runtime[idx]/mkl_runtime[idx]
-        
+
         log(f'    naive:{naive_runtime[idx]:10f}sec,  mkl:{mkl_runtime[idx]:10f}sec, mkl-speedup:{mkl_speedup[idx]:5.2f} x'
             , f)
-    
-    
+
     naive_time_total = sum(naive_runtime)
     mkl_time_total = sum(mkl_runtime)
 
@@ -101,7 +100,7 @@ if __name__ == "__main__":
     for i in mkl_speedup:
         raw_speedup = raw_speedup * i
     avg_speedup = pow(raw_speedup, 1.0/len(mkl_speedup))
-    
-    log(f'MLK speed-up over naive (normalized): {avg_speedup} x', f)
+
+    log(f'MKL speed-up over naive (normalized): {avg_speedup} x', f)
     f.close()
     print("Finish benchmark...")
