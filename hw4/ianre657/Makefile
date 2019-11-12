@@ -22,7 +22,7 @@ $(TARGET): Matrix_pybind.cpp Matrix.o Matrix.hpp
 test: $(TARGET)
 	pytest test_Matrix.py
 
-bench:
+bench: $(TARGET)
 	./benchmark.py --times 3
 
 clean:
