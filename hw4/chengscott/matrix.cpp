@@ -24,14 +24,15 @@ public:
     return data_[i * ncol_ + j];
   }
 
-  size_t nrow() const { return nrow_; }
-  size_t ncol() const { return ncol_; }
+  constexpr size_t nrow() const { return nrow_; }
+  constexpr size_t ncol() const { return ncol_; }
 
-  bool operator==(const Matrix &rhs) const {
+  constexpr bool operator==(const Matrix &rhs) const {
     return nrow_ == rhs.nrow_ && ncol_ == rhs.ncol_ && data_ == rhs.data_;
   }
-  bool operator!=(const Matrix &rhs) const { return !(*this == rhs); }
+  constexpr bool operator!=(const Matrix &rhs) const { return !(*this == rhs); }
 
+  friend Matrix multiply_tile(const Matrix &, const Matrix &, size_t);
   friend Matrix multiply_naive(const Matrix &, const Matrix &);
   friend Matrix multiply_mkl(const Matrix &, const Matrix &);
 
@@ -39,6 +40,41 @@ private:
   size_t nrow_, ncol_;
   std::vector<double> data_;
 };
+
+constexpr size_t mymin(int a, int b) {
+  // return std::min(a, b);
+  // return a < b ? a : b;
+  return b + ((a - b) & (a - b) >> 31);
+}
+
+Matrix multiply_tile(const Matrix &lhs, const Matrix &rhs, size_t tile) {
+  const size_t m = lhs.nrow_, n = lhs.ncol_, l = rhs.ncol_;
+  Matrix ret(m, l);
+  std::fill(std::begin(ret.data_), std::end(ret.data_), 0);
+  const double *ldata = lhs.data_.data(), *rdata = rhs.data_.data();
+  double *data = ret.data_.data();
+  for (size_t it = 0; it < m; it += tile) {
+    for (size_t jt = 0; jt < l; jt += tile) {
+      for (size_t kt = 0; kt < n; kt += tile) {
+        const size_t ti = mymin(it + tile, m), tj = mymin(jt + tile, l),
+                     tk = mymin(kt + tile, n);
+        for (size_t i = it; i < ti; ++i) {
+          const size_t im = i * m;
+          for (size_t j = jt; j < tj; ++j) {
+            double sum = 0;
+            for (size_t k = kt; k < tk; ++k) {
+              // sum += lhs(i, k) * rhs(k, j);
+              sum += ldata[im + k] * rdata[k * n + j];
+            }
+            // ret(i, j) += sum;
+            data[im + j] += sum;
+          }
+        }
+      }
+    }
+  }
+  return ret;
+}
 
 Matrix multiply_naive(const Matrix &lhs, const Matrix &rhs) {
   const size_t m = lhs.nrow_, n = lhs.ncol_, l = rhs.ncol_;
@@ -63,6 +99,7 @@ Matrix multiply_mkl(const Matrix &lhs, const Matrix &rhs) {
 
 PYBIND11_MODULE(_matrix, m) {
   m.doc() = "class Matrix";
+  m.def("multiply_tile", &multiply_tile);
   m.def("multiply_naive", &multiply_naive);
   m.def("multiply_mkl", &multiply_mkl);
   py::class_<Matrix>(m, "Matrix")
