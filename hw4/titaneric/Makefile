@@ -42,6 +42,9 @@ build: matrix.cpp
 	${CXX} ${CXXFLAGS} ${INCLUDES} -o ${TARGET} $< ${MKLLINKLINE}
 	export PRELOAD_MKL=True
 
+test: build
+	bash setup.sh
+
 debug: CXXFLAGS += -g
 debug: matrix.cpp
 	${CXX} ${CXXFLAGS} ${INCLUDES} -o $@ $< ${MKLLINKLINE}
