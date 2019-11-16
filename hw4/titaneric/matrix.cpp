@@ -9,6 +9,7 @@
 #include <vector>
 #include <stdexcept>
 #include <numeric>
+#include <algorithm>
 
 using namespace std;
 
@@ -42,6 +43,9 @@ public:
             }
         }
     };
+    Matrix(vector<vector<double>> d) : m_nrow(d.size()), m_ncol((d.size()) ? d[0].size() : 0), data(d)
+    {
+    }
     Matrix(const Matrix &) = default;
     Matrix(Matrix &&) = default;
     ~Matrix() = default;
@@ -60,6 +64,24 @@ public:
     bool operator!=(const Matrix &other) const
     {
         return !(*this == other);
+    }
+    bool is_same_size(const Matrix &other) const
+    {
+        return (nrow() == other.nrow()) && (ncol() == other.ncol());
+    }
+    Matrix &operator+=(const Matrix &other)
+    {
+        if (!is_same_size(other))
+            throw out_of_range("Matrices can not be added!!!");
+
+        for (size_t i = 0; i < nrow(); i++)
+        {
+            for (size_t j = 0; j < ncol(); j++)
+            {
+                data[i][j] += other(i, j);
+            }
+        }
+        return *this;
     }
     vector<double> getRow(int row) const
     {
@@ -170,15 +192,30 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B)
 
     Matrix result = Matrix(A.nrow(), B.ncol());
 
+    // for (size_t i = 0; i < result.nrow(); i++)
+    // {
+    //     for (size_t j = 0; j < result.ncol(); j++)
+    //     {
+    //         auto row = A.getRow(i);
+    //         auto col = B.getCol(j);
+    //         result(i, j) = inner_product(row.begin(), row.end(), col.begin(), 0.0);
+    //     }
+    // }
+
+    double value = 0;
     for (size_t i = 0; i < result.nrow(); i++)
     {
         for (size_t j = 0; j < result.ncol(); j++)
         {
-            auto row = A.getRow(i);
-            auto col = B.getCol(j);
-            result(i, j) = inner_product(row.begin(), row.end(), col.begin(), 0.0);
+            value = 0;
+            for (size_t k = 0; k < A.ncol(); k++)
+            {
+                value += A(i, k) * B(k, j);
+            }
+            result(i, j) = value;
         }
     }
+
     return result;
 }
 
@@ -188,19 +225,26 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     {
         throw out_of_range("Matrices can not be multiplied!!!");
     }
-
+    auto sizes = {A.nrow(), A.ncol(), B.ncol()};
+    if (*min_element(sizes.begin(), sizes.end()) < tile_size)
+    {
+        throw out_of_range("Tile size is too big!!!");
+    }
     Matrix result = Matrix(A.nrow(), B.ncol());
-    // const size_t num_tile_Arow = A.nrow() / tile_size;
-    // const size_t num_tile_Acol = A.ncol() / tile_size;
-    // const size_t num_tile_Bcol = B.ncol() / tile_size;
 
     for (size_t i = 0; i < result.nrow(); i += tile_size)
     {
         for (size_t j = 0; j < result.ncol(); j += tile_size)
         {
-            Matrix blockA = Matrix(tile_size, tile_size, A.loadBlock(i, j, tile_size));
-            Matrix blockB = Matrix(tile_size, tile_size, A.loadBlock(i, j, tile_size));
-            Matrix block_result = multiply_naive(blockA, blockB);
+            Matrix block_result = Matrix(tile_size, tile_size);
+            for (size_t k = 0; k < A.ncol(); k += tile_size)
+            {
+                Matrix blockA = Matrix(tile_size, tile_size, A.loadBlock(i, k, tile_size));
+                Matrix blockB = Matrix(tile_size, tile_size, B.loadBlock(k, j, tile_size));
+                // cout << blockA << "," << blockB << endl;
+                Matrix partial_result = multiply_naive(blockA, blockB);
+                block_result += partial_result;
+            }
             result.saveBlock(i, j, block_result);
         }
     }
@@ -253,14 +297,27 @@ PYBIND11_MODULE(_matrix, m)
 #else
 int main()
 {
-    size_t nrow = 2;
-    size_t ncol = 2;
-    Matrix A(nrow, ncol, vector<double>({1, 0, 0, 1}));
-    Matrix B(nrow, ncol, vector<double>({1, 2, 3, 4}));
+    Matrix A({{1, 0},
+              {0, 1}});
+    Matrix B({{1, 2},
+              {3, 4}});
+
     cout << A << endl;
     cout << B << endl;
-    cout << multiply_naive(A, B) << endl;
-    cout << multiply_mkl(A, B) << endl;
+    cout << multiply_tile(A, B, 1) << endl;
+    // cout << multiply_mkl(A, B) << endl;
+
+    A = Matrix({{1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 1}});
+    B = Matrix({{1, 2, 3, 4},
+                {5, 6, 7, 8},
+                {9, 10, 11, 12},
+                {13, 14, 15, 16}});
+    cout << A << endl;
+    cout << B << endl;
+    cout << multiply_tile(A, B, 2) << endl;
     return 0;
 }
 #endif
