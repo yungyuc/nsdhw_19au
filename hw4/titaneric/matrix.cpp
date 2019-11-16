@@ -118,16 +118,42 @@ public:
         }
         return flat;
     }
+    Matrix transpose() const
+    {
+        vector<vector<double>> block(ncol(), vector<double>(nrow(), 0));
 
-    vector<vector<double>> loadBlock(size_t u, size_t v, size_t tile) const
+        for (size_t i = 0; i < nrow(); i++)
+        {
+            for (size_t j = 0; j < ncol(); j++)
+            {
+                block[i][j] = data[j][i];
+            }
+        }
+
+        return Matrix(block);
+    }
+    vector<vector<double>> loadBlock(size_t u, size_t v, size_t tile, bool column_major = false) const
     {
         vector<vector<double>> block(tile, vector<double>(tile, 0));
 
-        for (size_t i = 0; i < tile; i++)
+        if (column_major)
         {
-            for (size_t j = 0; j < tile; j++)
+            for (size_t i = 0; i < tile; i++)
             {
-                block[i][j] = data[u + i][v + j];
+                for (size_t j = 0; j < tile; j++)
+                {
+                    block[i][j] = data[u + j][v + i];
+                }
+            }
+        }
+        else
+        {
+            for (size_t i = 0; i < tile; i++)
+            {
+                for (size_t j = 0; j < tile; j++)
+                {
+                    block[i][j] = data[u + i][v + j];
+                }
             }
         }
         return block;
@@ -197,7 +223,7 @@ private:
     vector<vector<double>> data;
 };
 
-Matrix multiply_naive(Matrix const &A, Matrix const &B)
+Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = false)
 {
     if (A.ncol() != B.nrow())
     {
@@ -217,72 +243,36 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B)
     // }
 
     double value = 0;
-    for (size_t i = 0; i < result.nrow(); i++)
+    if (!column_major)
     {
-        for (size_t j = 0; j < result.ncol(); j++)
+        for (size_t i = 0; i < result.nrow(); i++)
         {
-            value = 0;
-            for (size_t k = 0; k < A.ncol(); k++)
+            for (size_t j = 0; j < result.ncol(); j++)
             {
-                value += A(i, k) * B(k, j);
+                value = 0;
+                for (size_t k = 0; k < A.ncol(); k++)
+                {
+                    value += A(i, k) * B(k, j);
+                }
+                result(i, j) = value;
             }
-            result(i, j) = value;
         }
     }
-
-    return result;
-}
-
-Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
-{
-    if (A.ncol() != B.nrow())
+    else
     {
-        throw out_of_range("Matrices can not be multiplied!!!");
-    }
-    auto matrices_sizes = {A.nrow(), A.ncol(), B.ncol()};
-    size_t min_size = *min_element(matrices_sizes.begin(), matrices_sizes.end());
-    if (min_size < tile_size)
-    {
-        throw out_of_range("Tile size is too big!!!");
-    }
-
-    div_t tile_rowA_result = div((int)A.nrow(), (int)tile_size);
-    const size_t num_tile_rowA = (tile_rowA_result.rem) ? tile_rowA_result.quot + 1 : tile_rowA_result.quot;
-
-    div_t tile_colA_result = div((int)A.ncol(), (int)tile_size);
-    const size_t num_tile_colA = (tile_colA_result.rem) ? tile_colA_result.quot + 1 : tile_colA_result.quot;
-
-    div_t tile_colB_result = div((int)B.ncol(), (int)tile_size);
-    const size_t num_tile_colB = (tile_colB_result.rem) ? tile_colB_result.quot + 1 : tile_colB_result.quot;
-
-    Matrix augA = Matrix(num_tile_rowA * tile_size, num_tile_colA * tile_size);
-    augA.saveBlock(0, 0, A);
-
-    // cout << augA << endl;
-    Matrix augB = Matrix(num_tile_colA * tile_size, num_tile_colB * tile_size);
-    augB.saveBlock(0, 0, B);
-    // cout << augB << endl;
-
-    Matrix aug_result = Matrix(augA.nrow(), augB.ncol());
-
-    for (size_t i = 0, it = 0; i < aug_result.nrow() && it < num_tile_rowA; i += tile_size, it++)
-    {
-        for (size_t j = 0, jt = 0; j < aug_result.ncol() && jt < num_tile_colB; j += tile_size, jt++)
+        for (size_t i = 0; i < result.nrow(); i++)
         {
-            Matrix block_result = Matrix(tile_size, tile_size);
-            for (size_t k = 0, kt = 0; k < augA.ncol() && kt < num_tile_colA; k += tile_size, kt++)
+            for (size_t j = 0; j < result.ncol(); j++)
             {
-                Matrix blockA = Matrix(augA.loadBlock(i, k, tile_size));
-                Matrix blockB = Matrix(augB.loadBlock(k, j, tile_size));
-                // cout << blockA << "," << blockB << endl;
-                Matrix partial_result = multiply_naive(blockA, blockB);
-                block_result += partial_result;
+                value = 0;
+                for (size_t k = 0; k < A.ncol(); k++)
+                {
+                    value += A(i, k) * B(j, k);
+                }
+                result(i, j) = value;
             }
-            aug_result.saveBlock(i, j, block_result);
         }
     }
-    // cout << aug_result << endl;
-    Matrix result = Matrix(aug_result.loadBlock(0, 0, A.nrow(), B.ncol()));
 
     return result;
 }
@@ -312,12 +302,84 @@ Matrix multiply_mkl(Matrix A, Matrix B)
     return result;
 }
 
+Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
+{
+    if (A.ncol() != B.nrow())
+    {
+        throw out_of_range("Matrices can not be multiplied!!!");
+    }
+    auto matrices_sizes = {A.nrow(), A.ncol(), B.ncol()};
+    size_t min_size = *min_element(matrices_sizes.begin(), matrices_sizes.end());
+    if (min_size < tile_size)
+    {
+        throw out_of_range("Tile size is too big!!!");
+    }
+
+    div_t tile_rowA_result = div((int)A.nrow(), (int)tile_size);
+    const size_t num_tile_rowA = (tile_rowA_result.rem) ? tile_rowA_result.quot + 1 : tile_rowA_result.quot;
+
+    div_t tile_colA_result = div((int)A.ncol(), (int)tile_size);
+    const size_t num_tile_colA = (tile_colA_result.rem) ? tile_colA_result.quot + 1 : tile_colA_result.quot;
+
+    div_t tile_colB_result = div((int)B.ncol(), (int)tile_size);
+    const size_t num_tile_colB = (tile_colB_result.rem) ? tile_colB_result.quot + 1 : tile_colB_result.quot;
+
+    Matrix augA = A;
+    if (tile_rowA_result.rem || tile_colA_result.rem)
+    {
+        augA = Matrix(num_tile_rowA * tile_size, num_tile_colA * tile_size);
+        augA.saveBlock(0, 0, A);
+    }
+
+    // cout << augA << endl;
+    Matrix augB = B;
+    if (tile_colA_result.rem || tile_colB_result.rem)
+    {
+        augB = Matrix(num_tile_colA * tile_size, num_tile_colB * tile_size);
+        augB.saveBlock(0, 0, B);
+    }
+    // cout << augB << endl;
+
+    Matrix aug_result = Matrix(augA.nrow(), augB.ncol());
+
+    for (size_t i = 0, it = 0; i < aug_result.nrow() && it < num_tile_rowA; i += tile_size, it++)
+    {
+        for (size_t j = 0, jt = 0; j < aug_result.ncol() && jt < num_tile_colB; j += tile_size, jt++)
+        {
+            Matrix block_result = Matrix(tile_size, tile_size);
+            for (size_t k = 0, kt = 0; k < augA.ncol() && kt < num_tile_colA; k += tile_size, kt++)
+            {
+                Matrix blockA = Matrix(augA.loadBlock(i, k, tile_size));
+                Matrix blockB = Matrix(augB.loadBlock(k, j, tile_size, true));
+                // cout << blockA << "," << blockB.transpose() << endl;
+                Matrix partial_result = multiply_naive(blockA, blockB, true);
+                // cout << partial_result << endl;
+                block_result += partial_result;
+            }
+            // cout << block_result << endl;
+            aug_result.saveBlock(i, j, block_result);
+        }
+    }
+
+    // cout << aug_result << endl;
+    // cout << aug_result << endl;
+    if ((A.nrow() == aug_result.nrow()) && (B.ncol() == aug_result.ncol()))
+    {
+        return aug_result;
+    }
+
+    Matrix result = Matrix(aug_result.loadBlock(0, 0, A.nrow(), B.ncol()));
+
+    return result;
+}
+
 #ifdef PYTHON_LIB
 PYBIND11_MODULE(_matrix, m)
 {
     m.doc() = "pybind11 matrix plugin"; // optional module docstring
     m.def("multiply_mkl", &multiply_mkl, "A function which calculates product of two matrices using MKL");
-    m.def("multiply_naive", &multiply_naive, "A function which calculates product of two matrices using naive method");
+    m.def("multiply_naive", &multiply_naive, "A function which calculates product of two matrices using naive method",
+            py::arg("A"), py::arg("B"), py::arg("column_major") = false);
     m.def("multiply_tile", &multiply_tile, "A function which calculates product of two matrices using tile method");
     py::class_<Matrix>(m, "Matrix")
         .def(py::init<size_t, size_t>())
