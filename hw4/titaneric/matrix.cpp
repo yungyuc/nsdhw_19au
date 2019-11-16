@@ -5,7 +5,9 @@
 #include <mkl.h>
 
 #include <iostream>
-// #include <utility>
+#include <utility>
+#include <cmath>
+#include <map>
 #include <vector>
 #include <stdexcept>
 #include <numeric>
@@ -20,6 +22,7 @@ namespace py = pybind11;
 class Matrix
 {
 public:
+    Matrix() = default;
     Matrix(size_t r, size_t c) : m_nrow(r), m_ncol(c), data(r, vector<double>(c, 0)){};
     Matrix(size_t r, size_t c, vector<double> const &vec) : m_nrow(r), m_ncol(c), data(r, vector<double>(c, 0))
     {
@@ -302,6 +305,11 @@ Matrix multiply_mkl(Matrix A, Matrix B)
     return result;
 }
 
+size_t power_of_2_lower_than_num(size_t num)
+{
+    double pos = floor(log2((double)num));
+    return (size_t)pow(2, pos);
+}
 Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
 {
     if (A.ncol() != B.nrow())
@@ -314,6 +322,10 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     {
         throw out_of_range("Tile size is too big!!!");
     }
+
+    // find suitable tile size which is the power of 2
+    size_t new_tile_size = power_of_2_lower_than_num(tile_size);
+    tile_size = new_tile_size;
 
     div_t tile_rowA_result = div((int)A.nrow(), (int)tile_size);
     const size_t num_tile_rowA = (tile_rowA_result.rem) ? tile_rowA_result.quot + 1 : tile_rowA_result.quot;
@@ -341,6 +353,9 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     // cout << augB << endl;
 
     Matrix aug_result = Matrix(augA.nrow(), augB.ncol());
+    map<pair<size_t, size_t>, Matrix> matrix_mapA;
+    map<pair<size_t, size_t>, Matrix> matrix_mapB;
+
 
     for (size_t i = 0, it = 0; i < aug_result.nrow() && it < num_tile_rowA; i += tile_size, it++)
     {
@@ -349,8 +364,28 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
             Matrix block_result = Matrix(tile_size, tile_size);
             for (size_t k = 0, kt = 0; k < augA.ncol() && kt < num_tile_colA; k += tile_size, kt++)
             {
-                Matrix blockA = Matrix(augA.loadBlock(i, k, tile_size));
-                Matrix blockB = Matrix(augB.loadBlock(k, j, tile_size, true));
+                Matrix blockA;
+                auto find_blockA = matrix_mapA.find(make_pair(i, k));
+                if (find_blockA == matrix_mapA.end())
+                {
+                    blockA = Matrix(augA.loadBlock(i, k, tile_size));
+                    matrix_mapA[make_pair(i, k)] = blockA;
+                }
+                else
+                {
+                    blockA = find_blockA->second;
+                }
+                Matrix blockB;
+                auto find_blockB = matrix_mapB.find(make_pair(k, j));
+                if (find_blockB == matrix_mapB.end())
+                {
+                    blockB = Matrix(augB.loadBlock(k, j, tile_size, true));
+                    matrix_mapB[make_pair(k, j)] = blockB;
+                }
+                else
+                {
+                    blockB = find_blockB->second;
+                }
                 // cout << blockA << "," << blockB.transpose() << endl;
                 Matrix partial_result = multiply_naive(blockA, blockB, true);
                 // cout << partial_result << endl;
@@ -379,7 +414,7 @@ PYBIND11_MODULE(_matrix, m)
     m.doc() = "pybind11 matrix plugin"; // optional module docstring
     m.def("multiply_mkl", &multiply_mkl, "A function which calculates product of two matrices using MKL");
     m.def("multiply_naive", &multiply_naive, "A function which calculates product of two matrices using naive method",
-            py::arg("A"), py::arg("B"), py::arg("column_major") = false);
+          py::arg("A"), py::arg("B"), py::arg("column_major") = false);
     m.def("multiply_tile", &multiply_tile, "A function which calculates product of two matrices using tile method");
     py::class_<Matrix>(m, "Matrix")
         .def(py::init<size_t, size_t>())
