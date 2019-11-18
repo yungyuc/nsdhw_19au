@@ -215,27 +215,31 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
 
     return ret;
 }
+size_t min(size_t a,size_t b){return ((a>b)?b:a);}
 
 Matrix multiply_tile(Matrix const & mat1, Matrix const & mat2, size_t tsize){
     validate_multiplication(mat1, mat2);
     Matrix ret(mat1.nrow(), mat2.ncol());
-    size_t a = mat1.nrow(),b = mat2.ncol(), c = mat1.ncol();
-    size_t s = tsize*2;
-
-    for(size_t i=0;i<a;i+=s)
-    	for(size_t j=0;j<b;j+=s)
-	    for(size_t k=0;k<c;k+=s){
-	    	size_t mini = min(i+s,a), minj = min(j+s,b), mink = min(k+s,c);
-	        for(size_t ii=i;ii<mini;++ii)
-		       for(size_t jj=j;jj<minj;++jj){
-		           double sum=0;
-		           for(size_t kk=k;kk<mink;++kk){
-			       sum+=mat1(ii,kk)*mat2(kk,jj);
-			   }
-			   ret(ii,jj) +=sum;
-		       }
-	    }
-    
+    size_t N = mat1.nrow(),K = mat2.ncol(), M = mat1.ncol();
+    size_t block_size = tsize;
+    block_size = 64 / sizeof(double); 
+    for (size_t i0 = 0; i0 < N; i0 += block_size) {
+        size_t imax = i0 + block_size > N ? N : i0 + block_size;
+        for (size_t j0 = 0; j0 < M; j0 += block_size) {
+            size_t jmax = j0 + block_size > M ? M : j0 + block_size;
+            for (size_t k0 = 0; k0 < K; k0 += block_size) {
+                size_t kmax = k0 + block_size > K ? K : k0 + block_size;
+                for (size_t j1 = j0; j1 < jmax; ++j1) {
+                    for (size_t i1 = i0; i1 < imax; ++i1) {
+                        for (size_t k1 = k0; k1 < kmax; ++k1) {
+                            //C[kij] += A[mi + k1] * B[sj + k1];
+                            ret(i1,j1)+=mat1(i1,k1)*mat2(k1,j1);
+			}
+                    }
+                }
+            }
+        }
+    }
     return ret;
 }
 
