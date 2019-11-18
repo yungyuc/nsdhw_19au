@@ -40,9 +40,9 @@ Matrix multiply_tile(Matrix &lhs, Matrix &rhs, size_t tsize) {
   size_t s_i = (lhs.nrow() + tsize - 1) / tsize;
   size_t s_j = (rhs.ncol() + tsize - 1) / tsize;
   size_t s_k = (rhs.ncol() + tsize - 1) / tsize;
-  for (size_t t_i = 0; t_i < s_i; ++t_i) {
-    for (size_t t_j = 0; t_j < s_j; ++t_j) {
-      for (size_t t_k = 0; t_k < s_k; ++t_k) {
+  for (size_t t_k = 0; t_k < s_k; ++t_k) {
+    for (size_t t_i = 0; t_i < s_i; ++t_i) {
+      for (size_t t_j = 0; t_j < s_j; ++t_j) {
         size_t r_i = std::min((t_i + 1) * tsize, lhs.nrow());
         size_t r_j = std::min((t_j + 1) * tsize, rhs.ncol());
         size_t r_k = std::min((t_k + 1) * tsize, lhs.ncol());

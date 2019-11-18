@@ -1,7 +1,7 @@
  
 SRC_DIR = src
 CXXFILES = $(wildcard $(SRC_DIR)/*.cc)
-CXXFLAGS = -O2 -Wall -Wextra -Werror 
+CXXFLAGS = -O3 -Wall -Wextra -Werror 
 ifeq ($(shell uname -r), 5.3.6-arch1-1-ARCH)
 MKL_INC = /opt/intel/compilers_and_libraries_2019.5.281/linux/mkl/include
 MKL_LIB_DIR = /opt/intel/compilers_and_libraries_2019.5.281/linux/mkl/lib/intel64
