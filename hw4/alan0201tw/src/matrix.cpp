@@ -187,6 +187,9 @@ template<size_t N> void Tiler<N>::multiply()
     }
 }
 
+// Reference :
+// https://stackoverflow.com/questions/15829223/loop-tiling-blocking-for-large-dense-matrix-multiplication
+//
 Matrix multiply_tile(Matrix const & mat1, Matrix const & mat2, const unsigned int tsize)
 {
     if (mat1.ncol() != mat2.nrow())
@@ -200,29 +203,31 @@ Matrix multiply_tile(Matrix const & mat1, Matrix const & mat2, const unsigned in
 
     Matrix ret(mat1.nrow(), mat2.ncol());
 
-    const int block_size = static_cast<int>(tsize);
-    const int N = mat1.nrow();
-    const int M = mat1.ncol();
-    const int K = mat2.ncol();
+    const size_t block_size = static_cast<int>(tsize);
+    const size_t N = mat1.nrow();
+    const size_t M = mat1.ncol();
+    const size_t K = mat2.ncol();
 
-    for(int i=0; i<N; i++) {
-        for(int j=0; j<K; j++) {
+    for(size_t i=0; i<N; i++) {
+        for(size_t j=0; j<K; j++) {
             ret(i, j) = 0;
         }
     }
 
-    for (int i0 = 0; i0 < N; i0 += block_size) {
-        int imax = i0 + block_size > N ? N : i0 + block_size;
+    // iterate by i,k,j instead of i,j,k gives another performance boost
 
-        for (int j0 = 0; j0 < M; j0 += block_size) {
-            int jmax = j0 + block_size > M ? M : j0 + block_size;
+    for (size_t i0 = 0; i0 < N; i0 += block_size) {
+        size_t imax = i0 + block_size > N ? N : i0 + block_size;
 
-            for (int k0 = 0; k0 < K; k0 += block_size) {
-                int kmax = k0 + block_size > K ? K : k0 + block_size;
+        for (size_t k0 = 0; k0 < K; k0 += block_size) {
+                size_t kmax = k0 + block_size > K ? K : k0 + block_size;
 
-                for (int i1 = i0; i1 < imax; ++i1) {
-                    for (int j1 = j0; j1 < jmax; ++j1) {
-                        for (int k1 = k0; k1 < kmax; ++k1) {
+            for (size_t j0 = 0; j0 < M; j0 += block_size) {
+                size_t jmax = j0 + block_size > M ? M : j0 + block_size;
+
+                for (size_t i1 = i0; i1 < imax; ++i1) {
+                    for (size_t k1 = k0; k1 < kmax; ++k1) {
+                        for (size_t j1 = j0; j1 < jmax; ++j1) {
                             // C[kij] += A[mi + k1] * B[sj + k1];
                             ret(i1, j1) += mat1(i1, k1) * mat2(k1, j1);
                         }
