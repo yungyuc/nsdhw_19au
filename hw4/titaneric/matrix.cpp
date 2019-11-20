@@ -155,7 +155,7 @@ public:
         }
     }
 
-    #ifndef PYTHON_LIB
+#ifndef PYTHON_LIB
     friend ostream &operator<<(ostream &ostr, Matrix const &mat)
     {
         for (size_t i = 0; i < mat.nrow(); ++i)
@@ -170,7 +170,7 @@ public:
 
         return ostr;
     }
-    #endif
+#endif
 
 public:
     size_t nrow() const { return m_nrow; };
@@ -263,9 +263,8 @@ void make_padding(Matrix const &matrix, size_t tile_size,
     size_t col_tile_index = num_tile_col - 1;
     size_t col_edge = col_tile_index * tile_size;
 
-    for (size_t i = 0; i < num_tile_row - 1; i++)
+    for (size_t i = 0, sub_row_edge = 0; i < num_tile_row - 1; i++, sub_row_edge += tile_size)
     {
-        size_t sub_row_edge = i * tile_size;
         sub_matrix = Matrix(matrix.loadBlock(sub_row_edge, col_edge, tile_size, rem_col, tile_size, column_major));
         padding_map[make_pair(i, col_tile_index)] = sub_matrix;
         // cout << i << "," << col_tile_index << ":" << sub_matrix << endl;
@@ -275,9 +274,8 @@ void make_padding(Matrix const &matrix, size_t tile_size,
     size_t row_tile_index = num_tile_row - 1;
     size_t row_edge = row_tile_index * tile_size;
 
-    for (size_t j = 0; j < num_tile_col - 1; j++)
+    for (size_t j = 0, sub_col_edge = 0; j < num_tile_col - 1; j++, sub_col_edge += tile_size)
     {
-        size_t sub_col_edge = j * tile_size;
         sub_matrix = Matrix(matrix.loadBlock(row_edge, sub_col_edge, rem_row, tile_size, tile_size, column_major));
         padding_map[make_pair(row_tile_index, j)] = sub_matrix;
         // cout << row_tile_index << "," << j << ":" << sub_matrix << endl;
