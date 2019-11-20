@@ -189,7 +189,7 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = fals
         throw out_of_range("Matrices can not be multiplied!!!");
     }
 
-    Matrix result = Matrix(A.nrow(), B.ncol());
+    Matrix result(A.nrow(), B.ncol());
 
     double value = 0;
     if (!column_major)
@@ -259,21 +259,21 @@ void make_padding(Matrix const &matrix, size_t tile_size,
 
     Matrix sub_matrix;
 
-    // column padding
-    size_t col_tile_index = num_tile_col - 1;
-    size_t col_edge = col_tile_index * tile_size;
+    size_t col_tile_limit = num_tile_col - 1;
+    size_t col_edge = col_tile_limit * tile_size;
 
-    for (size_t i = 0, sub_row_edge = 0; i < num_tile_row - 1; i++, sub_row_edge += tile_size)
+    size_t row_tile_limit = num_tile_row - 1;
+    size_t row_edge = row_tile_limit * tile_size;
+
+    // column padding
+    for (size_t i = 0, sub_row_edge = 0; i < row_tile_limit; i++, sub_row_edge += tile_size)
     {
         sub_matrix = Matrix(matrix.loadBlock(sub_row_edge, col_edge, tile_size, rem_col, tile_size, column_major));
         padding_map[make_pair(sub_row_edge, col_edge)] = sub_matrix;
     }
 
     // row padding
-    size_t row_tile_index = num_tile_row - 1;
-    size_t row_edge = row_tile_index * tile_size;
-
-    for (size_t j = 0, sub_col_edge = 0; j < num_tile_col - 1; j++, sub_col_edge += tile_size)
+    for (size_t j = 0, sub_col_edge = 0; j < col_tile_limit; j++, sub_col_edge += tile_size)
     {
         sub_matrix = Matrix(matrix.loadBlock(row_edge, sub_col_edge, rem_row, tile_size, tile_size, column_major));
         padding_map[make_pair(row_edge, sub_col_edge)] = sub_matrix;
@@ -350,25 +350,30 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     make_padding(B, tile_size, rem_colA, rem_colB, num_tile_colA, num_tile_colB, matrix_mapB, true);
     // make_padding(B, tile_size, rem_colA, rem_colB, num_tile_colA, num_tile_colB, matrix_mapB);
 
-    Matrix result = Matrix(A.nrow(), B.ncol());
+    Matrix result(A.nrow(), B.ncol());
     size_t augA_col = num_tile_colA * tile_size;
 
-    Matrix block = Matrix(tile_size, tile_size);
+    Matrix block(tile_size, tile_size);
+
+    Matrix block_result;
+    Matrix blockA;
+    Matrix blockB;
+    Matrix partial_result;
 
     for (size_t i = 0, it = 0; i < result.nrow(); i += tile_size, it++)
     {
         for (size_t j = 0, jt = 0; j < result.ncol(); j += tile_size, jt++)
         {
-            Matrix block_result = block;
+            block_result = block;
             for (size_t k = 0; k < augA_col; k += tile_size)
             {
-                Matrix blockA = determine_source_of_block(i, k, tile_size, A, matrix_mapA);
+                blockA = determine_source_of_block(i, k, tile_size, A, matrix_mapA);
 
-                Matrix blockB = determine_source_of_block(k, j, tile_size, B, matrix_mapB, true);
+                blockB = determine_source_of_block(k, j, tile_size, B, matrix_mapB, true);
                 // Matrix blockB = determine_source_of_block(k, j, tile_size, B, matrix_mapB);
 
-                // cout << blockA << "," << blockB << endl;
-                Matrix partial_result = multiply_naive(blockA, blockB, true);
+                // cout << blockA << "," << blockB;
+                partial_result = multiply_naive(blockA, blockB, true);
                 // Matrix partial_result = multiply_mkl(blockA, blockB);
 
                 // cout << partial_result << endl;
