@@ -353,11 +353,13 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     Matrix result = Matrix(A.nrow(), B.ncol());
     size_t augA_col = num_tile_colA * tile_size;
 
+    Matrix block = Matrix(tile_size, tile_size);
+
     for (size_t i = 0, it = 0; i < result.nrow(); i += tile_size, it++)
     {
         for (size_t j = 0, jt = 0; j < result.ncol(); j += tile_size, jt++)
         {
-            Matrix block_result = Matrix(tile_size, tile_size);
+            Matrix block_result = block;
             for (size_t k = 0; k < augA_col; k += tile_size)
             {
                 Matrix blockA = determine_source_of_block(i, k, tile_size, A, matrix_mapA);
@@ -365,10 +367,8 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
                 Matrix blockB = determine_source_of_block(k, j, tile_size, B, matrix_mapB, true);
                 // Matrix blockB = determine_source_of_block(k, j, tile_size, B, matrix_mapB);
 
-
                 // cout << blockA << "," << blockB << endl;
                 Matrix partial_result = multiply_naive(blockA, blockB, true);
-                // Matrix partial_result = multiply_naive(blockA, blockB);
                 // Matrix partial_result = multiply_mkl(blockA, blockB);
 
                 // cout << partial_result << endl;
