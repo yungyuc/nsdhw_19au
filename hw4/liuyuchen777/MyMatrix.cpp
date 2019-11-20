@@ -63,7 +63,7 @@ public:
     }
 
 
-private:
+public:
     size_t m_nrow=0;
     size_t m_ncol=0;
     double* m_buffer=nullptr;
