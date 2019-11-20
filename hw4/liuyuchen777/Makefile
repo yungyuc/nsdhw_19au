@@ -2,8 +2,6 @@ CXX := g++
 CXXFLAGS ?= -std=c++17 -O3 -Wall
 SRC = MyMatrix.cpp
 TARGET = _matrix.cpython-37m-x86_64-linux-gnu.so
-TEST = test_my_matrix.py
-BENCH = benchmark.py
 
 # MKL
 MKLROOT ?= ${HOME}/opt/conda
@@ -15,11 +13,13 @@ LDFLAGS += -L${MKLROOT}/lib -Wl,--no-as-needed \
 INCLUDES += `python -m pybind11 --includes`
 CXXFLAGS += -shared -fPIC
 
-.PHONY: all test bench format clean
+.PHONY:
 all: $(TARGET)
 
 $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $< -o $(TARGET) $(LDFLAGS)
 
+format: $(SRC)
+	clang-format -i $(SRC)
 clean:
-	rm -rf *.so
+	rm -rf $(TARGET)
