@@ -86,28 +86,7 @@ public:
         }
         return *this;
     }
-    vector<double> getRow(int row) const
-    {
-        vector<double> axis(ncol());
 
-        for (size_t i = 0; i < ncol(); i++)
-        {
-            axis[i] = data[row][i];
-        }
-
-        return axis;
-    }
-    vector<double> getCol(int col) const
-    {
-        vector<double> axis(nrow());
-
-        for (size_t i = 0; i < nrow(); i++)
-        {
-            axis[i] = data[i][col];
-        }
-
-        return axis;
-    }
     vector<double> getFlatData() const
     {
         vector<double> flat(nrow() * ncol());
@@ -121,45 +100,10 @@ public:
         }
         return flat;
     }
-    Matrix transpose() const
-    {
-        vector<vector<double>> block(ncol(), vector<double>(nrow(), 0));
 
-        for (size_t i = 0; i < nrow(); i++)
-        {
-            for (size_t j = 0; j < ncol(); j++)
-            {
-                block[i][j] = data[j][i];
-            }
-        }
-
-        return Matrix(block);
-    }
     vector<vector<double>> loadBlock(size_t u, size_t v, size_t tile, bool column_major = false) const
     {
-        vector<vector<double>> block(tile, vector<double>(tile, 0));
-
-        if (column_major)
-        {
-            for (size_t i = 0; i < tile; i++)
-            {
-                for (size_t j = 0; j < tile; j++)
-                {
-                    block[j][i] = data[u + i][v + j];
-                }
-            }
-        }
-        else
-        {
-            for (size_t i = 0; i < tile; i++)
-            {
-                for (size_t j = 0; j < tile; j++)
-                {
-                    block[i][j] = data[u + i][v + j];
-                }
-            }
-        }
-        return block;
+        return loadBlock(u, v, tile, tile, tile, column_major);
     }
 
     vector<vector<double>> loadBlock(size_t u, size_t v,
@@ -193,56 +137,6 @@ public:
         return block;
     }
 
-    void saveBlock(size_t u, size_t v, Matrix const &block, bool column_major = false)
-    {
-        if (column_major)
-        {
-            for (size_t i = 0; i < block.nrow(); i++)
-            {
-                for (size_t j = 0; j < block.ncol(); j++)
-                {
-                    data[u + j][v + i] = block(i, j);
-                }
-            }
-        }
-        else
-        {
-
-            for (size_t i = 0; i < block.nrow(); i++)
-            {
-                for (size_t j = 0; j < block.ncol(); j++)
-                {
-                    data[u + i][v + j] = block(i, j);
-                }
-            }
-        }
-    }
-    void saveBlock(size_t u, size_t v, vector<vector<double>> &block, bool column_major = false)
-    {
-        size_t row = block.size();
-        size_t col = block[0].size();
-        if (column_major)
-        {
-            for (size_t i = 0; i < row; i++)
-            {
-                for (size_t j = 0; j < col; j++)
-                {
-                    data[u + j][u + i] = block[i][j];
-                }
-            }
-        }
-        else
-        {
-            // cout << "save" << row << "," << col << endl;
-            for (size_t i = 0; i < row; i++)
-            {
-                for (size_t j = 0; j < col; j++)
-                {
-                    data[u + i][v + j] = block[i][j];
-                }
-            }
-        }
-    }
     void saveBlock(size_t u, size_t v, size_t ut, size_t vt,
                    size_t i_limit, size_t j_limit,
                    size_t rem_row, size_t rem_col,
@@ -260,21 +154,8 @@ public:
             }
         }
     }
-    string repr()
-    {
-        string s = "";
-        for (size_t i = 0; i < nrow(); ++i)
-        {
-            for (size_t j = 0; j < ncol(); ++j)
-            {
-                s += to_string(this->operator()(i, j)) + " ";
-            }
-            s += "\n";
-        }
 
-        return s;
-    }
-
+    #ifndef PYTHON_LIB
     friend ostream &operator<<(ostream &ostr, Matrix const &mat)
     {
         for (size_t i = 0; i < mat.nrow(); ++i)
@@ -289,6 +170,7 @@ public:
 
         return ostr;
     }
+    #endif
 
 public:
     size_t nrow() const { return m_nrow; };
@@ -308,16 +190,6 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = fals
     }
 
     Matrix result = Matrix(A.nrow(), B.ncol());
-
-    // for (size_t i = 0; i < result.nrow(); i++)
-    // {
-    //     for (size_t j = 0; j < result.ncol(); j++)
-    //     {
-    //         auto row = A.getRow(i);
-    //         auto col = B.getCol(j);
-    //         result(i, j) = inner_product(row.begin(), row.end(), col.begin(), 0.0);
-    //     }
-    // }
 
     double value = 0;
     if (!column_major)
@@ -379,17 +251,17 @@ Matrix multiply_mkl(Matrix A, Matrix B)
     return result;
 }
 void make_padding(Matrix const &matrix, size_t tile_size,
-                  size_t &rem_row, size_t &rem_col,
+                  size_t rem_row, size_t rem_col,
                   size_t num_tile_row, size_t num_tile_col,
                   map<pair<size_t, size_t>, Matrix> &padding_map, bool column_major = false)
 {
     // cout << num_tile_row << "," << num_tile_col << endl;
 
+    Matrix sub_matrix;
+
     // column padding
     size_t col_tile_index = num_tile_col - 1;
     size_t col_edge = col_tile_index * tile_size;
-    rem_col = matrix.ncol() - col_edge;
-    Matrix sub_matrix;
 
     for (size_t i = 0; i < num_tile_row - 1; i++)
     {
@@ -402,7 +274,6 @@ void make_padding(Matrix const &matrix, size_t tile_size,
     // row padding
     size_t row_tile_index = num_tile_row - 1;
     size_t row_edge = row_tile_index * tile_size;
-    rem_row = matrix.nrow() - row_edge;
 
     for (size_t j = 0; j < num_tile_col - 1; j++)
     {
@@ -414,13 +285,18 @@ void make_padding(Matrix const &matrix, size_t tile_size,
 
     // corner padding
     sub_matrix = Matrix(matrix.loadBlock(row_edge, col_edge, rem_row, rem_col, tile_size, column_major));
-    // cout << sub_matrix << endl;
     padding_map[make_pair(row_tile_index, col_tile_index)] = sub_matrix;
     // cout << row_tile_index << "," << col_tile_index << ":" << sub_matrix << endl;
+
+    // cout << rem_row << ", " << rem_col << endl;
 }
-Matrix determine_source_of_block(size_t i, size_t j, size_t it, size_t jt, size_t i_limit, size_t j_limit, size_t tile_size, const Matrix &matrix,
+Matrix determine_source_of_block(size_t i, size_t j,
+                                 size_t it, size_t jt,
+                                 size_t i_limit, size_t j_limit,
+                                 size_t tile_size, const Matrix &matrix,
                                  map<pair<size_t, size_t>, Matrix> &padding_map,
-                                 map<pair<size_t, size_t>, Matrix> &matrix_map, bool column_major = false)
+                                 map<pair<size_t, size_t>, Matrix> &matrix_map,
+                                 bool column_major = false)
 {
     // cout << it << ":" << i_limit << "," << jt << ":" << j_limit << endl;
     Matrix block;
@@ -486,14 +362,13 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     map<pair<size_t, size_t>, Matrix> padding_mapA;
     map<pair<size_t, size_t>, Matrix> padding_mapB;
 
-    size_t rem_rowA = A.nrow();
-    size_t rem_colA = A.ncol();
-    size_t rem_colB = B.ncol();
+    size_t rem_rowA = tile_rowA_result.rem;
+    size_t rem_colA = tile_colA_result.rem;
+    size_t rem_colB = tile_colB_result.rem;
 
     make_padding(A, tile_size, rem_rowA, rem_colA, num_tile_rowA, num_tile_colA, padding_mapA);
     make_padding(B, tile_size, rem_colA, rem_colB, num_tile_colA, num_tile_colB, padding_mapB, true);
     // make_padding(B, tile_size, rem_colA, rem_colB, num_tile_colA, num_tile_colB, padding_mapB);
-
 
     Matrix result = Matrix(A.nrow(), B.ncol());
     size_t augA_col = num_tile_colA * tile_size;
@@ -524,13 +399,9 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
                 block_result += partial_result;
             }
             // cout << block_result << endl;
-            // aug_result.saveBlock(i, j, block_result);
             result.saveBlock(i, j, it, jt, num_tile_rowA, num_tile_colB, rem_rowA, rem_colB, block_result);
         }
     }
-
-    // cout << aug_result << endl;
-    // cout << aug_result << endl;
 
     return result;
 }
@@ -549,7 +420,6 @@ PYBIND11_MODULE(_matrix, m)
         .def(py::init<vector<vector<double>>>())
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
-        .def("__repr__", &Matrix::repr)
         .def("__eq__", [](const Matrix &self, const Matrix &other) { return self == other; })
         .def("__ne__", [](const Matrix &self, const Matrix &other) { return self != other; })
         .def("__getitem__", [](const Matrix &self, pair<size_t, size_t> idx) { return self(idx.first, idx.second); })
