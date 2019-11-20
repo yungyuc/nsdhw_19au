@@ -87,9 +87,9 @@ public:
         return *this;
     }
 
-    vector<double> getFlatData() const
+    double *getFlatData() const
     {
-        vector<double> flat(nrow() * ncol());
+        double *flat = new double[nrow() * ncol()];
         size_t k = 0;
         for (size_t i = 0; i < nrow(); i++)
         {
@@ -227,7 +227,7 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = fals
 }
 
 // https://software.intel.com/en-us/mkl-tutorial-c-multiplying-matrices-using-dgemm
-Matrix multiply_mkl(Matrix A, Matrix B)
+Matrix multiply_mkl(Matrix const &A, Matrix const &B)
 {
     size_t m = A.nrow(); // A: m x k
     size_t k = A.ncol(); // B: k x n
@@ -235,17 +235,17 @@ Matrix multiply_mkl(Matrix A, Matrix B)
     double alpha = 1.0;
     double beta = 0.0;
 
-    auto A_vec = A.getFlatData();
-    double *A_flat = A_vec.data();
-    auto B_vec = B.getFlatData();
-    double *B_flat = B_vec.data();
-
+    double *A_flat = A.getFlatData();
+    double *B_flat = B.getFlatData();
     double *C_flat = new double[m * n];
 
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 m, n, k, alpha, A_flat, k, B_flat, n, beta, C_flat, n);
 
     Matrix result(m, n, C_flat);
+
+    delete A_flat;
+    delete B_flat;
     delete C_flat;
 
     return result;
@@ -348,7 +348,7 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
 
     make_padding(A, tile_size, rem_rowA, rem_colA, num_tile_rowA, num_tile_colA, matrix_mapA);
     make_padding(B, tile_size, rem_colA, rem_colB, num_tile_colA, num_tile_colB, matrix_mapB, true);
-    // make_padding(B, tile_size, rem_colA, rem_colB, num_tile_colA, num_tile_colB, padding_mapB);
+    // make_padding(B, tile_size, rem_colA, rem_colB, num_tile_colA, num_tile_colB, matrix_mapB);
 
     Matrix result = Matrix(A.nrow(), B.ncol());
     size_t augA_col = num_tile_colA * tile_size;
@@ -363,6 +363,8 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
                 Matrix blockA = determine_source_of_block(i, k, tile_size, A, matrix_mapA);
 
                 Matrix blockB = determine_source_of_block(k, j, tile_size, B, matrix_mapB, true);
+                // Matrix blockB = determine_source_of_block(k, j, tile_size, B, matrix_mapB);
+
 
                 // cout << blockA << "," << blockB << endl;
                 Matrix partial_result = multiply_naive(blockA, blockB, true);
