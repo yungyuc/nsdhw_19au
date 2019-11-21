@@ -274,7 +274,7 @@ Matrix determine_source_of_block(size_t i, size_t j,
     }
     size_t load_row = (is_on_edge(it, i_limit) && rem_row) ? rem_row : tile_size;
     size_t load_col = (is_on_edge(jt, j_limit) && rem_col) ? rem_col : tile_size;
-
+    
     matrix_map[block_index] = Matrix(matrix.loadBlock(i, j, load_row, load_col, column_major));
     return matrix_map[block_index];
 }
@@ -304,8 +304,6 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     tile_size = 32;
 #endif
 
-    // cout << tile_size << endl;
-
     div_t tile_rowA_result = div((int)A.nrow(), (int)tile_size);
     const size_t num_tile_rowA = (tile_rowA_result.rem) ? tile_rowA_result.quot + 1 : tile_rowA_result.quot;
 
@@ -326,19 +324,18 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     size_t augA_col = num_tile_colA * tile_size;
 
     // empty block
-    Matrix block;
+    Matrix empty_block_source;
     // for blocking MM result
     Matrix block_result;
 
     Matrix blockA;
     Matrix blockB;
-    Matrix partial_result;
 
     for (size_t i = 0, it = 0; i < result.nrow(); i += tile_size, it++)
     {
         for (size_t j = 0, jt = 0; j < result.ncol(); j += tile_size, jt++)
         {
-            block_result = block;
+            block_result = empty_block_source;
             for (size_t k = 0, kt = 0; k < augA_col; k += tile_size, kt++)
             {
                 blockA = determine_source_of_block(i, k,
@@ -346,7 +343,6 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
                                                    num_tile_rowA, num_tile_colA,
                                                    rem_rowA, rem_colA,
                                                    tile_size, A, matrix_mapA);
-                // cout << blockA << endl;
 
                 blockB = determine_source_of_block(k, j,
                                                    kt, jt,
@@ -354,25 +350,9 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
                                                    rem_colA, rem_colB,
                                                    tile_size, B, matrix_mapB, true);
 
-                // blockB = determine_source_of_block(k, j,
-                //                                    kt, jt,
-                //                                    num_tile_colA, num_tile_colB,
-                //                                    rem_colA, rem_colB,
-                //                                    tile_size, B, matrix_mapB);
-
-                // cout << blockB << endl;
-                partial_result = multiply_naive(blockA, blockB, true);
-                // partial_result = multiply_naive(blockA, blockB);
-
-                // partial_result = multiply_mkl(blockA, blockB);
-
-                // cout << partial_result << endl;
-                // cout << "---\n";
-                block_result += partial_result;
+                block_result += multiply_naive(blockA, blockB, true);
             }
-            // cout << block_result << endl;
             result.saveBlock(i, j, block_result);
-            // cout << "---\n";
         }
     }
 
