@@ -293,7 +293,7 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
     }
 
 #if defined(PYTHON_LIB) && !defined(PYTHON_TEST)
-    tile_size = 32;
+    tile_size = 64;
 #else
     // find suitable tile size which is the power of 2
     size_t new_tile_size = power_of_2_tile_size(tile_size);
