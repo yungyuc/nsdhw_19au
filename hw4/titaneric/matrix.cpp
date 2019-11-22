@@ -292,12 +292,12 @@ Matrix multiply_tile(Matrix const &A, Matrix const &B, size_t tile_size)
         throw out_of_range("Tile size is too big!!!");
     }
 
+#if defined(PYTHON_LIB) && !defined(PYTHON_TEST)
+    tile_size = 32;
+#else
     // find suitable tile size which is the power of 2
     size_t new_tile_size = power_of_2_tile_size(tile_size);
     tile_size = new_tile_size;
-
-#ifdef PYTHON_LIB
-    tile_size = 32;
 #endif
 
     div_t tile_rowA_result = div((int)A.nrow(), (int)tile_size);

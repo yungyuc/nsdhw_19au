@@ -42,6 +42,7 @@ build: matrix.cpp
 	${CXX} ${CXXFLAGS} ${INCLUDES} -o ${TARGET} $< ${MKLLINKLINE}
 	export PRELOAD_MKL=True
 
+test: CXXFLAGS += -DPYTHON_TEST
 test: build
 	bash setup.sh
 
