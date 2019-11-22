@@ -61,7 +61,7 @@ public:
     }
     bool operator==(const Matrix &other) const
     {
-        return nrow() == other.nrow() && ncol() == other.ncol() && data == other.data;
+        return is_same_size(other) && (data == other.data);
     }
 
     bool operator!=(const Matrix &other) const
@@ -74,7 +74,7 @@ public:
     }
     Matrix &operator+=(const Matrix &other)
     {
-        if (nrow() == 0 && ncol() == 0)
+        if (!nrow() && !ncol())
         {
             *this = other;
             return *this;
@@ -110,11 +110,9 @@ public:
                                      size_t u_tile, size_t v_tile,
                                      bool column_major = false) const
     {
-        vector<vector<double>> block;
         if (column_major)
         {
-            block = vector(v_tile, vector<double>(u_tile, 0));
-
+            vector<vector<double>> block(v_tile, vector<double>(u_tile, 0));
             for (size_t i = 0; i < u_tile; i++)
             {
                 for (size_t j = 0; j < v_tile; j++)
@@ -122,10 +120,11 @@ public:
                     block[j][i] = data[u + i][v + j];
                 }
             }
+            return block;
         }
         else
         {
-            block = vector(u_tile, vector<double>(v_tile, 0));
+            vector<vector<double>> block(u_tile, vector<double>(v_tile, 0));
             for (size_t i = 0; i < u_tile; i++)
             {
                 for (size_t j = 0; j < v_tile; j++)
@@ -133,14 +132,13 @@ public:
                     block[i][j] = data[u + i][v + j];
                 }
             }
+            return block;
         }
-        return block;
     }
 
     void saveBlock(size_t u, size_t v,
                    Matrix const &block)
     {
-
         for (size_t i = 0; i < block.nrow(); i++)
         {
             for (size_t j = 0; j < block.ncol(); j++)
@@ -180,8 +178,6 @@ private:
 Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = false)
 {
 
-    Matrix result;
-
     double value = 0;
     if (!column_major)
     {
@@ -189,7 +185,7 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = fals
         {
             throw out_of_range("Matrices can not be multiplied!!!");
         }
-        result = Matrix(A.nrow(), B.ncol());
+        Matrix result(A.nrow(), B.ncol());
         for (size_t i = 0; i < result.nrow(); i++)
         {
             for (size_t j = 0; j < result.ncol(); j++)
@@ -202,6 +198,7 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = fals
                 result(i, j) = value;
             }
         }
+        return result;
     }
     else
     {
@@ -209,7 +206,7 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = fals
         {
             throw out_of_range("Matrices can not be multiplied!!!");
         }
-        result = Matrix(A.nrow(), B.nrow());
+        Matrix result(A.nrow(), B.nrow());
         for (size_t i = 0; i < result.nrow(); i++)
         {
             for (size_t j = 0; j < result.ncol(); j++)
@@ -222,9 +219,8 @@ Matrix multiply_naive(Matrix const &A, Matrix const &B, bool column_major = fals
                 result(i, j) = value;
             }
         }
+        return result;
     }
-
-    return result;
 }
 
 // https://software.intel.com/en-us/mkl-tutorial-c-multiplying-matrices-using-dgemm
@@ -274,7 +270,7 @@ Matrix determine_source_of_block(size_t i, size_t j,
     }
     size_t load_row = (is_on_edge(it, i_limit) && rem_row) ? rem_row : tile_size;
     size_t load_col = (is_on_edge(jt, j_limit) && rem_col) ? rem_col : tile_size;
-    
+
     matrix_map[block_index] = Matrix(matrix.loadBlock(i, j, load_row, load_col, column_major));
     return matrix_map[block_index];
 }
