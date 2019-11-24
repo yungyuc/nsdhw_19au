@@ -57,4 +57,4 @@ tiling.o: tiling.cpp tiling.h
 
 .PHONY: clean
 clean:
-	rm -rf ${MATRIX_TARGET} ${OBJECT_FILE} *.o *.dSYM/
+	rm -rf ${TARGET} ${OBJECT_FILE} *.o *.dSYM/

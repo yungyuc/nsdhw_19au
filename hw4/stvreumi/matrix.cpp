@@ -122,6 +122,11 @@ double Matrix::buffer(size_t i) const
     return m_buffer[i]; 
 }
 
+double & Matrix::buffer(size_t i) 
+{ 
+    return m_buffer[i]; 
+}
+
 double * Matrix::data() const 
 { 
     return m_buffer; 

@@ -1,7 +1,13 @@
 #include "tiling.h"
 
+Block::Block(size_t N): NDIM(N){
+    m_buffer = new double[N*N];
+}
+Block::~Block(){
+    delete[] m_buffer;
+}
 
-template<size_t N> void Block<N>::save(
+void Block::save(
     Matrix & mat, size_t it, size_t jt
 )
 {
@@ -19,7 +25,18 @@ template<size_t N> void Block<N>::save(
     }
 }
 
-template<size_t N> void Tiler<N>::load(
+Tiler::Tiler(size_t N): NDIM(N){
+    m_mat1 = new Block(N);
+    m_mat2 = new Block(N);
+    m_ret = new Block(N); 
+}
+Tiler::~Tiler(){
+    delete m_mat1;
+    delete m_mat2;
+    delete m_ret;
+}
+
+void Tiler::load(
     Matrix const & mat1, size_t it1, size_t jt1
   , Matrix const & mat2, size_t it2, size_t jt2
 )
@@ -33,7 +50,7 @@ template<size_t N> void Tiler<N>::load(
 
         for (size_t j=0; j<NDIM; ++j)
         {
-            m_mat1[base_t + j] = mat1.m_buffer[base_s + j];
+            (*m_mat1)[base_t + j] = mat1.m_buffer[base_s + j];
         }
     }
 
@@ -46,7 +63,7 @@ template<size_t N> void Tiler<N>::load(
 
         for (size_t j=0; j<NDIM; ++j)
         {
-            m_ret[base_t + j] = mat2.m_buffer[base_s + j];
+            (*m_ret)[base_t + j] = mat2.m_buffer[base_s + j];
         }
     }
 
@@ -56,12 +73,12 @@ template<size_t N> void Tiler<N>::load(
 
         for (size_t j=0; j<NDIM; ++j)
         {
-            m_mat2[j*NDIM + i] = m_ret[base + j];
+            (*m_mat2)[j*NDIM + i] = (*m_ret)[base + j];
         }
     }
 }
 
-template<size_t N> void Tiler<N>::multiply()
+void Tiler::multiply()
 {
     for (size_t i=0; i<NDIM; ++i)
     {
@@ -74,66 +91,9 @@ template<size_t N> void Tiler<N>::multiply()
             double v = 0;
             for (size_t j=0; j<NDIM; ++j)
             {
-                v += m_mat1[base1 + j] * m_mat2[base2 + j];
+                v += (*m_mat1)[base1 + j] * (*m_mat2)[base2 + j];
             }
-            m_ret[base1 + k] = v;
+            (*m_ret)[base1 + k] = v;
         }
     }
-}
-
-/*
- * Throw an exception if the shapes of the two matrices don't support
- * multiplication.
- */
-void validate_multiplication(Matrix const & mat1, Matrix const & mat2)
-{
-    if (mat1.ncol() != mat2.nrow())
-    {
-        throw std::out_of_range(
-            "the number of first matrix column "
-            "differs from that of second matrix row");
-    }
-}
-
-/*
- * Tiled matrix matrix multiplication.
- */
-template<size_t LSIZE>
-Matrix multiply_tile(Matrix const & mat1, Matrix const & mat2)
-{
-    validate_multiplication(mat1, mat2);
-
-    Matrix ret(mat1.nrow(), mat2.ncol());
-
-    constexpr const size_t tsize = LSIZE / sizeof(double);
-
-    const size_t nrow1 = mat1.nrow();
-    const size_t ncol1 = mat1.ncol();
-    const size_t nrow2 = mat2.nrow();
-    const size_t ncol2 = mat2.ncol();
-
-    const size_t ntrow1 = nrow1 / tsize;
-    const size_t ntcol1 = ncol1 / tsize;
-    const size_t ntrow2 = nrow2 / tsize;
-    const size_t ntcol2 = ncol2 / tsize;
-
-    Block<tsize> value;
-    Tiler<tsize> tiler;
-
-    for (size_t it=0; it<ntrow1; ++it)
-    {
-        for (size_t kt=0; kt<ntcol2; ++kt)
-        {
-            value = 0;
-            for (size_t jt=0; jt<ntcol1; ++jt)
-            {
-                tiler.load(mat1, it, jt, mat2, jt, kt);
-                tiler.multiply();
-                value += tiler.m_ret;
-            }
-            value.save(ret, it, kt);
-        }
-    }
-
-    return ret;
 }

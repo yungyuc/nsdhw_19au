@@ -3,35 +3,39 @@
 #ifndef TILING_H
 #define TILING_H
 
-template<size_t N>
-struct Block
+class Block
 {
-    static constexpr const size_t NDIM = N;
+public:
+    Block(size_t N);
+    ~Block();
 
     double   operator[] (size_t idx) const { return m_buffer[idx]; }
     double & operator[] (size_t idx)       { return m_buffer[idx]; }
 
-    Block<N> & operator= (double v)
+    Block & operator= (double v)
     {
-        for (size_t i=0; i<N*N; ++i) { m_buffer[i] = v; }
+        for (size_t i=0; i<NDIM*NDIM; ++i) { m_buffer[i] = v; }
         return *this;
     }
 
-    Block<N> & operator+= (Block<N> const & other)
+    Block & operator+= (Block const & other)
     {
-        for (size_t i=0; i<N*N; ++i) { m_buffer[i] += other.m_buffer[i]; }
+        for (size_t i=0; i<NDIM*NDIM; ++i) { m_buffer[i] += other.m_buffer[i]; }
         return *this;
     }
 
     void save(Matrix & mat, size_t it, size_t jt);
 
-    double m_buffer[N * N];
+    size_t NDIM;
+    double *m_buffer;
 };
 
-template<size_t N>
-struct Tiler
+class Tiler
 {
-    static constexpr const size_t NDIM = N;
+public:
+    Tiler(size_t N);
+    ~Tiler();
+    double NDIM;
 
     void load(
         Matrix const & mat1, size_t it1, size_t jt1
@@ -40,9 +44,9 @@ struct Tiler
 
     void multiply();
 
-    Block<N> m_mat1; // row-major
-    Block<N> m_mat2; // column-major
-    Block<N> m_ret; // row-major
+    Block *m_mat1; // row-major
+    Block *m_mat2; // column-major
+    Block *m_ret; // row-major
 };
 
 

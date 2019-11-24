@@ -1,3 +1,5 @@
+#include <iostream>
+
 #ifndef MATRIX_H
 #define MATRIX_H
 // copy from 07_matrix_matrix.cpp
@@ -29,7 +31,9 @@ public:
 
     size_t size() const;
     double buffer(size_t i) const;
+    double & buffer(size_t i);
     double * data() const;
+    double * m_buffer = nullptr;
 private:
 
     size_t index(size_t row, size_t col) const;
@@ -38,7 +42,7 @@ private:
 
     size_t m_nrow = 0;
     size_t m_ncol = 0;
-    double * m_buffer = nullptr;
+    
 
 };
 #endif //MATRIX_H
