@@ -15,7 +15,7 @@ SRCS     = ${SOURCES:%=%.cc}
 INCLUDE += $(shell python3.7-config --includes)
 SUFFIX   = $(shell python3.7-config --extension-suffix)
 LDFLAGS += $(shell python3.7-config --ldflags)
-FLAGS    = -O3 -Wall -shared -std=c++11 -fPIC
+FLAGS    = -O3 -Wall -shared -std=c++11 -fPIC -fno-lto
 BINDOBJ  = $(O_DIR)/$(BINDLIB)
 
 $(BINDOBJ) : $(O_DIR)
@@ -34,4 +34,4 @@ clean:
 
 test: $(BINDOBJ)
 	@chmod a+x $(BINDTST)
-	@./$(BINDTST)
+	@python3 $(BINDTST)
