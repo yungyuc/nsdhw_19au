@@ -28,6 +28,8 @@ bool isequal(Matrix &, Matrix &);
 
 Matrix multiply_naive(Matrix const &, Matrix const &);
 
+Matrix multiply_tile(Matrix const &, Matrix const &, size_t);
+
 Matrix operator*(Matrix const &, Matrix const &);
 
 /* broadcasting */

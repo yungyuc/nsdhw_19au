@@ -204,6 +204,16 @@ Matrix multiply_naive(Matrix const &A1, Matrix const &A2)
     return A1 * A2;
 }
 
+Matrix multiply_tile(Matrix const &A1, Matrix const &A2, size_t size)
+{
+    
+    if (A1.ncol() != A2.nrow())
+    {
+        throw std::out_of_range("invalid matrix size of matrix multiplication.");
+    }
+    Matrix res(A1.nrow(), A2.ncol())
+}
+
 Matrix operator*(double const &c, Matrix const &A)
 {
     Matrix ret(A.nrow(), A.ncol());
