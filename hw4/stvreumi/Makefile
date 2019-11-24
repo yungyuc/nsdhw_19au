@@ -38,12 +38,12 @@ CXX_MAINFLAGS := ${CXXFLAGS} \
 CXX_ASSEMBLEFLAGS := -shared
 
 TARGET := _matrix${PYBIND_POSTFIX}
-OBJECT_FILE := matrix.o tiling.o
+OBJECT_FILE := main.o matrix.o tiling.o
 
 .PHONY: default
 default: ${TARGET}
 
-_matrix${PYBIND_POSTFIX}: main.o matrix.o tiling.o
+_matrix${PYBIND_POSTFIX}: ${OBJECT_FILE}
 	${CXX} $^ ${CXX_ASSEMBLEFLAGS} -o $@
 
 main.o: main.cpp
@@ -57,4 +57,4 @@ tiling.o: tiling.cpp tiling.h
 
 .PHONY: clean
 clean:
-	rm -rf ${MATRIX_TARGET} *.o *.dSYM/
+	rm -rf ${MATRIX_TARGET} ${OBJECT_FILE} *.o *.dSYM/

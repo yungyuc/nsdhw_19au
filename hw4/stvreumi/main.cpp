@@ -135,9 +135,10 @@ private:
 };
 
 /*
- * Naive matrix matrix multiplication.
+ * Throw an exception if the shapes of the two matrices don't support
+ * multiplication.
  */
-Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
+void validate_multiplication(Matrix const & mat1, Matrix const & mat2)
 {
     if (mat1.ncol() != mat2.nrow())
     {
@@ -145,6 +146,14 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
             "the number of first matrix column "
             "differs from that of second matrix row");
     }
+}
+
+/*
+ * Naive matrix matrix multiplication.
+ */
+Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
+{
+    validate_multiplication(mat1, mat2);
 
     Matrix ret(mat1.nrow(), mat2.ncol());
 
@@ -166,12 +175,7 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
 
 Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
 {
-    if (mat1.ncol() != mat2.nrow())
-    {
-        throw std::out_of_range(
-            "the number of first matrix column "
-            "differs from that of second matrix row");
-    }
+    validate_multiplication(mat1, mat2);
 
     Matrix ret(mat1.nrow(), mat2.ncol());
 
@@ -195,6 +199,81 @@ Matrix multiply_mkl(Matrix const & mat1, Matrix const & mat2)
         ret.ncol() // lad, the first dimention of C
     );
 
+    return ret;
+}
+
+/*
+ * Tiled matrix matrix multiplication.
+ */
+Matrix multiply_tile(
+    Matrix const & mat1, Matrix const & mat2, size_t const tsize)
+{
+    validate_multiplication(mat1, mat2);
+
+    Matrix ret(mat1.nrow(), mat2.ncol());
+
+    const size_t nrow1 = mat1.nrow();
+    const size_t ncol1 = mat1.ncol();
+    const size_t nrow2 = mat2.nrow();
+    const size_t ncol2 = mat2.ncol();
+
+    const size_t ntrow1 = (nrow1 / tsize) + 1;
+    const size_t ntcol1 = (ncol1 / tsize) + 1;
+    const size_t ntrow2 = (nrow2 / tsize) + 1;
+    const size_t ntcol2 = (ncol2 / tsize) + 1;
+
+    // after padding size
+    const size_t nrow1_padding = ntrow1 * tsize;
+    const size_t ncol1_padding = ntcol1 * tsize;
+    const size_t nrow2_padding = ntrow2 * tsize;
+    const size_t ncol2_padding = ntcol2 * tsize;
+
+    // record padding idx
+    Matrix padding_mat1(nrow1_padding, ncol1_padding);
+    Matrix padding_mat2(nrow2_padding, ncol2_padding);
+    Matrix padding_ret(nrow1_padding, ncol2_padding);
+
+    for (size_t it=0; it<nrow1; ++it)
+    {
+        for (size_t kt=0; kt<ncol1; ++kt)
+        {
+            padding_mat1(it,kt) = mat1(it,kt);
+        }
+    }
+
+    for (size_t it=0; it<nrow2; ++it)
+    {
+        for (size_t kt=0; kt<ncol2; ++kt)
+        {
+            padding_mat2(it,kt) = mat2(it,kt);
+        }
+    }
+
+    Block value(tsize);
+    Tiler tiler(tsize);
+
+    for (size_t it=0; it<ntrow1; ++it)
+    {
+        for (size_t kt=0; kt<ntcol2; ++kt)
+        {
+            value = 0;
+            for (size_t jt=0; jt<ntcol1; ++jt)
+            {
+                tiler.load(padding_mat1, it, jt, padding_mat2, jt, kt);
+                tiler.multiply();
+                value += tiler.(*m_ret);
+            }
+            value.save(padding_ret, it, kt);
+        }
+    }
+
+    for (size_t it=0; it<nrow1; ++it)
+    {
+        for (size_t kt=0; kt<ncol2; ++kt)
+        {
+            ret(it,kt) = padding_ret(it,kt);
+        }
+    }
     return ret;
 }
 
@@ -238,5 +317,7 @@ PYBIND11_MODULE(_matrix, mod)
         &multiply_naive, "native method of multiplication");
     mod.def("multiply_mkl", 
         &multiply_mkl, "mkl-BLAS method of multiplication");
+    mod.def("multiply_tile", 
+        &multiply_tile, "tiled method of multiplication");
 
 }
