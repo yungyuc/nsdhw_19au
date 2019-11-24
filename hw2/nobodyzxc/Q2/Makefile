@@ -12,9 +12,9 @@ BINDLIB      = $(BINDTAR)$(SUFFIX)
 BINDALIAS    = $(BINDTAR).so
 
 SRCS     = ${SOURCES:%=%.cc}
-INCLUDE += $(shell python3.6-config --includes)
-SUFFIX   = $(shell python3.6-config --extension-suffix)
-LDFLAGS += $(shell python3.6-config --ldflags)
+INCLUDE += $(shell python3.7-config --includes)
+SUFFIX   = $(shell python3.7-config --extension-suffix)
+LDFLAGS += $(shell python3.7-config --ldflags)
 FLAGS    = -O3 -Wall -shared -std=c++11 -fPIC
 BINDOBJ  = $(O_DIR)/$(BINDLIB)
 

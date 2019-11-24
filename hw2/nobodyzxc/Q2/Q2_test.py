@@ -1,4 +1,4 @@
-#!/bin/env python3.6
+#!/bin/env python3.7
 import unittest
 import random, sys, math
 from vec2 import vec2
