@@ -134,35 +134,35 @@ Matrix multiply_tile(Matrix const & mat1, Matrix const & mat2, size_t t_size)
             "differs from that of second matrix row");
     }
 
-    int i_size = mat1.nrow();
-    int j_size = mat1.nrow();
-    int k_size = mat2.ncol();
+    size_t i_size = mat1.nrow();
+    size_t j_size = mat1.nrow();
+    size_t k_size = mat2.ncol();
 
     Matrix ret(i_size, k_size);
 
-    for(int i=0; i<i_size; i++)
+    for(size_t i=0; i<i_size; i++)
     {
-        for(int k=0; k<k_size; k++)
+        for(size_t k=0; k<k_size; k++)
         {
             ret(i, k) = 0;
         }
     }
 
-    for(int i=0; i<i_size; i+=t_size)
+    for(size_t i=0; i<i_size; i+=t_size)
     {
-        for(int k=0; k<k_size; k+=t_size)
+        for(size_t k=0; k<k_size; k+=t_size)
         {
-            for(int j=0; j<j_size; j+=t_size)
+            for(size_t j=0; j<j_size; j+=t_size)
             {
-                int it_max = i+t_size < i_size ? i+t_size : i_size;
-                for(int it=i; it<it_max; it++)
+                size_t it_max = i+t_size < i_size ? i+t_size : i_size;
+                for(size_t it=i; it<it_max; it++)
                 {
-                    int kt_max = k+t_size < k_size ? k+t_size : k_size;
-                    for(int kt=k; kt<kt_max; kt++)
+                    size_t kt_max = k+t_size < k_size ? k+t_size : k_size;
+                    for(size_t kt=k; kt<kt_max; kt++)
                     {
-                        int jt_max = j+t_size < t_size ? j+t_size : j_size;
+                        size_t jt_max = j+t_size < j_size ? j+t_size : j_size;
                         double v = 0;
-                        for(int jt=j; jt<jt_max; jt++)
+                        for(size_t jt=j; jt<jt_max; jt++)
                         {
                             v += mat1(it,jt) * mat2(jt,kt);
                         }
