@@ -180,12 +180,10 @@ Matrix multiply_naive(Matrix const & mat1, Matrix const & mat2)
     {
         for (size_t k=0; k<ret.ncol(); ++k)
         {
-            double v = 0;
             for (size_t j=0; j<mat1.ncol(); ++j)
             {
-                v += mat1(i,j) * mat2(j,k);
+                ret(i, k) += mat1(i,j) * mat2(j,k);
             }
-            ret(i,k) = v;
         }
     }
 
@@ -221,12 +219,12 @@ Matrix multiply_tile(Matrix const & mat1, Matrix const & mat2, size_t tsize){
     Matrix ret(mat1.nrow(), mat2.ncol());
     size_t a = mat1.nrow(),b = mat2.ncol(), c = mat1.ncol();
     size_t s = tsize*2;
-
+    //s = pow(2,int(log2(s)));
     for(size_t i=0;i<a;i+=s)
     	for(size_t j=0;j<b;j+=s)
 	    for(size_t k=0;k<c;k+=s){
-	    	size_t mini = min(i+s,a), minj = min(j+s,b), mink = min(k+s,c);
-	        for(size_t ii=i;ii<mini;++ii)
+	    	const size_t mini = min(i+s,a), minj = min(j+s,b), mink = min(k+s,c);
+	        for(size_t ii=i;ii<mini;++ii){
 		       for(size_t jj=j;jj<minj;++jj){
 		           double sum=0;
 		           for(size_t kk=k;kk<mink;++kk){
@@ -234,8 +232,8 @@ Matrix multiply_tile(Matrix const & mat1, Matrix const & mat2, size_t tsize){
 			   }
 			   ret(ii,jj) +=sum;
 		       }
+		}
 	    }
-    
     return ret;
 }
 
