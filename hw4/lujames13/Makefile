@@ -14,7 +14,6 @@ all: $(TARGET)
 
 $(TARGET): matrix.cpp
 	${CXX} ${CXXFLAGS} $< -o $@ ${LDFLAGS}
-	export PRELOAD_MKL=True
 
 test: test_matrix.py $(TARGET)
 	python3 -m unittest test_matrix.py
