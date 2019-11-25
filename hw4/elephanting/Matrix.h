@@ -22,11 +22,17 @@ private:
     void resetbuf(size_t, size_t);
 };
 
-Matrix mkl_MM(Matrix const &, Matrix const &);
+//Matrix mkl_MM(Matrix const &, Matrix const &);
 
 bool isequal(Matrix &, Matrix &);
 
 Matrix multiply_naive(Matrix const &, Matrix const &);
+
+struct Block;
+
+void block_assign(Matrix const &, size_t, size_t, Block &);
+
+void matrix_assign(Matrix &, size_t, size_t, Block const &);
 
 Matrix multiply_tile(Matrix const &, Matrix const &, size_t);
 
