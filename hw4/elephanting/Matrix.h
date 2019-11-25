@@ -22,7 +22,7 @@ private:
     void resetbuf(size_t, size_t);
 };
 
-//Matrix mkl_MM(Matrix const &, Matrix const &);
+Matrix mkl_MM(Matrix const &, Matrix const &);
 
 bool isequal(Matrix &, Matrix &);
 
