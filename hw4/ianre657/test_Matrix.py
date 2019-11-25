@@ -32,12 +32,12 @@ def test_multiply():
     m2 = Matrix(20,10)
 
     for i in range(10):
-    for j in range(20):
-        m1[i,j] = 8.0
+        for j in range(20):
+            m1[i,j] = 8.0
 
     for i in range(20):
         for j in range(10):
-        m2[i,j] = 6.0
+            m2[i,j] = 6.0
 
     m3 = multiply_naive(m1,m2)
     m4 = multiply_mkl(m1,m2)

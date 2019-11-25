@@ -1,5 +1,6 @@
 #include <stdexcept>
-
+#include <algorithm> 
+#include <cstring>
 #include "Matrix.hpp"
 
 Matrix multiply_naive(Matrix const &mat1, Matrix const &mat2)
@@ -17,12 +18,10 @@ Matrix multiply_naive(Matrix const &mat1, Matrix const &mat2)
     {
         for (size_t k = 0; k < ret.ncol(); ++k)
         {
-            double v = 0;
             for (size_t j = 0; j < mat1.ncol(); ++j)
             {
-                v += mat1(i, j) * mat2(j, k);
+                ret(i,k) += mat1(i, j) * mat2(j, k);
             }
-            ret(i, k) = v;
         }
     }
 
@@ -45,4 +44,45 @@ Matrix &multiply_mkl(Matrix const &mat1, Matrix const &mat2)
         beta,
         mat->raw_data(), mat->ncol());
     return *mat;
+}
+
+Matrix multiply_tile(Matrix const & mat1, Matrix const & mat2, size_t t_size)
+{
+    if (mat1.ncol() != mat2.nrow())
+    {
+        throw std::out_of_range(
+            "the number of first matrix column "
+            "differs from that of second matrix row");
+    }
+
+    size_t M = mat1.nrow();
+    size_t N = mat1.ncol();
+    size_t K = mat2.ncol();
+
+    Matrix ret(M, K);
+    std::fill(ret.raw_data(), ret.raw_data()+M*K, 0.0);
+
+    for(size_t i=0; i<M; i+=t_size)
+    {
+        for(size_t k=0; k<K; k+=t_size)
+        {
+            for(size_t j=0; j<N; j+=t_size)
+            {
+                size_t it_max = std::min(i+t_size, M);
+                for(size_t it=i; it<it_max; ++it)
+                {
+                    size_t kt_max = std::min(k+t_size, K);
+                    for(size_t kt=k; kt<kt_max; ++kt)
+                    {
+                        size_t jt_max = std::min(j+t_size,N);
+                        for(size_t jt=j; jt<jt_max; ++jt)
+                        {
+                            ret(it,kt)+= mat1(it,jt) * mat2(jt,kt);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return ret;
 }

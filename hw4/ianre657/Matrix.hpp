@@ -69,5 +69,7 @@ private:
 
 Matrix multiply_naive(Matrix const &mat1, Matrix const &mat2);
 Matrix &multiply_mkl(Matrix const &mat1, Matrix const &mat2);
+Matrix multiply_tile(Matrix const &mat1, Matrix const &mat2, size_t t_size);
+
 
 #endif

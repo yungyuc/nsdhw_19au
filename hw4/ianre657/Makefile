@@ -1,13 +1,14 @@
+PYBIND = $(shell python3 -m pybind11 --includes)
 CXX = g++
 CXXFLAGS = --std=c++11 -Wall -O3 -fPIC
 
 
-CONDAROOT = /opt/conda
-INCLUDE += -I$(CONDAROOT)/include
-LDFLAGS += -L$(CONDAROOT)/lib -lmkl_rt -lpthread -lm -ldl
+MKLROOT ?= ${HOME}/opt/conda
+INCLUDE += -I$(MKLROOT)/include
+LDFLAGS += -L$(MKLROOT)/lib -lmkl_rt -lpthread -lm -ldl
 
-
-TARGET = _matrix.*.so
+SUFFIX = $(shell python3-config --extension-suffix )
+TARGET = _matrix$(SUFFIX)
 
 all: $(TARGET)
 
@@ -17,12 +18,12 @@ Matrix.o: Matrix.cpp Matrix.hpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@ $(LDFLAGS)
 
 $(TARGET): Matrix_pybind.cpp Matrix.o Matrix.hpp
-	$(CXX) $(CXXFLAGS) $(INCLUDE)   --shared `python3 -m pybind11 --includes` $^ -o _matrix`python3-config --extension-suffix` $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) ${PYBIND} $(INCLUDE) --shared `python3 -m pybind11 --includes` $^ -o $@ $(LDFLAGS)
 
 test: $(TARGET)
-	pytest test_Matrix.py
+	pytest -p no:cacheprovider test_Matrix.py
 
-bench: $(TARGET)
+bench:
 	./benchmark.py --times 3
 
 clean:

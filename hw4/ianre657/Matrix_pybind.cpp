@@ -9,6 +9,8 @@ PYBIND11_MODULE(_matrix, m)
             "use naive method to multiply matrices.");
       m.def("multiply_mkl", &multiply_mkl,
             "use mkl to multiply matrices.");
+      m.def("multiply_tile", &multiply_tile,
+            "multiply matrices with tile optimization");
 
       py::class_<Matrix>(m, "Matrix")
           .def(py::init<int, int>())
