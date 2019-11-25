@@ -2,13 +2,14 @@
 #include <random>
 #include <stdexcept>
 #include <cmath>
-#include <ctime>
-//#include <pybind11/pybind11.h>
-//#include <pybind11/operators.h>
-//#include "mkl.h"
+#include <algorithm>
+#include <chrono>
+#include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
+#include "mkl.h"
 #include "Matrix.h"
 
-//namespace py = pybind11;
+namespace py = pybind11;
 
 /* generate matrix entries using uniform distribution between -1 and 1 */
 Matrix::Matrix(size_t nrow, size_t ncol)
@@ -77,7 +78,7 @@ bool Matrix::operator==(Matrix const &other)
     }
     for (size_t idx = 0; idx < this->m_nrow * this->m_ncol; idx++)
     {
-        if (abs(this->m_buffer[idx] - other.m_buffer[idx]) > 0.01)
+        if (fabs(this->m_buffer[idx] - other.m_buffer[idx]) > 0.001)
         {
             ret = false;
             break;
@@ -146,7 +147,6 @@ void Matrix::resetbuf(size_t row, size_t col)
     m_ncol = col;    
 }
 
-/*
 Matrix mkl_MM(Matrix const &A, Matrix const &B)
 {
     if (A.ncol() != B.nrow())
@@ -161,7 +161,6 @@ Matrix mkl_MM(Matrix const &A, Matrix const &B)
                 A.buffer(), A.ncol(), B.buffer(), B.ncol(), beta, ret.buffer(), ret.ncol());
     return ret;
 }
-*/
 
 bool isequal(Matrix& A, Matrix& B)
 {
@@ -201,7 +200,6 @@ Matrix operator*(Matrix const &A1, Matrix const &A2)
     return ret;
 }
 
-
 Matrix multiply_naive(Matrix const &A1, Matrix const &A2)
 {
     return A1 * A2;
@@ -216,28 +214,145 @@ struct Block
         size = _size;
         ptr = new double[size * size];
     }
+    ~Block()
+    {
+        std::fill(ptr, ptr + size * size, 0);
+    }
 };
 
 void block_assign(Matrix const &A, size_t row, size_t col, Block &B)
+/*
+    if-else checks if the block size exeeds the boundary of A
+*/
 {
     size_t size = B.size;
-    for (size_t i = 0; i < size; ++i)
+    if (row + size <= A.nrow() && col + size <= A.ncol())
     {
-        for (size_t j = 0; j < size; ++j)
+        for (size_t i = 0; i < size; ++i)
         {
-            B.ptr[i * size + j] = A(row + i, col + j);
+            for (size_t j = 0; j < size; ++j)
+            {
+                B.ptr[i * size + j] = A(row + i, col + j);
+            }
+        }
+    }
+    else if (row + size > A.nrow() && col + size <= A.ncol())
+    {
+        size_t margin = (row + size - A.nrow());
+        for (size_t i = 0; i < size; ++i)
+        {
+            for (size_t j = 0; j < size; ++j)
+            {
+                if (i < margin)
+                {
+                    B.ptr[i * size + j] = 0.0;
+                }
+                else
+                {
+                    B.ptr[i * size + j] = A(row + i - margin, col + j);
+                }
+            }
+        }
+    }
+    else if (row + size <= A.nrow() && col + size > A.ncol())
+    {
+        size_t margin = (col + size - A.ncol());
+        for (size_t i = 0; i < size; ++i)
+        {
+            for (size_t j = 0; j < size; ++j)
+            {
+                if (j < margin)
+                {
+                    B.ptr[i * size + j] = 0.0;
+                }
+                else
+                {
+                    B.ptr[i * size + j] = A(row + i, col + j - margin);
+                }
+            }
+        }
+    }
+    else
+    {
+        size_t margin_row = (row + size - A.nrow());
+        size_t margin_col = (col + size - A.ncol());
+        for (size_t i = 0; i < size; ++i)
+        {
+            for (size_t j = 0; j < size; ++j)
+            {
+                if (i < margin_row || j < margin_col)
+                {
+                    B.ptr[i * size + j] = 0.0;
+                }
+                else
+                {
+                    B.ptr[i * size + j] = A(row + i - margin_row, col + j - margin_col);
+                }
+            }
         }
     }
 }
 
 void matrix_assign(Matrix &A, size_t row, size_t col, Block const &B)
+/*
+    if-else checks if the block size exeeds the boundary of A
+*/
 {
     size_t size = B.size;
-    for (size_t i = 0; i < size; ++i)
-    {
-        for (size_t j = 0; j < size; ++j)
+    if (row + size <= A.nrow() && col + size <= A.ncol())
+    {        
+        for (size_t i = 0; i < size; ++i)
         {
-            A(row + i, col + j) = B.ptr[i * size + j];
+            for (size_t j = 0; j < size; ++j)
+            {
+                A(row + i, col + j) = B.ptr[i * size + j];
+            }
+        }
+    }
+    else if (row + size > A.nrow() && col + size <= A.ncol())
+    {
+        size_t margin = (row + size - A.nrow());
+        for (size_t i = 0; i < size; ++i)
+        {
+            for (size_t j = 0; j < size; ++j)
+            {
+                if (i < margin) {}
+                else
+                {
+                    A(row + i - margin, col + j) = B.ptr[i * size + j];
+                }
+            }
+        }
+    }
+    else if (row + size <= A.nrow() && col + size > A.ncol())
+    {
+        size_t margin = (col + size - A.ncol());
+        for (size_t i = 0; i < size; ++i)
+        {
+            for (size_t j = 0; j < size; ++j)
+            {
+                if (j < margin) {}
+                else
+                {
+                    A(row + i, col + j - margin) = B.ptr[i * size + j];                    
+                }
+            }
+        }
+    }
+    else
+    {
+        size_t margin_row = (row + size - A.nrow());
+        size_t margin_col = (col + size - A.ncol());
+        for (size_t i = 0; i < size; ++i)
+        {
+            for (size_t j = 0; j < size; ++j)
+            {
+                if (i < margin_row || j < margin_col) {}
+                else
+                {
+                    A(row + i - margin_row, col + j - margin_col) = B.ptr[i * size + j];
+                }
+            }
         }
     }
 }
@@ -253,23 +368,17 @@ Matrix multiply_tile(Matrix const &A1, Matrix const &A2, size_t size)
     size_t block_nrow = 0;
     size_t block_ncol = 0;
     size_t block_ncol2 = 0;
-    bool flag1 = false;
-    bool flag2 = false;
-    bool flag3 = false;
 
     if (A1.nrow() % size != 0)
     {
-        flag1 = true;
         block_nrow += 1;
     }
     if (A1.ncol() % size != 0)
     {
-        flag2 = true;
         block_ncol += 1;
     }
     if (A2.ncol() % size != 0)
     {
-        flag3 = true;
         block_ncol2 += 1;
     }
 
@@ -286,17 +395,28 @@ Matrix multiply_tile(Matrix const &A1, Matrix const &A2, size_t size)
             {
                 Block left(size);
                 Block right(size);
+
+                /* copy value from matrices to blocks */
                 block_assign(A1, i * size, j * size, left);
                 block_assign(A2, j * size, k * size, right);
-                for (size_t z = 0; z < size * size; ++z)
+
+                /* tiling block multiplication */
+                for (size_t x = 0; x < size; ++x)
                 {
-                    bres.ptr[z] += left.ptr[z] * right.ptr[z];
-                }            
-                //delete lptr;
-                //delete rptr;
+                    for (size_t y = 0; y < size; ++y)
+                    {
+                        for (size_t z = 0; z < size; ++z)
+                        {
+                            bres.ptr[x * size + y] += left.ptr[x * size + z] * right.ptr[size * z + y];
+                        }
+                    }
+                }
+                left.~Block();
+                right.~Block();           
             }
+            /* assign value from block to result matrix */
             matrix_assign(res, i * size, k * size, bres);
-            //delete bptr;
+            bres.~Block();
         }
     }
     return res;
@@ -336,12 +456,11 @@ Matrix operator*(Matrix const &A, double const &c)
     return ret;
 }
 
-/*
-
 PYBIND11_MODULE(_matrix, m) {
     m.doc() = "matrix class implements matrix multiplication";
     m.def("multiply_mkl", &mkl_MM, "mkl matrix multiplication");
     m.def("multiply_naive", &multiply_naive);
+    m.def("multiply_tile", &multiply_tile);
     m.def("isequal", &isequal, "compare two matrics");
     py::class_<Matrix>(m, "Matrix")
         .def(py::init<size_t, size_t>())
@@ -361,24 +480,47 @@ PYBIND11_MODULE(_matrix, m) {
         .def(py::self * double())
         .def(double() * py::self);
 }
-*/
-
+/*
 int main()
 {
-    time_t start, end;
-    Matrix a(100, 120);
-    Matrix b(120, 150);
-    Matrix c(100, 150);
-    Matrix d(100, 150);
-    start = time(NULL);
+    
+    Matrix a(1000, 1200);
+    Matrix b(1200, 1500);
+    Matrix c(1000, 1500);
+    Matrix d(1000, 1500);
+
+    a(0, 0) = 1;
+    a(0, 1) = 0;
+    a(0, 2) = 0;
+    a(0, 3) = 0;
+    a(1, 0) = 0;
+    a(1, 1) = 1;
+    a(1, 2) = 0;
+    a(1, 3) = 0;
+    a(2, 0) = 0;
+    a(2, 1) = 0;
+    a(2, 2) = 1;
+    a(2, 3) = 0;
+    a(3, 0) = 0;
+    a(3, 1) = 0;
+    a(3, 2) = 0;
+    a(3, 3) = 1;
+    
+    auto start = std::chrono::steady_clock::now();
     d = a * b;
-    end = time(NULL);
-    double diff2 = difftime(end, start);
-    start = time(NULL);
-    c = multiply_tile(a, b, 10);
-    end = time(NULL);
-    double diff1 = difftime(end, start);
-    std::cout << diff1 << std::endl;
-    std::cout << diff2 << std::endl;
+    auto end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+    auto start2 = std::chrono::steady_clock::now();
+    c = multiply_tile(a, b, 64);
+    auto end2 = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2).count() << std::endl;
+    bool res = (c == d);
+    
+    //std::cout << b.repr() << std::endl;
+    //std::cout << c.repr() << std::endl;
+    //std::cout << d.repr() << std::endl;
+    
+    std::cout << res << std::endl;
     return 0;
 }
+*/
