@@ -42,7 +42,7 @@ grader will run the following commands:
 .. code-block:: bash
 
   cd nsdhw_19au/hw4/username
-  ../validate.py | grep "GET POINTS"
+  ../validate.py | grep "GET POINT"
 
 You will earn points for what is printed on screen.  The grader will run on a
 `m5.large` in `us-east-1`.  Please test your code in the same or a similar
