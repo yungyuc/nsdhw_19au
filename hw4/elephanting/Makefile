@@ -29,3 +29,6 @@ CXXFLAGS := ${CXXFLAGS} \
 
 _matrix.*.so: Matrix.cpp Matrix.h
 	${CXX} ${CXXFLAGS} `python3 -m pybind11 --includes ` $< -o _matrix`python3-config --extension-suffix`
+
+clean:
+	@rm -f *.o *.so

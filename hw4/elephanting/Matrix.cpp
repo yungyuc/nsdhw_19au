@@ -213,11 +213,9 @@ struct Block
     {
         size = _size;
         ptr = new double[size * size];
+	std::fill(ptr, ptr + size * size, 0.0);
     }
-    ~Block()
-    {
-        std::fill(ptr, ptr + size * size, 0);
-    }
+    ~Block() {}
 };
 
 void block_assign(Matrix const &A, size_t row, size_t col, Block &B)
