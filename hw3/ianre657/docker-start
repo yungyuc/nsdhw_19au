@@ -13,7 +13,7 @@ docker_img = 'ianre657/nsd-env'
 def main():
   cwd = os.path.dirname(filepath)
   cwd = os.getcwd()
-  os.system(f'docker run --rm -it -v {cwd}:/nsd {docker_img}')
+  os.system(f'docker run --rm -it -v {cwd}:/home/ubuntu/nsd_hw3 {docker_img}')
 
 if __name__ == "__main__":
   main()
