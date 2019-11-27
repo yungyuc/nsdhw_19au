@@ -1,9 +1,7 @@
-FLAGS ?=
-
 UNAME_S := $(shell uname -s)
 MKLROOT ?= ${HOME}/opt/conda
 MKLEXT ?= so
-CXXFLAGS := -Wl,--no-as-needed -Wall -shared -fPIC
+CXXFLAGS := -Wall -shared -fPIC
 
 MKLLINKLINE := \
 	${MKLROOT}/lib/libmkl_intel_lp64.${MKLEXT} \
@@ -13,7 +11,7 @@ MKLLINKLINE := \
 
 CXX = g++
 CXXFLAGS := ${CXXFLAGS} \
-	-std=c++17 -O3 -g -m64 \
+	-std=c++11 -O3 -g -m64 \
 	-I${MKLROOT}/include \
 	${MKLLINKLINE} \
 	${FLAGS}
@@ -33,7 +31,7 @@ test: $(TARGET)
 
 .PHONY: bench
 bench: $(TARGET)
-	$(PY) matrix_benchmark.py
+	./matrix_benchmark.py
 
 .PHONY: clean
 clean:
