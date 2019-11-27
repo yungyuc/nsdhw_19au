@@ -31,6 +31,7 @@ test: $(TARGET)
 
 .PHONY: bench
 bench: $(TARGET)
+	chmod u+x matrix_benchmark.py
 	./matrix_benchmark.py
 
 .PHONY: clean
