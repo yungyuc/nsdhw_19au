@@ -5,8 +5,8 @@ Term project and presentation guideline
 Everyone should submit a presentation application with homework assignment #5.
 The format is
 
-* Name:
-* English name:
+* Full name:
+* English full name:
 * Preferred time slots (at least 1, at most 2; use the ID listed below):
 * Project subject:
 * Public GitHub repository URL:
