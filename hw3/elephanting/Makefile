@@ -30,14 +30,22 @@ CXXFLAGS := ${CXXFLAGS} \
 	${MKLLINKLINE} \
 	${FLAGS}
 
+MKL_ROOT:=${HOME}/opt/conda
+MKL_LIB_DIR:=${MKL_ROOT}/lib
+MKL_LIBS:=${MKL_LIB_DIR}/libmkl_def.so
+MKL_LIBS:=${MKL_LIBS}:${MKL_LIB_DIR}/libmkl_avx2.so
+MKL_LIBS:=${MKL_LIBS}:${MKL_LIB_DIR}/libmkl_core.so
+MKL_LIBS:=${MKL_LIBS}:${MKL_LIB_DIR}/libmkl_intel_lp64.so
+MKL_LIBS:=${MKL_LIBS}:${MKL_LIB_DIR}/libmkl_sequential.so
+
 _matrix.*.so: Matrix.cpp Matrix.h
-	${CXX} ${CXXFLAGS} `python3 -m pybind11 --includes ` $< -o _matrix`python3-config --extension-suffix`
+	export LD_PRELOAD=${MKL_LIBS}; ${CXX} ${CXXFLAGS} `python3 -m pybind11 --includes ` $< -o _matrix`python3-config --extension-suffix`
 
 clean:
-	@rm -f *.o *.so
+	@rm -rf *.so *.o  __py*
 
-bench: _matrix.*.so bench.py
-	@python3 bench.py
+bench: _matrix.*.so
+	@export LD_PRELOAD=${MKL_LIBS}; python3 bench.py
 
 test: _matrix.*.so test_matrix.py
 	@python3 bench.py
