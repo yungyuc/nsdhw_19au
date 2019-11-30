@@ -32,10 +32,8 @@ instructor’s email box no later than 12/27.
 Time table
 ==========
 
-12/30 7:00-9:50
-
-.. list-table:: 1/6 7:00-9:50
-   :header-rows: 1
+.. list-table:: 12/30 7:00-9:50
+  :header-rows: 1
 
   * - ID
     - Time
@@ -78,10 +76,8 @@ Time table
     -
     -
 
-1/6 7:00-9:50
-
 .. list-table:: 1/6 7:00-9:50
-   :header-rows: 1
+  :header-rows: 1
 
   * - ID
     - Time
