@@ -24,7 +24,7 @@ def bench(iterations):
         toc = time.time()
         ret_mkl.append(toc - tic)
         print("multiply_mkl iteration {} complete!".format(i + 1))
-    with open("performace.txt", "w") as f:
+    with open("performance.txt", "w") as f:
         naive_avg = sum(ret_naive) / len(ret_naive)
         mkl_avg = sum(ret_mkl) / len(ret_mkl)
         ret = "Start multiply_naive (repeat={iter}),\ntake min = {} seconds\nStart multiply_mkl (repeat={iter}),\ntake min = {} seconds\
