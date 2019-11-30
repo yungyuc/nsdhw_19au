@@ -11,10 +11,16 @@ The format is
 * Project subject:
 * Public GitHub repository URL:
 
-The term project requires to be in a public GitHub repository.  If you do not
+The term project is required to be in a public GitHub repository.  If you do not
 have one or failed to provide one in the homework assignment #5, the grade of
 your term project will be solely determined by your final presentation, by the
 most strict professional standard.
+
+Once you submit the GitHub repository, you can tag me (@yungyuc) in your issue
+or PR.  I will also find time to review your code and file issues or PRs.
+
+Presentation
+============
 
 Each presentation can use at most 16 minutes.  It is suggested that the
 presentation itself uses 13-14 minutes and 2-3 minutes are left for questions
