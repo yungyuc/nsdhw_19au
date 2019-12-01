@@ -45,40 +45,50 @@ Time table
     - Time
     - Presenter name
     - Subject
+    - Github
   * - 1-1
     - 07:00 - 07:16
+    -
     -
     -
   * - 1-2
     - 07:16 - 07:32
     -
     -
+    -
   * - 1-3
     - 07:32 - 07:48
     -
     -
+    -
   * - 1-4
     - 08:00 - 08:16
-    -
-    -
+    - Chen-Yi Huang
+    - Basic neural network library supported auto-differentiation
+    - https://github.com/titaneric/AutoDiff-from-scratch
   * - 1-5
     - 08:16 - 08:32
+    -
     -
     -
   * - 1-6
     - 08:32 - 08:48
     -
     -
+    -
   * - 1-7
     - 09:00 - 09:16
-    -
-    -
+    - Alisher Mukashev
+    - Linear XGBoost Implementation
+    - https://github.com/alishsuper/NSD_term_project
   * - 1-8
     - 09:16 - 09:32
     -
     -
+    -
   * - 1-9
     - 09:32 - 09:48
+    -
     -
     -
 
@@ -89,39 +99,49 @@ Time table
     - Time
     - Presenter name
     - Subject
+    - Github
   * - 2-1
     - 07:00 - 07:16
+    -
     -
     -
   * - 2-2
     - 07:16 - 07:32
     -
     -
+    -
   * - 2-3
     - 07:32 - 07:48
+    -
     -
     -
   * - 2-4
     - 08:00 - 08:16
     -
     -
+    -
   * - 2-5
     - 08:16 - 08:32
+    -
     -
     -
   * - 2-6
     - 08:32 - 08:48
     -
     -
+    -
   * - 2-7
     - 09:00 - 09:16
+    -
     -
     -
   * - 2-8
     - 09:16 - 09:32
     -
     -
+    -
   * - 2-9
     - 09:32 - 09:48
+    -
     -
     -
