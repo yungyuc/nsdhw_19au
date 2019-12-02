@@ -58,9 +58,9 @@ Time table
     -
   * - 1-3
     - 07:32 - 07:48
-    -
-    -
-    -
+    - Yarin Bar
+    - Euclidean Distance Between Adversarial Features
+    - https://github.com/yarinbar/nsd_eucleadian_resemblance
   * - 1-4
     - 08:00 - 08:16
     - Chen-Yi Huang
@@ -68,9 +68,9 @@ Time table
     - https://github.com/titaneric/AutoDiff-from-scratch
   * - 1-5
     - 08:16 - 08:32
-    -
-    -
-    -
+    - Yu-Hsuan Cheng
+    - PageRank
+    - https://github.com/chengscott/pagerank
   * - 1-6
     - 08:32 - 08:48
     -
@@ -117,14 +117,14 @@ Time table
     -
   * - 2-4
     - 08:00 - 08:16
-    -
-    -
-    -
+    - Hong-Sheng Zheng
+    - isl polytope visualization tool
+    - https://github.com/rniczh/isl-visualtool
   * - 2-5
     - 08:16 - 08:32
-    -
-    -
-    -
+    - Yi-Chien Shih
+    - CPU Ray Marching Renderer
+    - https://github.com/alan0201tw/RayMarcher
   * - 2-6
     - 08:32 - 08:48
     -
@@ -132,9 +132,9 @@ Time table
     -
   * - 2-7
     - 09:00 - 09:16
-    -
-    -
-    -
+    - Zi-Xuan Chen
+    - SVM Implementation
+    - https://github.com/nobodyzxc/yalibsvm
   * - 2-8
     - 09:16 - 09:32
     -
@@ -142,6 +142,6 @@ Time table
     -
   * - 2-9
     - 09:32 - 09:48
-    -
-    -
-    -
+    - liuyuchen
+    - Mesh Network Simulator
+    - https://github.com/liuyuchen777/Mesh-Simulator
