@@ -127,9 +127,9 @@ Time table
     - https://github.com/alan0201tw/RayMarcher
   * - 2-6
     - 08:32 - 08:48
-    -
-    -
-    -
+    - Yu-Sheng Hsieh
+    - Crowd Evacuation Simulation
+    - https://github.com/YSHsieh7777/CrowdEvacuationSimulation
   * - 2-7
     - 09:00 - 09:16
     - Zi-Xuan Chen
