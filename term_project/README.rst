@@ -145,3 +145,40 @@ Time table
     - liuyuchen
     - Mesh Network Simulator
     - https://github.com/liuyuchen777/Mesh-Simulator
+
+Grading guideline (subject to change)
+=====================================
+
+* Software engineering:
+  * Build system:
+  * Testing:
+  * Version control:
+  * History quality:
+  * Issue tracking:
+  * Documentation:
+  * Other:
+* Correctness:
+  * Existence of golden:
+  * Quality of golden:
+  * Order of development:
+  * Other:
+* Software architecture:
+  * SOLID:
+  * API granularity:
+  * API stability:
+  * Proper use of high-level language wrapping:
+  * Level of modularity:
+    * C++ code structure:
+    * Python code structure:
+  * Profiling:
+  * Runtime:
+  * Memory:
+  * Design for testing:
+  * Iterative design:
+  * Other:
+* Presentation:
+  * Technical fluency:
+  * Slide clarity:
+  * Time control:
+  * Appearance:
+  * Other:
