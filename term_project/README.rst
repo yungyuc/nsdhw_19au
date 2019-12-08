@@ -73,9 +73,9 @@ Time table
     - https://github.com/chengscott/pagerank
   * - 1-6
     - 08:32 - 08:48
-    -
-    -
-    -
+    - Jun-Wei Lin
+    - INT8 Inference Engine for Neural Network
+    - https://github.com/t0037799/INT8InferenceEngine
   * - 1-7
     - 09:00 - 09:16
     - Alisher Mukashev
@@ -112,9 +112,9 @@ Time table
     -
   * - 2-3
     - 07:32 - 07:48
-    -
-    -
-    -
+    - Chung Chih-Chi
+    - Bayesian Optimization
+    - https://github.com/stvreumi/BayesianOptimization
   * - 2-4
     - 08:00 - 08:16
     - Hong-Sheng Zheng
