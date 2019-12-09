@@ -1,5 +1,5 @@
 ======================
-Homework assignment #4
+Homework assignment #6
 ======================
 
 Your submission PR needs to create a sub-directory using exactly your GitHub
