@@ -88,9 +88,9 @@ Time table
     -
   * - 1-9
     - 09:32 - 09:48
-    -
-    -
-    -
+    - Cheng-Yen Tsai
+    - High Dynamic Range Imaging Using Multiple Exposure Images with Tone Mapping
+    - https://github.com/evan11401/NSDfinal_HDRI
 
 .. list-table:: 1/6 7:00-9:50
   :header-rows: 1
@@ -107,9 +107,9 @@ Time table
     -
   * - 2-2
     - 07:16 - 07:32
-    -
-    -
-    -
+    - Ruo-Lin Ko
+    - Single camera distance estimate
+    - https://github.com/elephanting/Single_camera_distance_estimate
   * - 2-3
     - 07:32 - 07:48
     - Chung Chih-Chi
@@ -137,9 +137,9 @@ Time table
     - https://github.com/nobodyzxc/yalibsvm
   * - 2-8
     - 09:16 - 09:32
-    -
-    -
-    -
+    - Chen Yi-An
+    - fourier plotter
+    - https://github.com/ianre657/FourierPlotter
   * - 2-9
     - 09:32 - 09:48
     - liuyuchen
