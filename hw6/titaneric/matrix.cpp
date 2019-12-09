@@ -1,6 +1,7 @@
 #ifdef PYTHON_LIB
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 #endif
 #include <mkl.h>
 
@@ -168,6 +169,28 @@ public:
 public:
     size_t nrow() const { return m_nrow; };
     size_t ncol() const { return m_ncol; };
+
+#ifdef PYTHON_LIB
+
+    py::array_t<double> array() const {
+        py::buffer_info info (
+            getFlatData(),
+            sizeof(double),
+            py::format_descriptor<double>::format(),
+            2,
+            {
+                nrow(),
+                ncol()
+            },
+            {
+                sizeof(double) * ncol(),
+                sizeof(double)
+            }
+        );
+        return py::array_t<double>(info);
+
+    };
+#endif
 
 private:
     size_t m_nrow = 0;
@@ -369,6 +392,7 @@ PYBIND11_MODULE(_matrix, m)
         .def(py::init<vector<vector<double>>>())
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
+        .def_property_readonly("array", &Matrix::array)
         .def("__eq__", [](const Matrix &self, const Matrix &other) { return self == other; })
         .def("__ne__", [](const Matrix &self, const Matrix &other) { return self != other; })
         .def("__getitem__", [](const Matrix &self, pair<size_t, size_t> idx) { return self(idx.first, idx.second); })
