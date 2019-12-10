@@ -2,6 +2,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
+#include <pybind11/embed.h>
 #endif
 #include <mkl.h>
 
@@ -257,20 +258,25 @@ public:
         return m_data;
     }
 #ifdef PYTHON_LIB
-
-    py::array_t<double> array() const
+public:
+    py::array_t<double> get_array()
     {
-        py::buffer_info info(
-            data(),
-            sizeof(double),
-            py::format_descriptor<double>::format(),
-            2,
-            {nrow(),
-             ncol()},
+        /* We MUST provide base to prevent the data copy
+            BUT we don't need to delete the original buffer
+            because we've already have destructor for it.
+            Thanks to https://github.com/pybind/pybind11/issues/1042
+            array source: https://github.com/pybind/pybind11/blob/master/include/pybind11/numpy.h
+        */
+        auto capsule = py::capsule(data(), [](void *v) { /*delete reinterpret_cast<double *>(v);*/ });
+        py::array_t<double> numpy_data(
+            {nrow(), ncol()},
             {sizeof(double) * ncol(),
-             sizeof(double)});
-        return py::array_t<double>(info);
-    };
+             sizeof(double)},
+            data(),
+            capsule);
+        return numpy_data;
+    }
+
 #endif
 
 private:
@@ -487,7 +493,7 @@ PYBIND11_MODULE(_matrix, m)
     py::class_<Matrix>(m, "Matrix", py::buffer_protocol())
         .def_buffer([](Matrix &m) -> py::buffer_info {
             return py::buffer_info(
-                m.data(),                                      /* Pointer to buffer */
+                m.data(),                                /* Pointer to buffer */
                 sizeof(double),                          /* Size of one scalar */
                 py::format_descriptor<double>::format(), /* Python struct-style format descriptor */
                 2,                                       /* Number of dimensions */
@@ -500,7 +506,7 @@ PYBIND11_MODULE(_matrix, m)
         .def(py::init<vector<vector<double>>>())
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
-        .def_property_readonly("array", &Matrix::array)
+        .def_property_readonly("array", &Matrix::get_array)
         .def("__eq__", [](const Matrix &self, const Matrix &other) { return self == other; })
         .def("__ne__", [](const Matrix &self, const Matrix &other) { return self != other; })
         .def("__getitem__", [](const Matrix &self, pair<size_t, size_t> idx) { return self(idx.first, idx.second); })

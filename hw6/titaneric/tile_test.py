@@ -56,5 +56,25 @@ def odd_tile_size():
 
     print(_matrix.multiply_tile(A, B, 2))
 
+
+def nd_array_test():
+    size = 100
+    mat = _matrix.Matrix(size,size)
+    for it in range(size):
+        for jt in range(size):
+            mat[it, jt] = it * size + jt + 1
+    np_array = np.array(mat, copy=False)
+    np_array[0, 0] = 10
+    print(np_array[0, 0], mat[0, 0])
+    np_array[1, 0] = 200
+
+    print(np_array[1, 0], mat[1, 0])
+    np_array.fill(0)
+    print(np_array[0, 0], mat[0, 0])
+
+    mat.array.fill(-1)
+    print(mat.array[0,0], mat[0, 0])
+
+
 if __name__ == "__main__":
-    performance()
+    nd_array_test()
