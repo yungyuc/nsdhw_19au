@@ -83,9 +83,9 @@ Time table
     - https://github.com/alishsuper/NSD_term_project
   * - 1-8
     - 09:16 - 09:32
-    -
-    -
-    -
+    - Tsung-Ta Wu
+    - Ball intersection detection
+    - https://github.com/cthbst/ball-intersection-detection
   * - 1-9
     - 09:32 - 09:48
     - Cheng-Yen Tsai
@@ -102,9 +102,9 @@ Time table
     - Github
   * - 2-1
     - 07:00 - 07:16
-    -
-    -
-    -
+    - Lu James
+    - Defect simulator
+    - https://github.com/lujames13/Defect-simulator
   * - 2-2
     - 07:16 - 07:32
     - Ruo-Lin Ko
