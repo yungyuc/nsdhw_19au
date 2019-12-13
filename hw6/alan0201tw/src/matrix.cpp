@@ -195,7 +195,7 @@ PYBIND11_MODULE(_matrix, mod)
         //           sizeof(double) }
         //     );
         // })
-        .def_property("array", &Matrix::numpy_data)
+        .def_readwrite("array", &Matrix::numpy_data)
         //
         .def( py::init<size_t, size_t>() )
         .def( py::init<size_t, size_t, std::vector<double>>() )
