@@ -1,5 +1,8 @@
 #pragma once
 
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -111,6 +114,12 @@ public:
 
     size_t size() const { return m_nrow * m_ncol; }
     double* data() const { return m_buffer; }
+    
+    py::array_t<double> numpy_data() const 
+    {
+        return py::array_t<double>(size(), m_buffer);
+    }
+    
     double buffer(size_t i) const { return m_buffer[i]; }
     std::vector<double> buffer_vector() const { return std::vector<double>(m_buffer, m_buffer+size()); }
 
@@ -161,6 +170,7 @@ private:
 
     size_t m_nrow = 0;
     size_t m_ncol = 0;
+    // py::array_t<double> m_buffer;
     double * m_buffer = nullptr;
 
     // friend free function for private field access
