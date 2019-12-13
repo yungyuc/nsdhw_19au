@@ -8,6 +8,8 @@
 #include <vector>
 #include <stdexcept>
 
+namespace py = pybind11;
+
 class Matrix
 {
 public:
@@ -119,7 +121,7 @@ public:
     {
         return py::array_t<double>(size(), m_buffer);
     }
-    
+
     double buffer(size_t i) const { return m_buffer[i]; }
     std::vector<double> buffer_vector() const { return std::vector<double>(m_buffer, m_buffer+size()); }
 
