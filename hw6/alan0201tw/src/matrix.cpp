@@ -179,7 +179,23 @@ PYBIND11_MODULE(_matrix, mod)
 
     mod.def("multiply_tile", &multiply_tile, "Matrix Tiling implementation");
 
-    py::class_<Matrix>(mod, "Matrix")
+    // Reference : 
+    // https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html
+
+    py::class_<Matrix>(mod, "Matrix", py::buffer_protocol())
+        //
+        .def_buffer([](Matrix &m) -> py::buffer_info {
+            return py::buffer_info(
+                m.data(),
+                sizeof(double),
+                py::format_descriptor<double>::format(),
+                2,
+                { m.nrow(), m.ncol() },
+                { sizeof(double) * m.ncol(),
+                  sizeof(double) }
+            );
+        })
+        //
         .def( py::init<size_t, size_t>() )
         .def( py::init<size_t, size_t, std::vector<double>>() )
         .def_property_readonly("nrow", &Matrix::nrow)

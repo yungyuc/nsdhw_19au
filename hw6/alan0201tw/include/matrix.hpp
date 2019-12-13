@@ -110,6 +110,7 @@ public:
     size_t ncol() const { return m_ncol; }
 
     size_t size() const { return m_nrow * m_ncol; }
+    double* data() const { return m_buffer; }
     double buffer(size_t i) const { return m_buffer[i]; }
     std::vector<double> buffer_vector() const { return std::vector<double>(m_buffer, m_buffer+size()); }
 
