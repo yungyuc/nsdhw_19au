@@ -119,7 +119,7 @@ public:
     
     py::array_t<double> numpy_data() const 
     {
-        return py::array_t<double>(size(), m_buffer);
+        return py::array_t<double>({m_nrow, m_ncol}, m_buffer);
     }
 
     double buffer(size_t i) const { return m_buffer[i]; }
