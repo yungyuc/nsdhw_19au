@@ -117,9 +117,15 @@ public:
     size_t size() const { return m_nrow * m_ncol; }
     double* data() const { return m_buffer; }
     
+    // Reference :
+    // https://github.com/pybind/pybind11/issues/1042
     py::array_t<double> numpy_data() const
     {
-        return py::array_t<double>({m_nrow, m_ncol}, m_buffer);
+        auto capsule = py::capsule(v, [](void *v) 
+        {
+            delete reinterpret_cast<std::vector<int>*>(v); 
+        });
+        return py::array_t<double>({m_nrow, m_ncol}, m_buffer, capsule);
     }
 
     double buffer(size_t i) const { return m_buffer[i]; }
