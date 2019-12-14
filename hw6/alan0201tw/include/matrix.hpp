@@ -121,7 +121,7 @@ public:
     // https://github.com/pybind/pybind11/issues/1042
     py::array_t<double> numpy_data() const
     {
-        auto capsule = py::capsule(v, [](void *v) 
+        auto capsule = py::capsule(m_buffer, [](void *v) 
         {
             delete reinterpret_cast<std::vector<int>*>(v); 
         });
