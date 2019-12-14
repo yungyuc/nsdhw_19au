@@ -184,17 +184,17 @@ PYBIND11_MODULE(_matrix, mod)
 
     py::class_<Matrix>(mod, "Matrix", py::buffer_protocol())
         //
-        // .def_buffer([](Matrix &m) -> py::buffer_info {
-        //     return py::buffer_info(
-        //         m.data(),
-        //         sizeof(double),
-        //         py::format_descriptor<double>::format(),
-        //         2,
-        //         { m.nrow(), m.ncol() },
-        //         { sizeof(double) * m.ncol(),
-        //           sizeof(double) }
-        //     );
-        // })
+        .def_buffer([](Matrix &m) -> py::buffer_info {
+            return py::buffer_info(
+                m.data(),
+                sizeof(double),
+                py::format_descriptor<double>::format(),
+                2,
+                { m.nrow(), m.ncol() },
+                { sizeof(double) * m.ncol(),
+                  sizeof(double) }
+            );
+        })
         .def_property("array", &Matrix::numpy_data, nullptr)
         //
         .def( py::init<size_t, size_t>() )
