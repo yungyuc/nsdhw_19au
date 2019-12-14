@@ -123,7 +123,7 @@ public:
     {
         auto capsule = py::capsule(m_buffer, [](void *v) 
         {
-            delete reinterpret_cast<std::vector<int>*>(v); 
+            // delete reinterpret_cast<std::vector<int>*>(v); 
         });
         return py::array_t<double>({m_nrow, m_ncol}, m_buffer, capsule);
     }
