@@ -1,12 +1,14 @@
 #include <mkl.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include <vector>
 namespace py = pybind11;
 
 class Matrix {
 public:
   Matrix(size_t nrow, size_t ncol)
-      : nrow_(nrow), ncol_(ncol), data_(nrow * ncol) {}
+      : nrow_(nrow), ncol_(ncol), data_(nrow * ncol)
+  {}
   Matrix(const Matrix &) = default;
   Matrix(Matrix &&) = default;
   ~Matrix() = default;
@@ -32,20 +34,13 @@ public:
   }
   constexpr bool operator!=(const Matrix &rhs) const { return !(*this == rhs); }
 
-  friend Matrix multiply_tile(const Matrix &, const Matrix &, size_t);
   friend Matrix multiply_naive(const Matrix &, const Matrix &);
   friend Matrix multiply_mkl(const Matrix &, const Matrix &);
 
-private:
+public:
   size_t nrow_, ncol_;
   std::vector<double> data_;
 };
-
-constexpr size_t mymin(int a, int b) {
-  // return std::min(a, b);
-  // return a < b ? a : b;
-  return b + ((a - b) & (a - b) >> 31);
-}
 
 Matrix multiply_naive(const Matrix &lhs, const Matrix &rhs) {
   const size_t m = lhs.nrow_, n = lhs.ncol_, l = rhs.ncol_;
@@ -86,5 +81,15 @@ PYBIND11_MODULE(_matrix, m) {
            })
       .def("__setitem__", [](Matrix &m, std::pair<size_t, size_t> i, double v) {
         m(i.first, i.second) = v;
-      });
+      })
+      .def_property(
+          "array",
+          [](Matrix &m) {
+            py::capsule obj(m.data_.data(), [](void *f) {
+              static_cast<void>(f);  // suppress warning
+            });
+            py::array ret({m.nrow(), m.ncol()}, m.data_.data(), obj);
+            return ret;
+          },
+          nullptr);
 }
