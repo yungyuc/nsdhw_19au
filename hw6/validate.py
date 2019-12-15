@@ -115,34 +115,47 @@ class GradingTest(unittest.TestCase):
         self.assertTrue(isinstance(mat.array, np.ndarray))
         self.assertEqual((size, size), mat.array.shape)
         self.assertEqual(np.dtype('float64'), mat.array.dtype)
+
         mat.array.fill(0)
+
         for i in range(size):
             for j in range(size):
                 self.assertEqual(0, mat[i,j])
+
     def test_match(self):
+
         size = 100
         mat1, mat2, *_ = self.make_matrices(size)
+
         ret_naive = _matrix.multiply_naive(mat1, mat2)
         ret_mkl = _matrix.multiply_mkl(mat1, mat2)
+
         self.assertEqual(size, ret_naive.nrow)
         self.assertEqual(size, ret_naive.ncol)
         self.assertEqual(size, ret_mkl.nrow)
         self.assertEqual(size, ret_mkl.ncol)
+
         for i in range(ret_naive.nrow):
             for j in range(ret_naive.ncol):
                 self.assertNotEqual(mat1[i,j], ret_mkl[i,j])
                 self.assertEqual(ret_naive[i,j], ret_mkl[i,j])
+
     def test_zero(self):
+
         size = 100
         mat1, mat2, mat3, *_ = self.make_matrices(size)
+
         ret_naive = _matrix.multiply_naive(mat1, mat3)
         ret_mkl = _matrix.multiply_mkl(mat1, mat3)
+
         self.assertEqual(size, ret_naive.nrow)
         self.assertEqual(size, ret_naive.ncol)
         self.assertEqual(size, ret_mkl.nrow)
         self.assertEqual(size, ret_mkl.ncol)
+
         for i in range(ret_naive.nrow):
             for j in range(ret_naive.ncol):
                 self.assertEqual(0, ret_naive[i,j])
                 self.assertEqual(0, ret_mkl[i,j])
+
 # vim: set fenc=utf8 ff=unix et sw=4 ts=4 sts=4:
