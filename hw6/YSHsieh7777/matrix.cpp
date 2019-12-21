@@ -1,5 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/numpy.h>
+
 #include <vector>
 #include <utility>
 #include <stddef.h>
@@ -63,6 +65,12 @@ public:
     size_t nrow() const { return m_nrow; }
     size_t ncol() const { return m_ncol; }
     double * buffer() const { return m_buffer; }
+
+    py::array_t<double> array()
+    {
+        auto capsule = py::capsule(m_buffer, [](void *p) { delete reinterpret_cast<double *>(p); });
+        return py::array_t<double>({m_nrow, m_ncol}, m_buffer, capsule);
+    }
 
     size_t size() const { return m_nrow * m_ncol; }
     double buffer(size_t i) const { return m_buffer[i]; }
@@ -202,7 +210,8 @@ PYBIND11_MODULE(_matrix, m) {
         .def_property_readonly("nrow", &Matrix::nrow)
         .def_property_readonly("ncol", &Matrix::ncol)
         .def(py::self == py::self)
-        .def(py::self != py::self);
+        .def(py::self != py::self)
+        .def_property_readonly("array", &Matrix::array);
 
     m.def("multiply_naive",                              // function name
         &multiply_naive,                               // function pointer
