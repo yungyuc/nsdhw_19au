@@ -68,7 +68,7 @@ public:
 
     py::array_t<double> array()
     {
-        auto capsule = py::capsule(m_buffer, [](void *p) { delete reinterpret_cast<double *>(p); });
+        auto capsule = py::capsule(m_buffer, [](void *p) { /*delete reinterpret_cast<double *>(p);*/ });
         return py::array_t<double>({m_nrow, m_ncol}, m_buffer, capsule);
     }
 
