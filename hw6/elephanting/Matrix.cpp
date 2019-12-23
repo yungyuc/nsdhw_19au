@@ -28,7 +28,7 @@ Matrix::Matrix(size_t nrow, size_t ncol)
 
 py::array_t<double> Matrix::array()
 {
-    auto capsule = py::capsule(m_buffer, [](void *v) { delete reinterpret_cast<double*>(v);});
+    auto capsule = py::capsule(m_buffer, [](void *v) {/* delete reinterpret_cast<double*>(v);*/}); // double free??
     return py::array_t<double> ({m_nrow, m_ncol}, m_buffer, capsule);
 }
 
@@ -52,7 +52,7 @@ std::string Matrix::repr() const
 
 Matrix::~Matrix()
 {
-    //resetbuf(0, 0);
+    resetbuf(0, 0);
 }
 
 Matrix &Matrix::operator=(Matrix const &other)
