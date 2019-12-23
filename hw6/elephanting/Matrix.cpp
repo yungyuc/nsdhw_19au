@@ -32,8 +32,6 @@ py::array_t<double> Matrix::array()
     return py::array_t<double> ({m_nrow, m_ncol}, m_buffer, capsule);
 }
 
-auto capsule = py::capsule(v, [](void *v) { delete reinterpret_cast<std::vector<int>*>(
-
 std::string Matrix::repr() const
 {
     std::string ret = "";
@@ -54,7 +52,7 @@ std::string Matrix::repr() const
 
 Matrix::~Matrix()
 {
-    resetbuf(0, 0);
+    //resetbuf(0, 0);
 }
 
 Matrix &Matrix::operator=(Matrix const &other)
