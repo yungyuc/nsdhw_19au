@@ -53,9 +53,9 @@ Time table
     -
   * - 1-2
     - 07:16 - 07:32
-    -
-    -
-    -
+    - Zhong
+    - TBD
+    - TBD
   * - 1-3
     - 07:32 - 07:48
     - Yarin Bar
