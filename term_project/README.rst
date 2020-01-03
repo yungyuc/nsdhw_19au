@@ -102,39 +102,39 @@ Time table
     - Github
   * - 2-1
     - 07:00 - 07:16
+    - (Vacant)
+    -
+    -
+  * - 2-2
+    - 07:16 - 07:32
+    - (Vacant)
+    -
+    -
+  * - 2-3
+    - 07:32 - 07:48
+    - (Vacant)
+    -
+    -
+  * - 2-4
+    - 08:00 - 08:16
     - Lu James
     - Defect simulator
     - https://github.com/lujames13/Defect-simulator
-  * - 2-2
-    - 07:16 - 07:32
+  * - 2-5
+    - 08:16 - 08:32
     - Ruo-Lin Ko
     - Single camera distance estimate
     - https://github.com/elephanting/Single_camera_distance_estimate
-  * - 2-3
-    - 07:32 - 07:48
-    - Chung Chih-Chi
-    - Bayesian Optimization
-    - https://github.com/stvreumi/BayesianOptimization
-  * - 2-4
-    - 08:00 - 08:16
-    - Hong-Sheng Zheng
-    - isl polytope visualization tool
-    - https://github.com/rniczh/isl-visualtool
-  * - 2-5
-    - 08:16 - 08:32
+  * - 2-6
+    - 08:32 - 08:48
     - Yi-Chien Shih
     - CPU Ray Marching Renderer
     - https://github.com/alan0201tw/RayMarcher
-  * - 2-6
-    - 08:32 - 08:48
+  * - 2-7
+    - 09:00 - 09:16
     - Yu-Sheng Hsieh
     - Crowd Evacuation Simulation
     - https://github.com/YSHsieh7777/CrowdEvacuationSimulation
-  * - 2-7
-    - 09:00 - 09:16
-    - Zi-Xuan Chen
-    - SVM Implementation
-    - https://github.com/nobodyzxc/yalibsvm
   * - 2-8
     - 09:16 - 09:32
     - Chen Yi-An
@@ -187,3 +187,30 @@ Grading guideline (subject to change)
   * Time control:
   * Appearance:
   * Other:
+
+Removed presentation
+====================
+
+.. list-table:: 1/6 7:00-9:50
+  :header-rows: 1
+
+  * - ID
+    - Time
+    - Presenter name
+    - Subject
+    - Github
+  * - 2-4
+    - 08:00 - 08:16
+    - (Removed) Hong-Sheng Zheng
+    - isl polytope visualization tool
+    - https://github.com/rniczh/isl-visualtool
+  * - 2-3
+    - 07:32 - 07:48
+    - (Removed) Chung Chih-Chi
+    - Bayesian Optimization
+    - https://github.com/stvreumi/BayesianOptimization
+  * - 2-7
+    - 09:00 - 09:16
+    - (Removed) Zi-Xuan Chen
+    - SVM Implementation
+    - https://github.com/nobodyzxc/yalibsvm
